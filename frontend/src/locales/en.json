@@ -1,0 +1,37 @@
+{
+  "app-bar": {
+    "change-password": "Change Password",
+    "logged-in-user": "Logged In User",
+    "logout": "Log Out"
+  },
+  "side-bar": {
+    "arrival": "Arrival",
+    "office": "Office",
+    "payout": "Payout"
+  },
+  "office": {
+    "customers": "Customers",
+    "reports": "Reports",
+    "users": "Users"
+  },
+  "table-data": {
+    "actions": "Actions",
+    "active": "Active",
+    "arrival": "Arrival",
+    "email": "Email",
+    "firstname": "First Name",
+    "invitation pending": "Invitation pending",
+    "lastname": "Last Name",
+    "name": "Name",
+    "office": "Office",
+    "payout": "Payout",
+    "status": "Status"
+  },
+  "form-data": {
+    "access-rights": "Access Rights",
+    "cancel": "Cancel",
+    "edit user": "Edit User",
+    "invite": "Invite",
+    "invite user": "Invite User"
+  }
+}

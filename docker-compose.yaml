@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+    app:
+        image: 100days/scrappy
+        init: true
+        build:
+            context: .
+        volumes:
+            - ./:/app
+        ports:
+          - "8000:8000"
+        restart: on-failure
+        command: ["python3", "manage.py", "runserver", "0.0.0.0:8000" ]
+
+    node:
+        image: node
+        volumes:
+            - ./:/app
+        working_dir: /app/frontend
+        command: ["yarn", "serve"]
+        ports:
+            - "8080:8080"

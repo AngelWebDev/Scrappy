@@ -1,0 +1,17 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Office{% endblock %}
+
+{% block content %}
+{% load render_bundle from webpack_loader %}
+{% if items %}
+<script type='text/javascript'>
+  var users = {{ items|safe }};
+</script>
+{% endif %}
+<div id="app">
+  <app></app>
+</div>
+{% render_bundle 'chunk-vendors' %}
+{% render_bundle 'office' %}
+{% endblock %}
