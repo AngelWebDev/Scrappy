@@ -38,12 +38,8 @@
                       label="Email"
                     ></v-text-field>
                     <v-text-field
-                      v-model="editedItem.firstname"
-                      :label="$t('table-data.firstname')"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="editedItem.lastname"
-                      :label="$t('table-data.lastname')"
+                      v-model="editedItem.name"
+                      :label="$t('table-data.fullname')"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -64,13 +60,39 @@
               </v-container>
             </v-card-text>
 
-            <v-card-actions>
+            <v-card-actions v-if="!editing && !pending">
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
+              <v-btn color="red darken-1" text @click="close">
                 {{ $t("form-data.cancel") }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
+              <v-btn color="blue darken-1" text @click="invite">
                 {{ $t("form-data.invite") }}
+              </v-btn>
+            </v-card-actions>
+
+            <v-card-actions v-else-if="pending">
+              <v-spacer></v-spacer>
+              <v-btn color="grey darken-1" text @click="back">
+                {{ $t("form-data.back") }}
+              </v-btn>
+              <v-btn color="red darken-1" text @click="cancelInvite">
+                {{ $t("form-data.cancelInvite") }}
+              </v-btn>
+              <v-btn color="blue darken-1" text @click="reSend">
+                {{ $t("form-data.resend") }}
+              </v-btn>
+            </v-card-actions>
+
+            <v-card-actions v-else-if="editing">
+              <v-spacer></v-spacer>
+              <v-btn color="grey darken-1" text @click="close">
+                {{ $t("form-data.cancel") }}
+              </v-btn>
+              <v-btn color="red darken-1" text @click="deactive">
+                {{ $t("form-data.deactive") }}
+              </v-btn>
+              <v-btn color="blue darken-1" text @click="invite">
+                {{ $t("form-data.save") }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -143,6 +165,8 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    pending: false,
+    editing: false,
     headers: [
       { text: "Name", value: "name" },
       { text: "Email", value: "email" },
@@ -201,6 +225,7 @@ export default {
       this.editedIndex = this.items.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
+      this.editing = true;
     },
 
     deleteItem(item) {
@@ -216,6 +241,8 @@ export default {
 
     close() {
       this.dialog = false;
+      this.editing = false;
+      this.pending = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -230,14 +257,19 @@ export default {
       });
     },
 
-    save() {
+    invite() {
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
+        this.editing = true;
       } else {
-        this.items.push(this.editedItem);
+        if (this.editedItem.email && this.editedItem.name) {
+          this.editedItem.status = "invitation pending";
+          this.pending = true;
+        }
       }
-      this.close();
     },
+
+    deactive() {},
   },
 };
 </script>

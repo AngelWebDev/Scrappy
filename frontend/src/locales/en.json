@@ -19,7 +19,7 @@
     "active": "Active",
     "arrival": "Arrival",
     "email": "Email",
-    "firstname": "First Name",
+    "fullname": "Full Name",
     "invitation pending": "Invitation pending",
     "lastname": "Last Name",
     "name": "Name",
@@ -29,9 +29,14 @@
   },
   "form-data": {
     "access-rights": "Access Rights",
+    "back": "Back",
     "cancel": "Cancel",
+    "cancelInvite": "Cancel Invitation",
+    "deactive": "Deactive",
     "edit user": "Edit User",
     "invite": "Invite",
-    "invite user": "Invite User"
+    "invite user": "Invite User",
+    "resend": "Re-Send Invitation",
+    "save": "Save"
   }
 }
