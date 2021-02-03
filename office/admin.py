@@ -5,8 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from office.models import ScrappyUser
-from office.models import Customer
+from office.models import *
 
 
 class UserCreationForm(forms.ModelForm):
@@ -54,6 +53,7 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
+@admin.register(ScrappyUser)
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
@@ -84,9 +84,11 @@ class UserAdmin(BaseUserAdmin):
     def fullname(self, obj):
         return "%s %s" % (obj.firstname, obj.lastname)
 
-# Now register the new UserAdmin...
-admin.site.register(ScrappyUser, UserAdmin)
+
 admin.site.register(Customer)
+admin.site.register(Rights)
+admin.site.register(Identification)
+
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
