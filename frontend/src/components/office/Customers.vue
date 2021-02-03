@@ -16,86 +16,7 @@
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{
-                $t(`form-data.${formTitle.toLowerCase()}`)
-              }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="6"></v-col>
-                  <v-col cols="6" class="text-left">
-                    <h3>{{ $t("form-data.access-rights") }}</h3>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field
-                      v-model="editedItem.email"
-                      label="Email"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="editedItem.name"
-                      :label="$t('table-data.fullname')"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-checkbox
-                      v-model="editedItem.arrival"
-                      :label="$t('table-data.arrival')"
-                    ></v-checkbox>
-                    <v-checkbox
-                      v-model="editedItem.payout"
-                      :label="$t('table-data.payout')"
-                    ></v-checkbox>
-                    <v-checkbox
-                      v-model="editedItem.office"
-                      :label="$t('table-data.office')"
-                    ></v-checkbox>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions v-if="!editing && !pending">
-              <v-spacer></v-spacer>
-              <v-btn color="red darken-1" text @click="close">
-                {{ $t("form-data.cancel") }}
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="invite">
-                {{ $t("form-data.invite") }}
-              </v-btn>
-            </v-card-actions>
-
-            <v-card-actions v-else-if="pending">
-              <v-spacer></v-spacer>
-              <v-btn color="grey darken-1" text @click="back">
-                {{ $t("form-data.back") }}
-              </v-btn>
-              <v-btn color="red darken-1" text @click="cancelInvite">
-                {{ $t("form-data.cancelInvite") }}
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="reSend">
-                {{ $t("form-data.resend") }}
-              </v-btn>
-            </v-card-actions>
-
-            <v-card-actions v-else-if="editing">
-              <v-spacer></v-spacer>
-              <v-btn color="grey darken-1" text @click="close">
-                {{ $t("form-data.cancel") }}
-              </v-btn>
-              <v-btn color="red darken-1" text @click="deactive">
-                {{ $t("form-data.deactive") }}
-              </v-btn>
-              <v-btn color="blue darken-1" text @click="invite">
-                {{ $t("form-data.save") }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <CustomerForm />
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
@@ -160,8 +81,12 @@
 </template>
 
 <script>
+import CustomerForm from "./CustomerForm";
 export default {
   name: "customers",
+  components: {
+    CustomerForm,
+  },
   data: () => ({
     dialog: false,
     dialogDelete: false,
