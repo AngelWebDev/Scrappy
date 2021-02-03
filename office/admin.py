@@ -17,7 +17,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = ScrappyUser
-        fields = ('email', 'date_of_birth')
+        fields = ('email', 'firstname', 'lastname')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -45,7 +45,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = ScrappyUser
-        fields = ('email', 'password', 'date_of_birth', 'is_active', 'is_admin')
+        fields = ('firstname', 'lastname', 'email', 'password', 'status', 'is_admin')
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
@@ -62,25 +62,27 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'date_of_birth', 'is_admin')
+    list_display = ('email', 'fullname', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('date_of_birth',)}),
-        ('Permissions', {'fields': ('is_admin',)}),
+        ('Personal info', {'fields': ('firstname', 'lastname')}),
+        ('Permissions', {'fields': ('is_admin', 'status')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'date_of_birth', 'password1', 'password2'),
+            'fields': ('email', 'firstname', 'lastname', 'password1', 'password2'),
         }),
     )
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
 
+    def fullname(self, obj):
+        return "%s %s" % (obj.firstname, obj.lastname)
 
 # Now register the new UserAdmin...
 admin.site.register(ScrappyUser, UserAdmin)
