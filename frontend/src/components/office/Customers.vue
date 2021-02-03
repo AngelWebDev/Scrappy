@@ -3,7 +3,7 @@
     <template v-slot:top>
       <v-toolbar flat>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="900px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -24,42 +24,70 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6">
+                  <v-col cols="6" sm="6">
                     <v-select
                       :items="solutations"
                       :label="$t('table-data.solutation')"
                       v-model="editedItem.title"
-                      solo
                     ></v-select>
                     <v-text-field
                       v-model="editedItem.firstname"
                       :label="$t('table-data.firstname')"
                     ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.lastname"
+                      :label="$t('table-data.lastname')"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.address"
+                      :label="$t('table-data.address')"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.zip"
+                      :label="$t('table-data.zip')"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.city"
+                      :label="$t('table-data.city')"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.email"
+                      label="Email"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.phone"
+                      :label="$t('table-data.phone')"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.comments"
+                      :label="$t('table-data.comments')"
+                    ></v-text-field>
                   </v-col>
-                  <!-- <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              v-model="editedItem.email"
-              label="Email"
-            ></v-text-field>
-            <v-text-field
-              v-model="editedItem.name"
-              :label="$t('table-data.fullname')"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6" md="4">
-            <v-checkbox
-              v-model="editedItem.arrival"
-              :label="$t('table-data.arrival')"
-            ></v-checkbox>
-            <v-checkbox
-              v-model="editedItem.payout"
-              :label="$t('table-data.payout')"
-            ></v-checkbox>
-            <v-checkbox
-              v-model="editedItem.office"
-              :label="$t('table-data.office')"
-            ></v-checkbox>
-          </v-col> -->
+
+                  <v-col cols="6">
+                    <v-switch
+                      v-model="editedItem.is_company"
+                      inset
+                      :label="$t('table-data.is_company')"
+                    />
+                    <v-text-field
+                      v-model="editedItem.company_name"
+                      :label="$t('table-data.company_name')"
+                    />
+                    <v-text-field
+                      v-model="editedItem.vat_id"
+                      :label="$t('table-data.vat_id')"
+                    />
+                    <v-text-field
+                      v-model="editedItem.tax_id"
+                      :label="$t('table-data.tax_id')"
+                    />
+                    <div class="text-right mt-16 pt-16">
+                      <v-btn color="warning" dark>
+                        {{ $t("table-data.verify") }}
+                      </v-btn>
+                    </div>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -158,7 +186,7 @@ export default {
     editing: false,
     solutations: ["Mr", "Mrs", "Dr", "Prof"],
     headers: [
-      { text: "No", value: "id" },
+      { text: "No", value: "no" },
       { text: "Last Name", value: "lastname" },
       { text: "First Name", value: "firstname" },
       { text: "Address", value: "address" },
@@ -207,7 +235,7 @@ export default {
   methods: {
     initialize() {
       // eslint-disable-next-line no-undef
-      this.items = users;
+      this.items = users.map((item, index) => ({ ...item, no: index + 1 }));
     },
 
     editItem(item) {
