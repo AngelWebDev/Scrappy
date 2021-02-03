@@ -1,90 +1,39 @@
-from django.shortcuts import render
 import json
+from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import View
+from django.core import serializers
+from .models import ScrappyUser, Customer, Rights
 
 
-def index(request):
-    items = [
-        {
-            "name": "Frozen Yogurt",
-            "email": "test@test.com",
-            "arrival": 6.0,
-            "payout": 24,
-            "office": 4.0,
-            "status": "invitation pending",
-        },
-        {
-            "name": "Ice cream sandwich",
-            "email": "test@test.com",
-            "arrival": 9.0,
-            "payout": 37,
-            "office": 4.3,
-            "status": "invitation pending",
-        },
-        {
-            "name": "Eclair",
-            "email": "test@test.com",
-            "arrival": 16.0,
-            "payout": 23,
-            "office": 6.0,
-            "status": "active",
-        },
-        {
-            "name": "Cupcake",
-            "email": "test@test.com",
-            "arrival": 3.7,
-            "payout": 67,
-            "office": 4.3,
-            "status": "active",
-        },
-        {
-            "name": "Gingerbread",
-            "email": "test@test.com",
-            "arrival": 16.0,
-            "payout": 49,
-            "office": 3.9,
-            "status": "active",
-        },
-        {
-            "name": "Jelly bean",
-            "email": "test@test.com",
-            "arrival": 0.0,
-            "payout": 94,
-            "office": 0.0,
-            "status": "active",
-        },
-        {
-            "name": "Lollipop",
-            "email": "test@test.com",
-            "arrival": 0.2,
-            "payout": 98,
-            "office": 0,
-            "status": "active",
-        },
-        {
-            "name": "Honeycomb",
-            "email": "test@test.com",
-            "arrival": 3.2,
-            "payout": 87,
-            "office": 6.5,
-            "status": "active",
-        },
-        {
-            "name": "Donut",
-            "email": "test@test.com",
-            "arrival": 25.0,
-            "payout": 51,
-            "office": 4.9,
-            "status": "active",
-        },
-        {
-            "name": "KitKat",
-            "email": "test@test.com",
-            "arrival": 26.0,
-            "payout": 65,
-            "office": 7,
-            "status": "active",
-        },
-    ];
-    context = {}
-    context["items"] = json.dumps(items)
-    return render(request, 'office.html', context)
+class UserView(View, LoginRequiredMixin):
+    template = 'office.html'
+    model = ScrappyUser
+
+    def get(self, request):
+        result = []
+        users = self.model.objects.exclude(status=self.model.StatusChoices.DEACTIVATED).all()
+
+        for user in users:
+            rights = list(Rights.objects.filter(user=user).values_list("right", flat=True))
+            user_detail = {
+                "office": False,
+                "payout": False,
+                "arrival": False
+            }
+
+            if 'Office' in rights:
+                user_detail['office'] = True
+            if 'Payout' in rights:
+                user_detail['payout'] = True
+            if 'Arrival' in rights:
+                user_detail['arrival'] = True
+
+            user_serialized = json.loads(
+                serializers.serialize("json", [user, ], fields=["email", "firstname", "lastname", "status"]))
+            user_personal_info = user_serialized[0]["fields"]
+            user_detail.update(user_personal_info)
+            result.append(user_detail)
+        print(result)
+        context = {"users": json.dumps(result)}
+        return render(request, self.template, context)
