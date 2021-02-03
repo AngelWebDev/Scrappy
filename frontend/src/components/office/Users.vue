@@ -38,8 +38,12 @@
                       label="Email"
                     ></v-text-field>
                     <v-text-field
-                      v-model="editedItem.name"
-                      :label="$t('table-data.fullname')"
+                      v-model="editedItem.firstname"
+                      :label="$t('table-data.firstname')"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="editedItem.lastname"
+                      :label="$t('table-data.lastname')"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -160,6 +164,7 @@
 </template>
 
 <script>
+import { inviteUser, deleteUser, updateUser, deactiveUser } from "../../api";
 export default {
   name: "users",
   data: () => ({
@@ -179,7 +184,9 @@ export default {
     items: [],
     editedIndex: -1,
     editedItem: {
-      name: "",
+      id: "",
+      firstname: "",
+      lastname: "",
       email: "",
       arrival: false,
       payout: false,
@@ -187,7 +194,9 @@ export default {
       status: "",
     },
     defaultItem: {
-      name: "",
+      id: "",
+      firstname: "",
+      lastname: "",
       email: "",
       arrival: false,
       payout: false,
@@ -218,12 +227,31 @@ export default {
   methods: {
     initialize() {
       // eslint-disable-next-line no-undef
-      this.items = users;
+      this.items = users.map((item) => ({
+        id: item.id,
+        name: item.firstname + " " + item.lastname,
+        email: item.email,
+        arrival: item.arrival,
+        payout: item.payout,
+        office: item.office,
+        status: item.status,
+      }));
     },
 
     editItem(item) {
       this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.editedItem = Object.assign(
+        {},
+        {
+          id: item.id,
+          firstname: item.name.split(" ")[0],
+          lastname: item.name.split(" ")[1],
+          email: item.email,
+          arrival: item.arrival,
+          payout: item.payout,
+          office: item.office,
+        }
+      );
       this.dialog = true;
       this.editing = true;
     },
@@ -234,8 +262,10 @@ export default {
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
+    async deleteItemConfirm() {
       this.items.splice(this.editedIndex, 1);
+      await deleteUser(this.editedItem.id);
+      this.initialize();
       this.closeDelete();
     },
 
@@ -257,19 +287,31 @@ export default {
       });
     },
 
-    invite() {
+    async invite() {
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
+        await updateUser(this.editedItem.id, this.editedItem);
         this.editing = true;
       } else {
-        if (this.editedItem.email && this.editedItem.name) {
+        if (
+          this.editedItem.email &&
+          this.editedItem.firstname &&
+          this.editedItem.lastname
+        ) {
           this.editedItem.status = "invitation pending";
           this.pending = true;
+          await inviteUser(this.editedItem);
         }
       }
+      this.initialize();
     },
 
-    deactive() {},
+    async deactive() {
+      if (this.editedIndex > -1) {
+        await deactiveUser(this.editedItem.id);
+        this.initialize();
+      }
+    },
   },
 };
 </script>
