@@ -4,9 +4,9 @@
 
 {% block content %}
 {% load render_bundle from webpack_loader %}
-{% if items %}
+{% if users %}
 <script type='text/javascript'>
-  var users = {{ items|safe }};
+  var users = {{ users|safe }};
 </script>
 {% endif %}
 <div id="app">

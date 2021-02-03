@@ -45,9 +45,9 @@ class ScrappyUser(AbstractBaseUser):
         db_table = "users"
 
     class StatusChoices(models.TextChoices):
-        ACTIVE = 'ACTIVE', 'active'
-        PENDING = 'PENDING', 'pending'
-        DEACTIVATED = 'DEACTIVATED', 'deactivated'
+        ACTIVE = 'Active', 'Active'
+        PENDING = 'Pending', 'Pending'
+        DEACTIVATED = 'Deactivated', 'Deactivated'
 
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     firstname = models.CharField(max_length=255, blank=True, null=True)
@@ -86,9 +86,9 @@ class Rights(models.Model):
         verbose_name_plural = "Rights"
 
     class RightChoices(models.TextChoices):
-        ARRIVAL = 'ARRIVAL', 'Arrival'
-        PAYOUT = 'PAYOUT', 'Payout'
-        OFFICE = 'OFFICE', 'Office'
+        ARRIVAL = 'Arrival', 'Arrival'
+        PAYOUT = 'Payout', 'Payout'
+        OFFICE = 'Office', 'Office'
 
     user = models.ForeignKey(ScrappyUser, on_delete=models.CASCADE)
     right = models.CharField(max_length=10, choices=RightChoices.choices)
@@ -99,9 +99,9 @@ class Identification(models.Model):
         db_table = "identification"
 
     class DocumentTypeChoices(models.TextChoices):
-        IDCARD = 'IDCARD', 'IDCard'
-        PASSPORT = 'PASSPORT', 'Passport'
-        DRIVERLICENSE = 'DRIVERLICENSE', 'Driver License'
+        IDCARD = 'IDCard', 'IDCard'
+        PASSPORT = 'Passport', 'Passport'
+        DRIVERLICENSE = 'Driver License', 'Driver License'
 
     user = models.OneToOneField(ScrappyUser, on_delete=models.SET_NULL, null=True)
     document_type = models.CharField(max_length=20, choices=DocumentTypeChoices.choices)
