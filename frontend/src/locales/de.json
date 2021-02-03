@@ -26,6 +26,7 @@
     "name": "Name",
     "office": "Büro",
     "payout": "Auszahlung",
+    "solutation": "Lösung",
     "status": "Status"
   },
   "form-data": {
@@ -33,7 +34,9 @@
     "back": "Zurück",
     "cancel": "Stornieren",
     "cancelInvite": "Stornieren Einladung",
+    "create-customer": "Erstellen Kundin",
     "deactive": "Deaktivieren",
+    "edit-customer": "Bearbeiten Kundin",
     "edit user": "Bearbeiten Nutzerin",
     "invite": "Einladen",
     "invite user": "Benutzer Nutzerin",

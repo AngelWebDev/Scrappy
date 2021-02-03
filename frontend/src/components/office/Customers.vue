@@ -16,7 +16,75 @@
               <v-icon dark>mdi-plus</v-icon>
             </v-btn>
           </template>
-          <CustomerForm />
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ $t(`form-data.${formTitle}`) }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="6">
+                    <v-select
+                      :items="solutations"
+                      :label="$t('table-data.solutation')"
+                      v-model="editedItem.title"
+                      solo
+                    ></v-select>
+                    <v-text-field
+                      v-model="editedItem.firstname"
+                      :label="$t('table-data.firstname')"
+                    ></v-text-field>
+                  </v-col>
+                  <!-- <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              v-model="editedItem.email"
+              label="Email"
+            ></v-text-field>
+            <v-text-field
+              v-model="editedItem.name"
+              :label="$t('table-data.fullname')"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" md="4">
+            <v-checkbox
+              v-model="editedItem.arrival"
+              :label="$t('table-data.arrival')"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="editedItem.payout"
+              :label="$t('table-data.payout')"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="editedItem.office"
+              :label="$t('table-data.office')"
+            ></v-checkbox>
+          </v-col> -->
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-container>
+                <v-row>
+                  <v-col cols="9">
+                    <v-btn color="grey darken-1" text @click="close">
+                      {{ $t("form-data.cancel") }}
+                    </v-btn>
+                    <v-btn color="red darken-1" text @click="deactive">
+                      {{ $t("form-data.deactive") }}
+                    </v-btn>
+                  </v-col>
+
+                  <v-col cols="3">
+                    <v-btn color="blue darken-1" text @click="invite">
+                      {{ $t("form-data.save") }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-actions>
+          </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
@@ -81,17 +149,14 @@
 </template>
 
 <script>
-import CustomerForm from "./CustomerForm";
 export default {
   name: "customers",
-  components: {
-    CustomerForm,
-  },
   data: () => ({
     dialog: false,
     dialogDelete: false,
     pending: false,
     editing: false,
+    solutations: ["Mr", "Mrs", "Dr", "Prof"],
     headers: [
       { text: "No", value: "id" },
       { text: "Last Name", value: "lastname" },
@@ -106,12 +171,9 @@ export default {
     items: [],
     editedIndex: -1,
     editedItem: {
-      name: "",
-      email: "",
-      arrival: false,
-      payout: false,
-      office: false,
-      status: "",
+      title: "",
+      firstname: "",
+      lastname: "",
     },
     defaultItem: {
       name: "",
@@ -125,7 +187,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Invite User" : "Edit User";
+      return this.editedIndex === -1 ? "create-customer" : "edit-customer";
     },
   },
 
