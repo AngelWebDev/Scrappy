@@ -24,61 +24,98 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="6" sm="6">
-                    <v-select
-                      :items="solutations"
-                      :label="$t('table-data.solutation')"
-                      v-model="editedItem.title"
-                    ></v-select>
+                  <v-col cols="7" sm="7">
+                    <v-row>
+                      <v-col cols="4">
+                        <v-select
+                          outlined
+                          :items="solutations"
+                          :label="$t('table-data.solutation')"
+                          v-model="editedItem.title"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="8">
+                        <v-text-field
+                          outlined
+                          v-model="editedItem.email"
+                          label="Email"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-text-field
+                          outlined
+                          v-model="editedItem.firstname"
+                          :label="$t('table-data.firstname')"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-text-field
+                          outlined
+                          v-model="editedItem.lastname"
+                          :label="$t('table-data.lastname')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
                     <v-text-field
-                      v-model="editedItem.firstname"
-                      :label="$t('table-data.firstname')"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="editedItem.lastname"
-                      :label="$t('table-data.lastname')"
-                    ></v-text-field>
-                    <v-text-field
+                      outlined
                       v-model="editedItem.address"
                       :label="$t('table-data.address')"
                     ></v-text-field>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-text-field
+                          outlined
+                          v-model="editedItem.zip"
+                          :label="$t('table-data.zip')"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-text-field
+                          outlined
+                          v-model="editedItem.city"
+                          :label="$t('table-data.city')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
                     <v-text-field
-                      v-model="editedItem.zip"
-                      :label="$t('table-data.zip')"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="editedItem.city"
-                      :label="$t('table-data.city')"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="editedItem.email"
-                      label="Email"
-                    ></v-text-field>
-                    <v-text-field
+                      outlined
                       v-model="editedItem.phone"
                       :label="$t('table-data.phone')"
                     ></v-text-field>
-                    <v-text-field
+                    <v-textarea
+                      outlined
                       v-model="editedItem.comments"
                       :label="$t('table-data.comments')"
-                    ></v-text-field>
+                    ></v-textarea>
                   </v-col>
 
-                  <v-col cols="6">
+                  <v-col cols="5">
                     <v-switch
+                      outlined
+                      class="mb-11"
                       v-model="editedItem.is_company"
+                      :value="editedItem.is_company"
                       inset
                       :label="$t('table-data.is_company')"
                     />
                     <v-text-field
+                      outlined
+                      v-show="editedItem.is_company"
                       v-model="editedItem.company_name"
                       :label="$t('table-data.company_name')"
                     />
                     <v-text-field
+                      outlined
+                      v-show="editedItem.is_company"
                       v-model="editedItem.vat_id"
                       :label="$t('table-data.vat_id')"
                     />
                     <v-text-field
+                      outlined
+                      v-show="editedItem.is_company"
                       v-model="editedItem.tax_id"
                       :label="$t('table-data.tax_id')"
                     />
@@ -134,28 +171,31 @@
       </v-toolbar>
     </template>
 
-    <template v-slot:[`header.arrival`]="{ header }">
-      {{ $t(`table-data.${header.text.toLowerCase()}`) }}
+    <template v-slot:[`header.firstname`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
     </template>
-    <template v-slot:[`header.payout`]="{ header }">
-      {{ $t(`table-data.${header.text.toLowerCase()}`) }}
+    <template v-slot:[`header.lastname`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
     </template>
-    <template v-slot:[`header.office`]="{ header }">
-      {{ $t(`table-data.${header.text.toLowerCase()}`) }}
+    <template v-slot:[`header.address`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
+    </template>
+    <template v-slot:[`header.city`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
+    </template>
+    <template v-slot:[`header.comments`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
+    </template>
+    <template v-slot:[`header.vat_id`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
+    </template>
+    <template v-slot:[`header.status`]="{ header }">
+      {{ $t(`table-data.${header.value}`) }}
     </template>
     <template v-slot:[`header.actions`]="{ header }">
-      {{ $t(`table-data.${header.text.toLowerCase()}`) }}
+      {{ $t(`table-data.${header.value}`) }}
     </template>
 
-    <template v-slot:[`item.arrival`]="{ item }">
-      <v-simple-checkbox v-model="item.arrival" disabled></v-simple-checkbox>
-    </template>
-    <template v-slot:[`item.payout`]="{ item }">
-      <v-simple-checkbox v-model="item.payout" disabled></v-simple-checkbox>
-    </template>
-    <template v-slot:[`item.office`]="{ item }">
-      <v-simple-checkbox v-model="item.office" disabled></v-simple-checkbox>
-    </template>
     <template v-slot:[`item.status`]="{ item }">
       {{ $t(`table-data.${item.status.toLowerCase()}`) }}
     </template>
@@ -177,6 +217,7 @@
 </template>
 
 <script>
+import { createCustomer, updateCustomer, deactiveCustomer } from "../../api";
 export default {
   name: "customers",
   data: () => ({
@@ -202,14 +243,31 @@ export default {
       title: "",
       firstname: "",
       lastname: "",
+      address: "",
+      city: "",
+      comments: "",
+      vat_id: "",
+      status: "active",
+      tax_id: "",
+      zip: "",
+      email: "",
+      is_company: false,
+      company_name: "",
     },
     defaultItem: {
-      name: "",
+      title: "",
+      firstname: "",
+      lastname: "",
+      address: "",
+      city: "",
+      comments: "",
+      vat_id: "",
+      status: "active",
+      tax_id: "",
+      zip: "",
       email: "",
-      arrival: false,
-      payout: false,
-      office: false,
-      status: "",
+      is_company: false,
+      company_name: "",
     },
   }),
 
@@ -235,7 +293,7 @@ export default {
   methods: {
     initialize() {
       // eslint-disable-next-line no-undef
-      this.items = users.map((item, index) => ({ ...item, no: index + 1 }));
+      this.items = customers.map((item, index) => ({ ...item, no: index + 1 }));
     },
 
     editItem(item) {
@@ -277,16 +335,18 @@ export default {
     invite() {
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
+        updateCustomer(this.editedItem.id, this.editedItem);
         this.editing = true;
       } else {
         if (this.editedItem.email && this.editedItem.name) {
-          this.editedItem.status = "invitation pending";
-          this.pending = true;
+          createCustomer(this.editedItem);
         }
       }
     },
 
-    deactive() {},
+    deactive() {
+      deactiveCustomer(this.editedItem.id);
+    },
   },
 };
 </script>
