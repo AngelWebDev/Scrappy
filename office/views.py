@@ -1,12 +1,12 @@
 import json
 from django.shortcuts import render
-# from django.views.decorators.csrf import csrf_exempt
-# from django.utils.decorators import method_decorator
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from .models import ScrappyUser, Customer, Rights
 from .serializers import UserSerializer
+from rest_framework.generics import UpdateAPIView
+from rest_framework.response import Response
+
 
 class UserListCreateView(View, LoginRequiredMixin):
     template = 'office.html'
@@ -39,12 +39,13 @@ class UserListCreateView(View, LoginRequiredMixin):
         return render(request, self.template, context)
 
 
-class UserUpdateView(View):
-    def post(self, request, *args, **kwargs):
-        user_id = kwargs["id"]
+class UserUpdateAPI(UpdateAPIView):
+    def put(self, request, *args, **kwargs):
+        request_data = request.data
+        user_id = request_data["id"]
         user = ScrappyUser.objects.filter(id=user_id)
+
         if user:
-            request_data = json.loads(request.body)
             office_right = request_data.pop("office", False)
             payout_right = request_data.pop("payout", False)
             arrival_right = request_data.pop("arrival", False)
@@ -53,6 +54,6 @@ class UserUpdateView(View):
                                          Payout=payout_right,
                                          Arrival=arrival_right)
             user.update(**request_data)
-            return JsonResponse({'result': 'success'})
+            return Response({"result": "success"})
         else:
-            return JsonResponse({'result': 'User not found'}, status=404)
+            return Response({"result": "User not found"}, status=404)
