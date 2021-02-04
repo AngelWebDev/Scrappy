@@ -273,23 +273,26 @@ export default {
 
     async invite() {
       if (this.editedIndex > -1) {
-        Object.assign(this.items[this.editedIndex], this.editedItem);
         delete this.editedItem.name;
-        await updateUser(this.editedItem.id, this.editedItem);
-        this.editing = true;
+        updateUser(this.editedItem.id, this.editedItem).then(() => {
+          Object.assign(this.items[this.editedIndex], this.editedItem);
+          this.close();
+        });
       } else {
         if (
           this.editedItem.email &&
           this.editedItem.firstname &&
           this.editedItem.lastname
         ) {
-          this.editedItem.status = "invitation pending";
+          this.editedItem.status = "pending";
           this.pending = true;
           delete this.editedItem.name;
-          await inviteUser(this.editedItem);
+          inviteUser(this.editedItem).then(() => {
+            this.items.push(this.editedItem);
+            this.close();
+          });
         }
       }
-      this.initialize();
     },
 
     async deactive() {
