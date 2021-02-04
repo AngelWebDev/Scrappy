@@ -228,30 +228,14 @@ export default {
     initialize() {
       // eslint-disable-next-line no-undef
       this.items = users.map((item) => ({
-        id: item.id,
         name: item.firstname + " " + item.lastname,
-        email: item.email,
-        arrival: item.arrival,
-        payout: item.payout,
-        office: item.office,
-        status: item.status,
+        ...item,
       }));
     },
 
     editItem(item) {
       this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign(
-        {},
-        {
-          id: item.id,
-          firstname: item.name.split(" ")[0],
-          lastname: item.name.split(" ")[1],
-          email: item.email,
-          arrival: item.arrival,
-          payout: item.payout,
-          office: item.office,
-        }
-      );
+      this.editedItem = Object.assign({}, item);
       this.dialog = true;
       this.editing = true;
     },
