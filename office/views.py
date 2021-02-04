@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from .models import ScrappyUser, Customer, Rights
 from .serializers import UserSerializer
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 
 
@@ -39,7 +39,7 @@ class UserListCreateView(View, LoginRequiredMixin):
         return render(request, self.template, context)
 
 
-class UserUpdateAPI(UpdateAPIView):
+class UserUpdateAPI(RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         request_data = request.data
         user_id = request_data["id"]
@@ -54,6 +54,16 @@ class UserUpdateAPI(UpdateAPIView):
                                          Payout=payout_right,
                                          Arrival=arrival_right)
             user.update(**request_data)
+            return Response({"result": "success"})
+        else:
+            return Response({"result": "User not found"}, status=404)
+
+    def delete(self, request, *args, **kwargs):
+        request_data = request.data
+        user_id = request_data["id"]
+        user = ScrappyUser.objects.filter(id=user_id)
+        if user:
+            user.delete()
             return Response({"result": "success"})
         else:
             return Response({"result": "User not found"}, status=404)
