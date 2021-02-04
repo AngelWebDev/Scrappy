@@ -1,43 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
-
-
-class ScrappyUserManager(BaseUserManager):
-    def create_user(self, email, firstname, lastname, password=None):
-        """
-        Creates and saves a User with the given email, date of
-        birth and password.
-        """
-        if not email:
-            raise ValueError('Users must have an email address')
-
-        user = self.model(
-            email=self.normalize_email(email),
-            firstname=firstname,
-            lastname=lastname
-        )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, firstname, lastname, password=None):
-        """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
-        """
-        user = self.create_user(
-            email,
-            password=password,
-            firstname=firstname,
-            lastname=lastname
-        )
-        user.is_admin = True
-        user.status = ScrappyUser.StatusChoices.ACTIVE
-        user.save(using=self._db)
-        return user
+from django.contrib.auth.models import AbstractBaseUser
+from .managers import ScrappyUserManager, RightsManager
 
 
 class ScrappyUser(AbstractBaseUser):
@@ -92,6 +55,8 @@ class Rights(models.Model):
 
     user = models.ForeignKey(ScrappyUser, on_delete=models.CASCADE)
     right = models.CharField(max_length=10, choices=RightChoices.choices)
+
+    objects = RightsManager()
 
 
 class Identification(models.Model):
