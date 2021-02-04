@@ -9,7 +9,7 @@ export const inviteUser = async (data) => {
 };
 
 export const updateUser = async (uid, data) => {
-  return await fetch(`${API_URL}/office/user/${uid}`, {
+  return await fetch(`${API_URL}/office/user`, {
     method: "PUT",
     headers,
     body: JSON.stringify(data),
@@ -17,9 +17,10 @@ export const updateUser = async (uid, data) => {
 };
 
 export const deleteUser = async (uid) => {
-  return await fetch(`${API_URL}/office/user/${uid}`, {
+  return await fetch(`${API_URL}/office/user`, {
     method: "DELETE",
     headers,
+    body: JSON.stringify({ id: uid }),
   });
 };
 
