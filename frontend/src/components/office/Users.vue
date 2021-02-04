@@ -274,6 +274,7 @@ export default {
     async invite() {
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
+        delete this.editedItem.name;
         await updateUser(this.editedItem.id, this.editedItem);
         this.editing = true;
       } else {
@@ -284,6 +285,7 @@ export default {
         ) {
           this.editedItem.status = "invitation pending";
           this.pending = true;
+          delete this.editedItem.name;
           await inviteUser(this.editedItem);
         }
       }
