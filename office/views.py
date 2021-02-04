@@ -1,12 +1,14 @@
 import json
 from django.shortcuts import render
+# from django.views.decorators.csrf import csrf_exempt
+# from django.utils.decorators import method_decorator
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
-from django.core import serializers
 from .models import ScrappyUser, Customer, Rights
+from .serializers import UserSerializer
 
-
-class UserView(View, LoginRequiredMixin):
+class UserListCreateView(View, LoginRequiredMixin):
     template = 'office.html'
     model = ScrappyUser
 
@@ -29,11 +31,28 @@ class UserView(View, LoginRequiredMixin):
             if 'Arrival' in rights:
                 user_detail['arrival'] = True
 
-            user_serialized = json.loads(
-                serializers.serialize("json", [user, ], fields=["email", "firstname", "lastname", "status"]))
-            user_personal_info = user_serialized[0]["fields"]
-            user_detail.update(user_personal_info)
+            user_serialized = UserSerializer(user)
+            user_detail.update(user_serialized.data)
             result.append(user_detail)
-        print(result)
+
         context = {"users": json.dumps(result)}
         return render(request, self.template, context)
+
+
+class UserUpdateView(View):
+    def post(self, request, *args, **kwargs):
+        user_id = kwargs["id"]
+        user = ScrappyUser.objects.filter(id=user_id)
+        if user:
+            request_data = json.loads(request.body)
+            office_right = request_data.pop("office", False)
+            payout_right = request_data.pop("payout", False)
+            arrival_right = request_data.pop("arrival", False)
+            Rights.objects.update_rights(user.first(),
+                                         Office=office_right,
+                                         Payout=payout_right,
+                                         Arrival=arrival_right)
+            user.update(**request_data)
+            return JsonResponse({'result': 'success'})
+        else:
+            return JsonResponse({'result': 'User not found'}, status=404)
