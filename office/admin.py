@@ -86,6 +86,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(Customer)
+admin.site.register(Company)
 admin.site.register(Rights)
 admin.site.register(Identification)
 

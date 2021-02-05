@@ -80,6 +80,7 @@ class Identification(models.Model):
 class Company(models.Model):
     class Meta:
         db_table = "company"
+        verbose_name_plural = "Companies"
 
     name = models.CharField(max_length=255)
     vat_id = models.CharField(max_length=50)
@@ -103,10 +104,9 @@ class Customer(models.Model):
     city = models.CharField(max_length=255, null=True, blank=True)
     phone1 = models.CharField(max_length=50, null=True, blank=True)
     phone2 = models.CharField(max_length=50, null=True, blank=True)
-    vat_id = models.CharField(max_length=50, null=True, blank=True)
-    tax_id = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     title = models.CharField(max_length=255, choices=TitleChoices.choices, default=TitleChoices.MR)
+    comments = models.TextField(null=True, blank=True)
     status = models.BooleanField(default=True)
     identification = models.OneToOneField(Identification, on_delete=models.SET_NULL, null=True, blank=True)
     company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True)

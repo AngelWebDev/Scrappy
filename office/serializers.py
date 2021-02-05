@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import ScrappyUser, Customer, Identification, Company
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScrappyUser
@@ -10,17 +11,21 @@ class UserSerializer(serializers.ModelSerializer):
 class IdentificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Identification
+        fields = '__all__'
 
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
+        fields = '__all__'
 
 
 class CustomerListSerializer(serializers.ModelSerializer):
+    company = CompanySerializer()
+
     class Meta:
         model = Customer
-        fields = ['id', 'firstname', 'lastname', 'street', 'city', 'title', 'vat_id', 'status']
+        fields = ['id', 'firstname', 'lastname', 'street', 'city', 'title', 'comments', 'status', 'company']
 
 
 class CustomerDetailSerializer(serializers.ModelSerializer):
@@ -29,3 +34,4 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
+        fields = ['company']
