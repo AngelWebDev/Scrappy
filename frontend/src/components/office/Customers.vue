@@ -1,5 +1,10 @@
 <template>
-  <v-data-table :headers="headers" :items="items" class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :items="items"
+    :search="search"
+    class="elevation-1"
+  >
     <template v-slot:top>
       <v-toolbar flat>
         <v-spacer></v-spacer>
@@ -19,6 +24,13 @@
           <v-card>
             <v-card-title>
               <span class="headline">{{ $t(`form-data.${formTitle}`) }}</span>
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
             </v-card-title>
 
             <v-card-text>
@@ -225,6 +237,7 @@ export default {
     dialogDelete: false,
     pending: false,
     editing: false,
+    search: "",
     solutations: ["Mr", "Mrs", "Dr", "Prof"],
     headers: [
       { text: "No", value: "no" },
@@ -246,13 +259,15 @@ export default {
       address: "",
       city: "",
       comments: "",
-      vat_id: "",
       status: "active",
-      tax_id: "",
       zip: "",
       email: "",
-      is_company: false,
-      company_name: "",
+      company: {
+        id: "",
+        name: "",
+        tax_id: "",
+        vat_id: "",
+      },
     },
     defaultItem: {
       title: "",
@@ -261,13 +276,15 @@ export default {
       address: "",
       city: "",
       comments: "",
-      vat_id: "",
       status: "active",
-      tax_id: "",
       zip: "",
       email: "",
-      is_company: false,
-      company_name: "",
+      company: {
+        id: "",
+        name: "",
+        tax_id: "",
+        vat_id: "",
+      },
     },
   }),
 
