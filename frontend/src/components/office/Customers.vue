@@ -7,7 +7,14 @@
   >
     <template v-slot:top>
       <v-toolbar flat>
+        <v-text-field
+          v-model="search"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
         <v-spacer></v-spacer>
+
         <v-dialog v-model="dialog" max-width="900px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -24,13 +31,6 @@
           <v-card>
             <v-card-title>
               <span class="headline">{{ $t(`form-data.${formTitle}`) }}</span>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field>
             </v-card-title>
 
             <v-card-text>
@@ -209,8 +209,9 @@
     </template>
 
     <template v-slot:[`item.status`]="{ item }">
-      {{ $t(`table-data.${item.status.toLowerCase()}`) }}
+      {{ $t(`table-data.${item.status ? "active" : "pending"}`) }}
     </template>
+
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)">
         mdi-pencil
@@ -243,10 +244,10 @@ export default {
       { text: "No", value: "no" },
       { text: "Last Name", value: "lastname" },
       { text: "First Name", value: "firstname" },
-      { text: "Address", value: "address" },
+      { text: "Address", value: "street" },
       { text: "City", value: "city" },
       { text: "Comments", value: "comments" },
-      { text: "Vat_id", value: "vat_id" },
+      { text: "Vat_id", value: "company.vat_id" },
       { text: "Status", value: "status" },
       { text: "Actions", value: "actions", sortable: false },
     ],
