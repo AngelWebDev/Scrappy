@@ -46,7 +46,7 @@ class OfficeView(View, LoginRequiredMixin):
 
         customers_serialized = CustomerListSerializer(customers_obj.all(), many=True)
         context["customers"] = json.dumps(customers_serialized.data)
-
+        print(context)
         return render(request, self.template, context)
 
 
