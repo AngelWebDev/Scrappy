@@ -142,7 +142,7 @@
                   </v-col>
 
                   <v-col cols="3">
-                    <v-btn color="blue darken-1" text @click="invite">
+                    <v-btn color="blue darken-1" text @click="save">
                       {{ $t("form-data.save") }}
                     </v-btn>
                   </v-col>
@@ -332,10 +332,10 @@ export default {
       });
     },
 
-    invite() {
+    save() {
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
-        updateCustomer(this.editedItem.id, this.editedItem);
+        updateCustomer(this.editedItem);
         this.editing = true;
       } else {
         if (this.editedItem.email && this.editedItem.name) {

@@ -39,8 +39,8 @@ export const createCustomer = async (data) => {
   });
 };
 
-export const updateCustomer = async (cid, data) => {
-  return await fetch(`${API_URL}/office/customer/${cid}`, {
+export const updateCustomer = async (data) => {
+  return await fetch(`${API_URL}/office/customer`, {
     method: "PUT",
     headers,
     body: JSON.stringify(data),

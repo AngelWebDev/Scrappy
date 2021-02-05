@@ -253,6 +253,10 @@ export default {
       this.closeDelete();
     },
 
+    back() {
+      this.pending = false;
+    },
+
     close() {
       this.dialog = false;
       this.editing = false;
@@ -288,8 +292,8 @@ export default {
           this.pending = true;
           delete this.editedItem.name;
           inviteUser(this.editedItem).then(() => {
-            this.items.push(this.editedItem);
-            this.close();
+            // this.items.push(this.editedItem);
+            // this.close();
           });
         }
       }
