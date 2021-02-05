@@ -77,6 +77,15 @@ class Identification(models.Model):
     verified_at = models.DateTimeField(auto_now_add=True)
 
 
+class Company(models.Model):
+    class Meta:
+        db_table = "company"
+
+    name = models.CharField(max_length=255)
+    vat_id = models.CharField(max_length=50)
+    tax_id = models.CharField(max_length=50)
+
+
 class Customer(models.Model):
     class Meta:
         db_table = "customer"
@@ -99,7 +108,8 @@ class Customer(models.Model):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     title = models.CharField(max_length=255, choices=TitleChoices.choices, default=TitleChoices.MR)
     status = models.BooleanField(default=True)
-    identification = models.OneToOneField(Identification, on_delete=models.SET_NULL, null=True)
+    identification = models.OneToOneField(Identification, on_delete=models.SET_NULL, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.email

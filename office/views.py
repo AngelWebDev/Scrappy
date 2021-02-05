@@ -1,22 +1,22 @@
 import json
 from django.shortcuts import render
+from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from .models import ScrappyUser, Customer, Rights
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CustomerListSerializer
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 
 
-class UserListCreateView(View, LoginRequiredMixin):
+class OfficeView(View, LoginRequiredMixin):
     template = 'office.html'
-    model = ScrappyUser
 
     def get(self, request):
-        result = []
-        users = self.model.objects.exclude(status=self.model.StatusChoices.DEACTIVATED).all()
+        users = []
+        users_obj = ScrappyUser.objects.exclude(status=ScrappyUser.StatusChoices.DEACTIVATED).all()
 
-        for user in users:
+        for user in users_obj:
             rights = list(Rights.objects.filter(user=user).values_list("right", flat=True))
             user_detail = {
                 "office": False,
@@ -33,13 +33,24 @@ class UserListCreateView(View, LoginRequiredMixin):
 
             user_serialized = UserSerializer(user)
             user_detail.update(user_serialized.data)
-            result.append(user_detail)
+            users.append(user_detail)
 
-        context = {"users": json.dumps(result)}
+        context = {"users": json.dumps(users)}
+
+        customer_search_term = request.GET.get('customer', None)
+
+        customers_obj = Customer.objects
+        if customer_search_term:
+            customers_obj = Customer.objects.filter(
+                Q(firstname__contains=customer_search_term) | Q(lastname__contains=customer_search_term))
+
+        customers_serialized = CustomerListSerializer(customers_obj.all(), many=True)
+        context["customers"] = json.dumps(customers_serialized.data)
+
         return render(request, self.template, context)
 
 
-class UserUpdateAPI(RetrieveUpdateDestroyAPIView):
+class UserUpdateDeleteAPI(RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         request_data = request.data
         user_id = request_data["id"]
@@ -67,3 +78,5 @@ class UserUpdateAPI(RetrieveUpdateDestroyAPIView):
             return Response({"result": "success"})
         else:
             return Response({"result": "User not found"}, status=404)
+
+
