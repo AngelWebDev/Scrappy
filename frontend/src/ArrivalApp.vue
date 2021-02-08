@@ -2,11 +2,7 @@
   <v-app>
     <NavigationBar :selectedItem="0" />
     <AppBar />
-    <v-main>
-      <v-container fluid>
-        Arrival
-      </v-container>
-    </v-main>
+    <Arrival />
     <Footer />
   </v-app>
 </template>
@@ -15,6 +11,7 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import AppBar from "./components/AppBar.vue";
 import Footer from "./components/Footer.vue";
+import Arrival from "./components/Arrival.vue";
 import "./assets/custom.css";
 
 export default {
@@ -23,6 +20,7 @@ export default {
     NavigationBar,
     AppBar,
     Footer,
+    Arrival,
   },
 };
 </script>

@@ -261,7 +261,7 @@ export default {
       street: "",
       city: "",
       comments: "",
-      status: "active",
+      status: true,
       phone1: "",
       zip: "",
       email: "",
@@ -280,7 +280,7 @@ export default {
       city: "",
       phone1: "",
       comments: "",
-      status: "active",
+      status: true,
       zip: "",
       email: "",
       company: {
@@ -360,7 +360,9 @@ export default {
         this.editing = true;
       } else {
         if (this.editedItem.email) {
-          console.log("angel log customer", this.editedItem);
+          if (this.editedItem.company.id === "") {
+            delete this.editedItem.company.id;
+          }
           createCustomer(this.editedItem);
         }
       }
