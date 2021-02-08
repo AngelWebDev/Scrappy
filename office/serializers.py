@@ -34,4 +34,4 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ['company']
+        fields = "__all__"
