@@ -1,27 +1,29 @@
-import Vue from 'vue';
-import App from './ArrivalApp.vue';
+import Vue from "vue";
+import App from "./ArrivalApp.vue";
 import Vuex from "vuex";
-import vuetify from './plugins/vuetify'
+import vuetify from "./plugins/vuetify";
+import i18n from "./i18n";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 Vue.config.productionTip = false;
 
 const store = new Vuex.Store({
   state: {
-    count: 12
+    count: 12,
   },
   mutations: {
-    increment (state) {
-      state.count++
+    increment(state) {
+      state.count++;
     },
-    decrement (state) {
-      state.count++
-    }
-  }
-})
+    decrement(state) {
+      state.count++;
+    },
+  },
+});
 
 new Vue({
   vuetify,
+  i18n,
   store,
-  render: h => h(App),
-}).$mount('#app')
+  render: (h) => h(App),
+}).$mount("#app");

@@ -12,24 +12,24 @@
 </template>
 
 <script>
-import NavigationBar from './components/NavigationBar.vue'
-import AppBar from './components/AppBar.vue'
-import Footer from './components/Footer.vue'
-import './assets/custom.css'
+import NavigationBar from "./components/NavigationBar.vue";
+import AppBar from "./components/AppBar.vue";
+import Footer from "./components/Footer.vue";
+import "./assets/custom.css";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     NavigationBar,
     AppBar,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
