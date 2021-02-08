@@ -279,7 +279,10 @@ export default {
       if (this.editedIndex > -1) {
         delete this.editedItem.name;
         updateUser(this.editedItem.id, this.editedItem).then(() => {
-          Object.assign(this.items[this.editedIndex], this.editedItem);
+          Object.assign(this.items[this.editedIndex], {
+            ...this.editedItem,
+            name: this.editedItem.firstname + " " + this.editedItem.lastname,
+          });
           this.close();
         });
       } else {
