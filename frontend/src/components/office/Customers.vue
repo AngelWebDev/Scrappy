@@ -108,27 +108,27 @@
                     <v-switch
                       outlined
                       class="mb-11"
-                      v-model="editedItem.is_company"
-                      :value="editedItem.is_company"
+                      v-model="is_company"
+                      :value="is_company"
                       inset
                       :label="$t('table-data.is_company')"
                     />
                     <v-text-field
                       outlined
-                      v-show="editedItem.is_company"
-                      v-model="editedItem.company_name"
+                      v-show="is_company"
+                      v-model="editedItem.company.name"
                       :label="$t('table-data.company_name')"
                     />
                     <v-text-field
                       outlined
-                      v-show="editedItem.is_company"
-                      v-model="editedItem.vat_id"
+                      v-show="is_company"
+                      v-model="editedItem.company.vat_id"
                       :label="$t('table-data.vat_id')"
                     />
                     <v-text-field
                       outlined
-                      v-show="editedItem.is_company"
-                      v-model="editedItem.tax_id"
+                      v-show="is_company"
+                      v-model="editedItem.company.tax_id"
                       :label="$t('table-data.tax_id')"
                     />
                     <div class="text-right mt-16 pt-16">
@@ -239,6 +239,7 @@ export default {
     pending: false,
     editing: false,
     search: "",
+    is_company: false,
     solutations: ["Mr", "Mrs", "Dr", "Prof"],
     headers: [
       { text: "No", value: "no" },
@@ -358,7 +359,8 @@ export default {
         updateCustomer(this.editedItem);
         this.editing = true;
       } else {
-        if (this.editedItem.email && this.editedItem.name) {
+        if (this.editedItem.email) {
+          console.log("angel log customer", this.editedItem);
           createCustomer(this.editedItem);
         }
       }
