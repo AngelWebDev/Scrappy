@@ -72,7 +72,7 @@
                     </v-row>
                     <v-text-field
                       outlined
-                      v-model="editedItem.address"
+                      v-model="editedItem.street"
                       :label="$t('table-data.address')"
                     ></v-text-field>
                     <v-row>
@@ -94,7 +94,7 @@
 
                     <v-text-field
                       outlined
-                      v-model="editedItem.phone"
+                      v-model="editedItem.phone1"
                       :label="$t('table-data.phone')"
                     ></v-text-field>
                     <v-textarea
@@ -257,10 +257,11 @@ export default {
       title: "",
       firstname: "",
       lastname: "",
-      address: "",
+      street: "",
       city: "",
       comments: "",
       status: "active",
+      phone1: "",
       zip: "",
       email: "",
       company: {
@@ -274,8 +275,9 @@ export default {
       title: "",
       firstname: "",
       lastname: "",
-      address: "",
+      street: "",
       city: "",
+      phone1: "",
       comments: "",
       status: "active",
       zip: "",
