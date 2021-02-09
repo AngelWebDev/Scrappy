@@ -21,7 +21,9 @@
     "arrival": "Ankunft",
     "city": "Stadt",
     "comments": "Bemerkungen",
+    "company": "Unternehmen",
     "company_name": "Unternehmen  Name",
+    "customer": "Kundin",
     "email": "Email",
     "firstname": "Zuerst Name",
     "fullname": "Voll Name",
@@ -29,6 +31,7 @@
     "pending": "Einladung ausstehend",
     "phone": "Telefon",
     "lastname": "Letzte Name",
+    "material": "Material",
     "name": "Name",
     "office": "Büro",
     "payout": "Auszahlung",
@@ -37,6 +40,7 @@
     "tax_id": "MwSt Nummer",
     "vat_id": "VAT ID",
     "verify": "Überprüfen Identität",
+    "weight": "Gewicht",
     "zip": "Zip"
   },
   "form-data": {
@@ -44,6 +48,7 @@
     "back": "Zurück",
     "cancel": "Stornieren",
     "cancelInvite": "Stornieren Einladung",
+    "clear": "klar",
     "create-customer": "Erstellen Kundin",
     "deactive": "Deaktivieren",
     "edit-customer": "Bearbeiten Kundin",

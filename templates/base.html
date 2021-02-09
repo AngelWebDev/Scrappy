@@ -8,7 +8,13 @@
 </head>
 
 <body>
-    {% block body %}{% endblock %}
+    {% csrf_token %}
+    {% block body %}
+
+    {% endblock %}
     {% block bottom %}{% endblock %}
 </body>
 </html>
+<script>
+    var csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').getAttribute("value");
+</script>

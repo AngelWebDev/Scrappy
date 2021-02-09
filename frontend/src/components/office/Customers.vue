@@ -364,8 +364,10 @@ export default {
             delete this.editedItem.company.id;
           }
           createCustomer(this.editedItem);
+          this.items.push({ ...this.editedItem, no: this.items.length + 1 });
         }
       }
+      this.close();
     },
 
     deactive() {
