@@ -1,13 +1,27 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, login
 from django.views.generic import View
-from .models import ScrappyUser, Customer, Rights, Company
-from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from .models import ScrappyUser, Customer, Rights, Company
+from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer
+from .forms import UserSignUpForm
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserSignUpForm(request.POST)
+        if form.is_valid():
+            user = ScrappyUser.objects.create_user(**form.cleaned_data)
+            login(request, user)
+            return redirect('office_view')
+    else:
+        form = UserSignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
 
 class OfficeView(View, LoginRequiredMixin):
@@ -96,6 +110,7 @@ class CustomerAPIView(APIView):
 
     def post(self, request):
         request_data = request.data
+        print(request_data)
         try:
             company_info = request_data.pop("company")
             if company_info:
