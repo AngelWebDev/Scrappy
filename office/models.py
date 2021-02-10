@@ -144,6 +144,9 @@ class CustomInvitation(AbstractBaseInvitation):
     created = models.DateTimeField(default=timezone.now)
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
+    arrival = models.BooleanField(default=False)
+    payout = models.BooleanField(default=False)
+    office = models.BooleanField(default=False)
 
     @classmethod
     def create(cls, email, firstname, lastname, inviter=None, **kwargs):

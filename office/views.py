@@ -28,6 +28,15 @@ def signup(request, *args, **kwargs):
         if form.is_valid():
             user = ScrappyUser.objects.create_user(**form.cleaned_data)
             login(request, user)
+
+            user_rights = CustomInvitation.objects.filter(email=user.email).first()
+            if user_rights.arrival:
+                Rights.objects.create(user=user, right=Rights.RightChoices.ARRIVAL)
+            if user_rights.office:
+                Rights.objects.create(user=user, right=Rights.RightChoices.OFFICE)
+            if user_rights.payout:
+                Rights.objects.create(user=user, right=Rights.RightChoices.PAYOUT)
+
             return redirect('office_view')
     else:
         invited_user = CustomInvitation.objects.filter(key=kwargs["key"]).first()
