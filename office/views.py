@@ -101,7 +101,7 @@ class CustomerAPIView(APIView):
     detail_serializer = CustomerDetailSerializer
     
     def get(self, request):
-        customer_id = request.data["id"]
+        customer_id = request.query_params["id"]
         try:
             customer = self.model.objects.get(id=customer_id)
             return Response({"result": self.detail_serializer(customer).data})
