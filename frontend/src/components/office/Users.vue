@@ -104,7 +104,7 @@
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
+              >Are you sure you want to delete this User?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -269,16 +269,17 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+      // eslint-disable-next-line no-undef
+      deleteUser(this.editedItem.id, csrftoken);
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
     },
 
     async invite() {
       if (this.editedIndex > -1) {
         delete this.editedItem.name;
-        updateUser(this.editedItem.id, this.editedItem).then(() => {
+        // eslint-disable-next-line no-undef
+        updateUser(this.editedItem, csrftoken).then(() => {
           Object.assign(this.items[this.editedIndex], {
             ...this.editedItem,
             name: this.editedItem.firstname + " " + this.editedItem.lastname,
@@ -294,7 +295,8 @@ export default {
           this.editedItem.status = "pending";
           this.pending = true;
           delete this.editedItem.name;
-          inviteUser(this.editedItem).then(() => {
+          // eslint-disable-next-line no-undef
+          inviteUser(this.editedItem, csrftoken).then(() => {
             // this.items.push(this.editedItem);
             // this.close();
           });
