@@ -166,7 +166,7 @@
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
-              >Are you sure you want to delete this item?</v-card-title
+              >Are you sure you want to delete this Customer?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -230,7 +230,13 @@
 </template>
 
 <script>
-import { createCustomer, updateCustomer, deactiveCustomer } from "../../api";
+import {
+  createCustomer,
+  getCustomer,
+  updateCustomer,
+  deactiveCustomer,
+  deleteCustomer,
+} from "../../api";
 export default {
   name: "customers",
   data: () => ({
@@ -318,10 +324,18 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-      this.editing = true;
+      // eslint-disable-next-line no-undef
+      getCustomer(item.id, csrftoken).then((res) => {
+        if (res) {
+          this.editedIndex = this.items.indexOf(item);
+          this.editedItem = Object.assign({}, res.result);
+          if (res.result.company && res.result.company.id) {
+            this.is_company = true;
+          }
+          this.dialog = true;
+          this.editing = true;
+        }
+      });
     },
 
     deleteItem(item) {
@@ -347,6 +361,8 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
+      // eslint-disable-next-line no-undef
+      deleteCustomer(this.editedItem.id, csrftoken);
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -356,7 +372,8 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
-        updateCustomer(this.editedItem);
+        // eslint-disable-next-line no-undef
+        updateCustomer(this.editedItem, csrftoken);
         this.editing = true;
       } else {
         if (this.editedItem.email) {
@@ -371,7 +388,8 @@ export default {
     },
 
     deactive() {
-      deactiveCustomer(this.editedItem.id);
+      // eslint-disable-next-line no-undef
+      deactiveCustomer(this.editedItem.id, csrftoken);
     },
   },
 };
