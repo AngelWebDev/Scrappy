@@ -1,12 +1,15 @@
 from django.contrib import admin
 from django.urls import include, path
-from office.views import signup
+from django.conf.urls import url
+from office.views import signup, CustomInviteAcceptView
 
 urlpatterns = [
     path('arrival/', include('arrival.urls')),
     path('payout/', include('payout.urls')),
     path('office/', include('office.urls')),
     path('admin/', admin.site.urls),
-    path('signup/', signup, name='signup'),
+    path('create-account/<str:key>', signup, name='signup'),
+    url(r'^invitations/accept-invite/(?P<key>\w+)/?$', CustomInviteAcceptView.as_view(), name='accept-invite'),
+    path('invitations/', include('invitations.urls', namespace='invitations')),
     path('', include('django.contrib.auth.urls')),
 ]

@@ -1,18 +1,28 @@
 import json
-from django.shortcuts import render, redirect
+
 from django.db.models import Q
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import authenticate, login
+from django.db.utils import IntegrityError
+from django.http import HttpResponse
+from django.contrib import messages
 from django.views.generic import View
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import ScrappyUser, Customer, Rights, Company
+
+from invitations.app_settings import app_settings
+from invitations.adapters import get_invitations_adapter
+from invitations.views import AcceptInvite, accept_invitation
+
+from .models import ScrappyUser, Customer, Rights, Company, CustomInvitation
 from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer
 from .forms import UserSignUpForm
 
 
-def signup(request):
+def signup(request, *args, **kwargs):
     if request.method == 'POST':
         form = UserSignUpForm(request.POST)
         if form.is_valid():
@@ -20,8 +30,75 @@ def signup(request):
             login(request, user)
             return redirect('office_view')
     else:
-        form = UserSignUpForm()
+        invited_user = CustomInvitation.objects.filter(key=kwargs["key"]).first()
+        form = UserSignUpForm(instance=invited_user)
     return render(request, 'registration/signup.html', {'form': form})
+
+
+class CustomInviteAcceptView(AcceptInvite):
+    def post(self, *args, **kwargs):
+        self.object = invitation = self.get_object()
+
+        # Compatibility with older versions: return an HTTP 410 GONE if there
+        # is an error. # Error conditions are: no key, expired key or
+        # previously accepted key.
+        if app_settings.GONE_ON_ACCEPT_ERROR and \
+                (not invitation or
+                 (invitation and (invitation.accepted or
+                                  invitation.key_expired()))):
+            return HttpResponse(status=410)
+
+        # No invitation was found.
+        if not invitation:
+            # Newer behavior: show an error message and redirect.
+            get_invitations_adapter().add_message(
+                self.request,
+                messages.ERROR,
+                'invitations/messages/invite_invalid.txt')
+            return redirect(app_settings.LOGIN_REDIRECT)
+
+        # The invitation was previously accepted, redirect to the login
+        # view.
+        if invitation.accepted:
+            get_invitations_adapter().add_message(
+                self.request,
+                messages.ERROR,
+                'invitations/messages/invite_already_accepted.txt',
+                {'email': invitation.email})
+            # Redirect to login since there's hopefully an account already.
+            return redirect(app_settings.LOGIN_REDIRECT)
+
+        # The key was expired.
+        if invitation.key_expired():
+            get_invitations_adapter().add_message(
+                self.request,
+                messages.ERROR,
+                'invitations/messages/invite_expired.txt',
+                {'email': invitation.email})
+            # Redirect to sign-up since they might be able to register anyway.
+            return redirect('office_view')
+
+        # The invitation is valid.
+        # Mark it as accepted now if ACCEPT_INVITE_AFTER_SIGNUP is False.
+        if not app_settings.ACCEPT_INVITE_AFTER_SIGNUP:
+            accept_invitation(invitation=invitation,
+                              request=self.request,
+                              signal_sender=self.__class__)
+
+        get_invitations_adapter().stash_verified_email(
+            self.request, invitation.email)
+
+        return redirect('signup', key=kwargs["key"])
+
+
+class UserInviteAPI(CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            invite = CustomInvitation.create(**request.data, inviter=ScrappyUser.objects.get(pk=1))
+            invite.send_invitation(request)
+        except IntegrityError:
+            return Response({"result": "Invitation already sent"}, status=400)
+        return Response({"result": "success"})
 
 
 class OfficeView(View, LoginRequiredMixin):

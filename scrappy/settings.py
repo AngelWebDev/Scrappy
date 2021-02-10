@@ -29,8 +29,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'webpack_loader',
     'corsheaders',
+    'invitations',
 ]
 
 MIDDLEWARE = [
@@ -110,6 +112,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# django-invitations
+# ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
 
 AUTH_USER_MODEL = 'office.ScrappyUser'
 LOGIN_URL = '/login/'
@@ -140,3 +144,16 @@ STATICFILES_DIRS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+SITE_ID = 1
+
+# django-invitations configuration
+INVITATIONS_SIGNUP_REDIRECT = 'signup'
+INVITATIONS_INVITATION_MODEL = 'office.CustomInvitation'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'soft2dev2021@gmail.com'
+EMAIL_HOST_PASSWORD = 'eoshsury!@34'
