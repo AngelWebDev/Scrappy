@@ -21,7 +21,9 @@
     "arrival": "Arrival",
     "city": "City",
     "comments": "Comments",
+    "company": "Company",
     "company_name": "Company Name",
+    "customer": "Customer",
     "email": "Email",
     "firstname": "First Name",
     "fullname": "Full Name",
@@ -29,6 +31,7 @@
     "pending": "Invitation pending",
     "phone": "Phone",
     "lastname": "Last Name",
+    "material": "Material",
     "name": "Name",
     "office": "Office",
     "payout": "Payout",
@@ -37,6 +40,7 @@
     "tax_id": "Tax Number",
     "vat_id": "VAT ID",
     "verify": "Verify Identity",
+    "weight": "Weight",
     "zip": "Zip"
   },
   "form-data": {
@@ -44,6 +48,7 @@
     "back": "Back",
     "cancel": "Cancel",
     "cancelInvite": "Cancel Invitation",
+    "clear": "Clear",
     "create-customer": "Create Customer",
     "deactive": "Deactive",
     "edit-customer": "Edit Customer",

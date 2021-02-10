@@ -1,6 +1,6 @@
 <template>
   <v-container class="grey lighten-5">
-    Footer
+    {{ Header }}
   </v-container>
 </template>
 
@@ -8,7 +8,11 @@
 export default {
   name: "footer",
   components: {},
-  data() {},
+  data() {
+    return {
+      Header: "Footer",
+    };
+  },
 };
 </script>
 
