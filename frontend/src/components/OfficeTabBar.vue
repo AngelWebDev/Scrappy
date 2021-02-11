@@ -43,11 +43,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .v-tabs {
-  margin-left: 260px;
+  margin-left: 220px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 .tab-title {
   margin-left: 260px;
   margin-top: 150px;
-  padding-left: 40px;
+  padding-left: 20px;
 }
 </style>

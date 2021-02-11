@@ -28,6 +28,7 @@
     "firstname": "First Name",
     "fullname": "Full Name",
     "is_company": "Is a Company",
+    "inactive": "InActive",
     "pending": "Invitation pending",
     "phone": "Phone",
     "lastname": "Last Name",
@@ -57,5 +58,11 @@
     "invite user": "Invite User",
     "resend": "Re-Send Invitation",
     "save": "Save"
+  },
+  "messages": {
+    "invite": {
+      "success": "We sent you invitation successfully. Please check your mail box.",
+      "error": "Invitation already sent.  Please check your mail box."
+    }
   }
 }

@@ -209,7 +209,7 @@
     </template>
 
     <template v-slot:[`item.status`]="{ item }">
-      {{ $t(`table-data.${item.status ? "active" : "pending"}`) }}
+      {{ $t(`table-data.${item.status ? "active" : "inactive"}`) }}
     </template>
 
     <template v-slot:[`item.actions`]="{ item }">
@@ -390,6 +390,13 @@ export default {
     deactive() {
       // eslint-disable-next-line no-undef
       deactiveCustomer(this.editedItem.id, csrftoken);
+      this.editedItem.status = false;
+      delete this.editedItem.name;
+      // eslint-disable-next-line no-undef
+      updateCustomer(this.editedItem, csrftoken).then(() => {
+        Object.assign(this.items[this.editedIndex], this.editedItem);
+        this.close();
+      });
     },
   },
 };

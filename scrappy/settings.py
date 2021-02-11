@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     'corsheaders',
     'invitations',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [

@@ -103,7 +103,7 @@ class CustomInviteAcceptView(AcceptInvite):
 class UserInviteAPI(CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
-            invite = CustomInvitation.create(**request.data, inviter=ScrappyUser.objects.get(pk=1))
+            invite = CustomInvitation.create(**request.data, inviter=request.user)
             invite.send_invitation(request)
         except IntegrityError:
             return Response({"result": "Invitation already sent"}, status=400)
@@ -185,7 +185,7 @@ class CustomerAPIView(APIView):
     model = Customer
     list_serializer = CustomerListSerializer
     detail_serializer = CustomerDetailSerializer
-    
+
     def get(self, request):
         customer_id = request.query_params["id"]
         try:
@@ -209,7 +209,7 @@ class CustomerAPIView(APIView):
         except Exception as e:
             print(e)
             return Response({"result": "Failed to create new customer"}, status=400)
-    
+
     def put(self, request):
         request_data = request.data
         try:

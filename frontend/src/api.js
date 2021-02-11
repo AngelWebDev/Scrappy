@@ -11,6 +11,17 @@ export const inviteUser = async (data, csrftoken) => {
   });
 };
 
+export const cancelInviteUser = async (data, csrftoken) => {
+  return await fetch(`${API_URL}/office/user/cancel-invite`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const updateUser = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/user`, {
     method: "PUT",

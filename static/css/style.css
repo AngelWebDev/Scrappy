@@ -1,0 +1,11 @@
+.pt-60 {
+    width: 60% !important;
+    margin-top: 60px;
+    padding: 20px;
+}
+.descriptions {
+    margin-top: 30px;
+    font-size: 18px;
+    line-height: 40px;
+    font-weight: 600;
+}

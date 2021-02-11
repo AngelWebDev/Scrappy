@@ -99,8 +99,17 @@
                 {{ $t("form-data.save") }}
               </v-btn>
             </v-card-actions>
+
+            <v-card-text v-if="error" class="amber darken-1 invite-error">
+              {{ $t("messages.invite.error") }}
+            </v-card-text>
+
+            <v-card-text v-if="success" class="green darken-1 invite-error">
+              {{ $t("messages.invite.success") }}
+            </v-card-text>
           </v-card>
         </v-dialog>
+
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
@@ -164,7 +173,12 @@
 </template>
 
 <script>
-import { inviteUser, deleteUser, updateUser, deactiveUser } from "../../api";
+import {
+  inviteUser,
+  deleteUser,
+  updateUser,
+  cancelInviteUser,
+} from "../../api";
 export default {
   name: "users",
   data: () => ({
@@ -172,6 +186,8 @@ export default {
     dialogDelete: false,
     pending: false,
     editing: false,
+    error: false,
+    success: false,
     headers: [
       { text: "Name", value: "name" },
       { text: "Email", value: "email" },
@@ -191,7 +207,6 @@ export default {
       arrival: false,
       payout: false,
       office: false,
-      status: "",
     },
     defaultItem: {
       id: "",
@@ -201,7 +216,6 @@ export default {
       arrival: false,
       payout: false,
       office: false,
-      status: "",
     },
   }),
 
@@ -248,8 +262,8 @@ export default {
 
     async deleteItemConfirm() {
       this.items.splice(this.editedIndex, 1);
-      await deleteUser(this.editedItem.id);
-      this.initialize();
+      // eslint-disable-next-line no-undef
+      await deleteUser(this.editedItem.id, csrftoken);
       this.closeDelete();
     },
 
@@ -261,6 +275,8 @@ export default {
       this.dialog = false;
       this.editing = false;
       this.pending = false;
+      this.error = "";
+      this.success = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -269,8 +285,6 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
-      // eslint-disable-next-line no-undef
-      deleteUser(this.editedItem.id, csrftoken);
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
     },
@@ -292,24 +306,48 @@ export default {
           this.editedItem.firstname &&
           this.editedItem.lastname
         ) {
-          this.editedItem.status = "pending";
           this.pending = true;
           delete this.editedItem.name;
+          delete this.editedItem.id;
           // eslint-disable-next-line no-undef
-          inviteUser(this.editedItem, csrftoken).then(() => {
-            // this.items.push(this.editedItem);
-            // this.close();
-          });
+          inviteUser(this.editedItem, csrftoken)
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.result === "success") {
+                this.success = true;
+              } else {
+                this.error = true;
+              }
+            });
         }
       }
     },
 
     async deactive() {
       if (this.editedIndex > -1) {
-        await deactiveUser(this.editedItem.id);
-        this.initialize();
+        this.editedItem.status = "Deactivated";
+        delete this.editedItem.name;
+        // eslint-disable-next-line no-undef
+        updateUser(this.editedItem, csrftoken).then(() => {
+          this.items.splice(this.editedIndex, 1);
+          this.close();
+        });
       }
     },
+  },
+
+  reSend() {
+    // eslint-disable-next-line no-undef
+    inviteUser(this.editedItem, csrftoken);
+  },
+
+  cancelInvite() {
+    const data = {
+      email: this.editedItem.email,
+    };
+    // eslint-disable-next-line no-undef
+    cancelInviteUser(data, csrftoken);
+    this.close();
   },
 };
 </script>
@@ -318,5 +356,9 @@ export default {
 <style scoped>
 .v-data-table {
   margin-left: 260px;
+}
+.invite-error {
+  color: white !important;
+  padding-top: 10px !important;
 }
 </style>

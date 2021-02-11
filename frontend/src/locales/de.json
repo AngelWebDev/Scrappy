@@ -28,6 +28,7 @@
     "firstname": "Zuerst Name",
     "fullname": "Voll Name",
     "is_company": "Ist  ein Unternehmen",
+    "inactive": "Inaktiv",
     "pending": "Einladung ausstehend",
     "phone": "Telefon",
     "lastname": "Letzte Name",
@@ -57,5 +58,11 @@
     "invite user": "Benutzer Nutzerin",
     "resend": "Erneut senden",
     "save": "sparen"
+  },
+  "messages": {
+    "invite": {
+      "success": "Wir haben Ihnen die Einladung erfolgreich gesendet. Bitte überprüfen Sie Ihre Mailbox.",
+      "error": "Einladung bereits gesendet. Bitte überprüfen Sie Ihre Mailbox."
+    }
   }
 }
