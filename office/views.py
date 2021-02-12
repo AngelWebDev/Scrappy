@@ -101,6 +101,15 @@ class UserInviteAPI(APIView, LoginRequiredMixin):
             return Response({"result": "Invitation already sent"}, status=400)
         return Response({"result": "success"})
 
+    def delete(self, request):
+        email = request.data["email"]
+        try:
+            invitation = self.model.objects.get(email=email)
+            invitation.delete()
+            return Response({"result": "success"})
+        except self.model.DoesNotExist:
+            return Response({"result": "No invitation exists"}, status=400)
+
 
 class OfficeView(View, LoginRequiredMixin):
     template = 'office.html'
