@@ -18,7 +18,7 @@ from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite, accept_invitation
 
 from .models import ScrappyUser, Customer, Rights, Company, CustomInvitation
-from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer
+from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer, InvitationSerializer
 from .forms import UserSignUpForm
 
 
@@ -111,12 +111,12 @@ class UserInviteAPI(APIView, LoginRequiredMixin):
             return Response({"result": "No invitation exists"}, status=400)
 
 
-class OfficeView(View, LoginRequiredMixin):
+class OfficeView(View):
     template = 'office.html'
 
     def get(self, request):
         users = []
-        users_obj = ScrappyUser.objects.exclude(status=ScrappyUser.StatusChoices.DEACTIVATED).all()
+        users_obj = ScrappyUser.objects.filter(status=ScrappyUser.StatusChoices.ACTIVE).all()
 
         for user in users_obj:
             rights = list(Rights.objects.filter(user=user).values_list("right", flat=True))
@@ -137,6 +137,15 @@ class OfficeView(View, LoginRequiredMixin):
             user_detail.update(user_serialized.data)
             users.append(user_detail)
 
+        invited_users = CustomInvitation.objects.filter(accepted=0).all()
+        pending_users = []
+        for iuser in invited_users:
+            if not iuser.key_expired():
+                invited_user_serialize = InvitationSerializer(iuser).data
+                invited_user_serialize['status'] = 'Pending'
+                pending_users.append(invited_user_serialize)
+
+        users.extend(pending_users)
         context = {"users": json.dumps(users)}
 
         customer_search_term = request.GET.get('customer', None)

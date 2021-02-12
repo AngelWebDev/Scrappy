@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ScrappyUser, Customer, Identification, Company
+from .models import ScrappyUser, Customer, Identification, Company, CustomInvitation
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,3 +35,9 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = "__all__"
+
+
+class InvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomInvitation
+        fields = ['id', 'email', 'firstname', 'lastname', 'office', 'arrival', 'payout']
