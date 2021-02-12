@@ -1,0 +1,1 @@
+Invitation sent to  {{ email }} has already been expired!

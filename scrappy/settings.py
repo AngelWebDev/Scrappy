@@ -150,6 +150,7 @@ SITE_ID = 1
 
 # django-invitations configuration
 INVITATIONS_SIGNUP_REDIRECT = 'signup'
+INVITATIONS_LOGIN_REDIRECT = 'login'
 INVITATIONS_INVITATION_EXPIRY = 7
 INVITATIONS_INVITATION_MODEL = 'office.CustomInvitation'
 

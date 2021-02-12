@@ -151,14 +151,18 @@ class CustomInvitation(AbstractBaseInvitation):
     @classmethod
     def create(cls, email, firstname, lastname, inviter=None, **kwargs):
         key = get_random_string(64).lower()
-        instance = cls._default_manager.create(
+        instance = cls._default_manager.filter(email=email).first()
+        if instance:
+            instance.delete()
+
+        new_instance = cls._default_manager.create(
             email=email,
             firstname=firstname,
             lastname=lastname,
             key=key,
             inviter=inviter,
             **kwargs)
-        return instance
+        return new_instance
 
     def key_expired(self):
         expiration_date = (
