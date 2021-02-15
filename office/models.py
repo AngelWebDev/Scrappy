@@ -27,7 +27,7 @@ class ScrappyUser(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     firstname = models.CharField(max_length=255, blank=True, null=True)
     lastname = models.CharField(max_length=255, blank=True, null=True)
-    status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.PENDING)
+    status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.ACTIVE)
     is_admin = models.BooleanField(default=False)
 
     objects = ScrappyUserManager()
