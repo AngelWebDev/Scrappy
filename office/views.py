@@ -95,7 +95,7 @@ class UserInviteAPI(APIView, LoginRequiredMixin):
     
     def post(self, request):
         try:
-            invite = self.model.create(**request.data, inviter=ScrappyUser.objects.get(pk=1))
+            invite = self.model.create(**request.data, inviter=request.user)
             invite.send_invitation(request)
         except IntegrityError:
             return Response({"result": "Invitation already sent"}, status=400)
