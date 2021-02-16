@@ -49,7 +49,13 @@ export default {
         { title: "office", icon: "mdi-office-building", target: "/office" },
       ],
       right: null,
+      user: {},
     };
+  },
+  created() {
+    // eslint-disable-next-line no-undef
+    this.user = authUser;
+    this.items = this.items.filter((item) => this.user[item.title]);
   },
 };
 </script>

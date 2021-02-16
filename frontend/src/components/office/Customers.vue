@@ -414,6 +414,7 @@ import {
   updateCustomer,
   deactiveCustomer,
   deleteCustomer,
+  getCustomers,
 } from "../../api";
 export default {
   name: "customers",
@@ -511,8 +512,19 @@ export default {
 
   methods: {
     initialize() {
+      const csrftoken = document
+        .querySelector('input[name="csrfmiddlewaretoken"]')
+        .getAttribute("value");
       // eslint-disable-next-line no-undef
-      this.items = customers.map((item, index) => ({ ...item, no: index + 1 }));
+      getCustomers(csrftoken)
+        .then((res) => res.json())
+        .then(({ result }) => {
+          // eslint-disable-next-line no-undef
+          this.items = result.map((item, index) => ({
+            ...item,
+            no: index + 1,
+          }));
+        });
     },
 
     openDialogID() {

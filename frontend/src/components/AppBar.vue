@@ -6,7 +6,8 @@
           2021-01-22 15:00
         </v-col>
         <v-col cols="3" class="text-right pr-4 pt-2">
-          {{ $t("app-bar.logged-in-user") }}: Hello
+          {{ $t("app-bar.logged-in-user") }}:
+          <strong>{{ user.firstname + " " + user.lastname }}</strong>
         </v-col>
         <v-col class="text-right " cols="1" sm="1">
           <v-select
@@ -46,7 +47,12 @@ export default {
       lans: process.env.VUE_APP_I18N_SUPPORTED_LOCALE.split(","),
       locale: "en",
       right: null,
+      user: {},
     };
+  },
+  created() {
+    // eslint-disable-next-line no-undef
+    this.user = authUser;
   },
   methods: {
     selectLanguage() {
