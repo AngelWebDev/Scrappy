@@ -8,7 +8,6 @@ from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -160,7 +159,7 @@ class OfficeView(LoginRequiredMixin, View):
         context = {
             "user": json.dumps(user_detail)
         }
-        print(context)
+
         return render(request, self.template, context)
 
 
@@ -198,8 +197,7 @@ class UserAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
                         pending_users.append(invited_user_serialize)
 
                 users.extend(pending_users)
-
-                return Response({"result": json.dumps(users)})
+                return Response({"result": users})
             else:
                 return Response({"result": "No User"}, status=204)
         except:
@@ -256,7 +254,7 @@ class CustomerAPIView(LoginRequiredMixin, APIView):
                 Q(firstname__contains=customer_search_term) | Q(lastname__contains=customer_search_term))
 
         customers_serialized = CustomerListSerializer(customers_obj.all(), many=True)
-        return Response({"result": json.dumps(customers_serialized.data)})
+        return Response({"result": customers_serialized.data})
 
     def post(self, request):
         request_data = request.data
@@ -269,7 +267,7 @@ class CustomerAPIView(LoginRequiredMixin, APIView):
                 request_data["company_id"] = new_company.id
             new_customer = self.model(**request_data)
             new_customer.save()
-            return Response({"result": json.dumps(self.list_serializer(new_customer).data)})
+            return Response({"result": self.list_serializer(new_customer).data})
         except Exception as e:
             print(e)
             return Response({"result": "Failed to create new customer"}, status=400)
