@@ -8,6 +8,7 @@ from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -32,6 +33,7 @@ def scrappy_login(request):
         email = request.POST['username']
         password = request.POST['password']
         user = authenticate(email=email, password=password)
+
         if user:
             if user.status == 'Active':
                 login(request, user)
@@ -139,53 +141,54 @@ class OfficeView(LoginRequiredMixin, View):
     template = 'office.html'
 
     def get(self, request):
-        users = []
-        users_obj = ScrappyUser.objects.filter(status=ScrappyUser.StatusChoices.ACTIVE).all()
 
-        for user in users_obj:
-            rights = list(Rights.objects.filter(user=user).values_list("right", flat=True))
-            user_detail = {
-                "office": False,
-                "payout": False,
-                "arrival": False
-            }
 
-            if 'Office' in rights:
-                user_detail['office'] = True
-            if 'Payout' in rights:
-                user_detail['payout'] = True
-            if 'Arrival' in rights:
-                user_detail['arrival'] = True
 
-            user_serialized = UserSerializer(user)
-            user_detail.update(user_serialized.data)
-            users.append(user_detail)
-
-        invited_users = CustomInvitation.objects.filter(accepted=0).all()
-        pending_users = []
-        for iuser in invited_users:
-            if not iuser.key_expired():
-                invited_user_serialize = InvitationSerializer(iuser).data
-                invited_user_serialize['status'] = 'Pending'
-                pending_users.append(invited_user_serialize)
-
-        users.extend(pending_users)
-        context = {"users": json.dumps(users)}
-
-        customer_search_term = request.GET.get('customer', None)
-
-        customers_obj = Customer.objects
-        if customer_search_term:
-            customers_obj = Customer.objects.filter(
-                Q(firstname__contains=customer_search_term) | Q(lastname__contains=customer_search_term))
-
-        customers_serialized = CustomerListSerializer(customers_obj.all(), many=True)
-        context["customers"] = json.dumps(customers_serialized.data)
 
         return render(request, self.template, context)
 
 
-class UserUpdateDeleteAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
+class UserAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
+    def retrieve(self, request, *args, **kwargs):
+        users = []
+        try:
+            users_obj = ScrappyUser.objects.filter(status=ScrappyUser.StatusChoices.ACTIVE).all()
+            if users_obj:
+                for user in users_obj:
+                    rights = list(Rights.objects.filter(user=user).values_list("right", flat=True))
+                    user_detail = {
+                        "office": False,
+                        "payout": False,
+                        "arrival": False
+                    }
+
+                    if 'Office' in rights:
+                        user_detail['office'] = True
+                    if 'Payout' in rights:
+                        user_detail['payout'] = True
+                    if 'Arrival' in rights:
+                        user_detail['arrival'] = True
+
+                    user_serialized = UserSerializer(user)
+                    user_detail.update(user_serialized.data)
+                    users.append(user_detail)
+
+                invited_users = CustomInvitation.objects.filter(accepted=0).all()
+                pending_users = []
+                for iuser in invited_users:
+                    if not iuser.key_expired():
+                        invited_user_serialize = InvitationSerializer(iuser).data
+                        invited_user_serialize['status'] = 'Pending'
+                        pending_users.append(invited_user_serialize)
+
+                users.extend(pending_users)
+
+                return Response({"result": json.dumps(users)})
+            else:
+                return Response({"result": "No User"}, status=204)
+        except:
+            return Response({"result": ""}, status=400)
+
     def put(self, request, *args, **kwargs):
         request_data = request.data
         user_id = request_data["id"]
@@ -221,12 +224,23 @@ class CustomerAPIView(LoginRequiredMixin, APIView):
     detail_serializer = CustomerDetailSerializer
 
     def get(self, request):
-        customer_id = request.query_params["id"]
-        try:
-            customer = self.model.objects.get(id=customer_id)
-            return Response({"result": self.detail_serializer(customer).data})
-        except self.model.DoesNotExist:
-            return Response({"result": "Customer not found"}, status=400)
+        customer_id = request.query_params.get("id", None)
+        customer_search_term = request.query_params.get('customer', None)
+
+        if customer_id:
+            try:
+                customer = self.model.objects.get(id=customer_id)
+                return Response({"result": self.detail_serializer(customer).data})
+            except self.model.DoesNotExist:
+                return Response({"result": "Customer not found"}, status=400)
+
+        customers_obj = Customer.objects
+        if customer_search_term:
+            customers_obj = customers_obj.filter(
+                Q(firstname__contains=customer_search_term) | Q(lastname__contains=customer_search_term))
+
+        customers_serialized = CustomerListSerializer(customers_obj.all(), many=True)
+        return Response({"result": json.dumps(customers_serialized.data)})
 
     def post(self, request):
         request_data = request.data
