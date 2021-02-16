@@ -22,6 +22,16 @@ export const cancelInviteUser = async (data, csrftoken) => {
   });
 };
 
+export const getUsers = async (csrftoken) => {
+  return await fetch(`${API_URL}/office/user`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
 export const updateUser = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/user`, {
     method: "PUT",
@@ -67,6 +77,16 @@ export const getCustomer = (id, csrftoken) => {
       "X-CSRFTOKEN": csrftoken,
     },
   }).then((res) => res.json());
+};
+
+export const getCustomers = async (csrftoken) => {
+  return await fetch(`${API_URL}/office/customer`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
 };
 
 export const updateCustomer = async (data, csrftoken) => {

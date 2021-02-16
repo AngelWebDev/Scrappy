@@ -131,10 +131,81 @@
                       v-model="editedItem.company.tax_id"
                       :label="$t('table-data.tax_id')"
                     />
-                    <div class="text-right mt-16 pt-16">
-                      <v-btn color="warning" dark>
+                    <div class="text-right mt-16 pt-16" v-if="!docData.number">
+                      <v-btn color="warning" dark @click="openDialogID">
                         {{ $t("table-data.verify") }}
                       </v-btn>
+                    </div>
+
+                    <div class="text-left" v-if="docData.number">
+                      <h2 class="text-left py-8">
+                        {{ $t("table-data.id") }}
+                      </h2>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_type") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong> {{ docData.type }} </strong>
+                        </v-col>
+                      </v-row>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_id") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong> {{ docData.number }} </strong>
+                        </v-col>
+                      </v-row>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_exp") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong> {{ docData.exp }} </strong>
+                        </v-col>
+                      </v-row>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_issuer") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong> {{ docData.issuer }} </strong>
+                        </v-col>
+                      </v-row>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_verify_user") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong> {{ docData.user.name }} </strong>
+                        </v-col>
+                      </v-row>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_verify_date") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong> {{ docData.user.date }} </strong>
+                        </v-col>
+                      </v-row>
+                      <div class="text-right pa-4">
+                        <v-btn @click="openDialogID">
+                          {{ $t("table-data.verify_again") }}
+                        </v-btn>
+                      </div>
                     </div>
                   </v-col>
                 </v-row>
@@ -163,6 +234,113 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-dialog v-model="dialogID" max-width="600px">
+          <v-card height="600px">
+            <v-card-title>
+              <span class="headline">{{ $t(`form-data.id_person`) }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="12">
+                    <p class="text-left pa-0 ma-0">
+                      {{ editedItem.firstname + " " + editedItem.lastname }}
+                    </p>
+                    <p class="text-left pa-0 ma-0">
+                      {{ editedItem.street }}
+                    </p>
+                    <p class="text-left ma-0">
+                      {{ editedItem.zip + " " + editedItem.city }}
+                    </p>
+                    <p class="text-left mt-0 mb-8">
+                      {{ editedItem.company.name }}
+                    </p>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-select
+                          outlined
+                          :items="types"
+                          :label="$t('table-data.doc_type')"
+                          v-model="docData.type"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-text-field
+                          outlined
+                          v-model="docData.number"
+                          :label="$t('table-data.doc_number')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-text-field
+                          outlined
+                          v-model="docData.issuer"
+                          :label="$t('table-data.doc_issuer')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-menu
+                          v-model="fromDateMenu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              outlined
+                              :label="$t('table-data.doc_exp')"
+                              readonly
+                              :value="docData.exp"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            locale="en-in"
+                            v-model="docData.exp"
+                            no-title
+                            @input="fromDateMenu = false"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-container>
+                <v-row>
+                  <v-col cols="6">
+                    <v-btn color="grey darken-1" text @click="cancelDoc">
+                      {{ $t("form-data.cancel") }}
+                    </v-btn>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-btn color="blue darken-1" text @click="saveDoc">
+                      {{ $t("form-data.save") }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline"
@@ -241,12 +419,16 @@ export default {
   name: "customers",
   data: () => ({
     dialog: false,
+    dialogID: false,
     dialogDelete: false,
     pending: false,
     editing: false,
     search: "",
     is_company: false,
     solutations: ["Mr", "Mrs", "Dr", "Prof"],
+    types: ["Passport", "ID card", "Drivers License"],
+    fromDateMenu: false,
+
     headers: [
       { text: "No", value: "no" },
       { text: "Last Name", value: "lastname" },
@@ -260,6 +442,16 @@ export default {
     ],
     items: [],
     editedIndex: -1,
+    docData: {
+      type: "Passport",
+      number: "",
+      issuer: "",
+      exp: "",
+      user: {
+        name: "",
+        date: "",
+      },
+    },
     editedItem: {
       title: "",
       firstname: "",
@@ -322,6 +514,20 @@ export default {
       // eslint-disable-next-line no-undef
       this.items = customers.map((item, index) => ({ ...item, no: index + 1 }));
     },
+
+    openDialogID() {
+      this.dialogID = true;
+    },
+
+    cancelDoc() {
+      this.dialogID = false;
+      this.docData = Object.assign(
+        {},
+        { type: "Passport", number: "", issuer: "", exp: "" }
+      );
+    },
+
+    saveDoc() {},
 
     editItem(item) {
       // eslint-disable-next-line no-undef

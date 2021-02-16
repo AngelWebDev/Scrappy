@@ -178,6 +178,7 @@ import {
   deleteUser,
   updateUser,
   cancelInviteUser,
+  getUsers,
 } from "../../api";
 export default {
   name: "users",
@@ -240,11 +241,19 @@ export default {
 
   methods: {
     initialize() {
+      const csrftoken = document
+        .querySelector('input[name="csrfmiddlewaretoken"]')
+        .getAttribute("value");
       // eslint-disable-next-line no-undef
-      this.items = users.map((item) => ({
-        name: item.firstname + " " + item.lastname,
-        ...item,
-      }));
+      getUsers(csrftoken)
+        .then((res) => res.json())
+        .then(({ result }) => {
+          // eslint-disable-next-line no-undef
+          this.items = result.map((item) => ({
+            name: item.firstname + " " + item.lastname,
+            ...item,
+          }));
+        });
     },
 
     editItem(item) {

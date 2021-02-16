@@ -6,8 +6,7 @@
 {% load render_bundle from webpack_loader %}
 {% if users %}
 <script type='text/javascript'>
-  var users = {{ users|safe }};
-  var customers = {{ customers|safe }};
+  var user = {{ user|safe }};
 </script>
 {% endif %}
 <div id="app">
