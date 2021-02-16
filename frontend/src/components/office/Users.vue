@@ -334,20 +334,20 @@ export default {
         });
       }
     },
-  },
 
-  reSend() {
-    // eslint-disable-next-line no-undef
-    inviteUser(this.editedItem, csrftoken);
-  },
+    reSend() {
+      // eslint-disable-next-line no-undef
+      inviteUser(this.editedItem, csrftoken);
+    },
 
-  cancelInvite() {
-    const data = {
-      email: this.editedItem.email,
-    };
-    // eslint-disable-next-line no-undef
-    cancelInviteUser(data, csrftoken);
-    this.close();
+    cancelInvite() {
+      const data = {
+        email: this.editedItem.email,
+      };
+      // eslint-disable-next-line no-undef
+      cancelInviteUser(data, csrftoken);
+      this.close();
+    },
   },
 };
 </script>
