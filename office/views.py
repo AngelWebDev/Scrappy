@@ -1,13 +1,14 @@
 import json
 
+from django.urls import reverse
 from django.db.models import Q
 from django.db.utils import IntegrityError
-from django.http import HttpResponse
 from django.contrib import messages
 from django.views.generic import View
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import AuthenticationForm
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
@@ -20,6 +21,29 @@ from invitations.views import AcceptInvite, accept_invitation
 from .models import ScrappyUser, Customer, Rights, Company, CustomInvitation
 from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer, InvitationSerializer
 from .forms import UserSignUpForm
+
+
+def scrappy_login(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('office_view'))
+
+    if request.method == 'POST':
+        form = AuthenticationForm(request.POST)
+        email = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(email=email, password=password)
+        if user:
+            if user.status == 'Active':
+                login(request, user)
+                return redirect(reverse('office_view'))
+            elif user.status == 'Deactivated':
+                messages.error(request, 'Your account was deactivated!')
+        else:
+            messages.error(request, 'Email or Password not correct!')
+            return redirect(reverse('login'))
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
 
 
 def signup(request, *args, **kwargs):
@@ -44,7 +68,7 @@ def signup(request, *args, **kwargs):
     return render(request, 'registration/signup.html', {'form': form})
 
 
-class InviteAcceptView(AcceptInvite):
+class InviteAcceptView(LoginRequiredMixin, AcceptInvite):
     def post(self, request, *args, **kwargs):
         self.object = invitation = self.get_object()
 
@@ -90,7 +114,7 @@ class InviteAcceptView(AcceptInvite):
         return redirect('signup', key=kwargs["key"])
 
 
-class UserInviteAPI(APIView, LoginRequiredMixin):
+class UserInviteAPI(LoginRequiredMixin, APIView):
     model = CustomInvitation
     
     def post(self, request):
@@ -111,7 +135,7 @@ class UserInviteAPI(APIView, LoginRequiredMixin):
             return Response({"result": "No invitation exists"}, status=400)
 
 
-class OfficeView(View):
+class OfficeView(LoginRequiredMixin, View):
     template = 'office.html'
 
     def get(self, request):
@@ -161,7 +185,7 @@ class OfficeView(View):
         return render(request, self.template, context)
 
 
-class UserUpdateDeleteAPI(RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class UserUpdateDeleteAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         request_data = request.data
         user_id = request_data["id"]
@@ -191,7 +215,7 @@ class UserUpdateDeleteAPI(RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
             return Response({"result": "User not found"}, status=400)
 
 
-class CustomerAPIView(APIView, LoginRequiredMixin):
+class CustomerAPIView(LoginRequiredMixin, APIView):
     model = Customer
     list_serializer = CustomerListSerializer
     detail_serializer = CustomerDetailSerializer
