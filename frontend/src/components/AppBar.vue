@@ -3,7 +3,7 @@
     <v-container class="grey lighten-5">
       <v-row no-gutters class="mt-16 pt-4">
         <v-col cols="8" class="pt-2">
-          2021-01-22 15:00
+          {{ nowTime }}
         </v-col>
         <v-col cols="3" class="text-right pr-4 pt-2">
           {{ $t("app-bar.logged-in-user") }}:
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "app-bar",
   components: {},
@@ -48,17 +49,25 @@ export default {
       locale: "en",
       right: null,
       user: {},
+      nowTime: "",
     };
   },
   created() {
     // eslint-disable-next-line no-undef
     this.user = authUser;
   },
+  mounted() {
+    this.nowTimes();
+  },
   methods: {
     selectLanguage() {
       if (this.$i18n.locale !== this.locale) {
         this.$i18n.locale = this.locale;
       }
+    },
+    nowTimes() {
+      this.nowTime = moment(new Date()).format("MM-DD-YYYY hh:mm");
+      setTimeout(this.nowTimes, 30 * 1000);
     },
   },
 };

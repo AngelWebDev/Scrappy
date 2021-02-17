@@ -9,7 +9,7 @@
 
 {% block body %}
   <div class="container pt-60 col-3">
-    {% include 'messages.html' %}
+
     <h1 class="text-center">Login</h1>
     <br/>
     <form method="post">
@@ -17,6 +17,8 @@
       {{ form|crispy }}
       <br/>
       <button type="submit" class="btn btn-success btn-md btn-block">Login</button>
+      <br/>
+      {% include 'messages.html' %}
     </form>
   </div>
 {% endblock %}
