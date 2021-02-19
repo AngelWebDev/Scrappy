@@ -18,6 +18,7 @@ from invitations.app_settings import app_settings
 from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite, accept_invitation
 
+from .mixins import UserOfficeAccessMixin
 from .models import ScrappyUser, Customer, Rights, Company, CustomInvitation
 from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer, InvitationSerializer
 from .forms import UserSignUpForm
@@ -136,7 +137,7 @@ class UserInviteAPI(LoginRequiredMixin, APIView):
             return Response({"result": "No invitation exists"}, status=400)
 
 
-class OfficeView(LoginRequiredMixin, View):
+class OfficeView(LoginRequiredMixin, UserOfficeAccessMixin, View):
     template = 'office.html'
 
     def get(self, request):

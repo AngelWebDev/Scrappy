@@ -4,11 +4,12 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from .mixins import UserPayoutAccessMixin
 from office.models import Rights, ScrappyUser
 from office.serializers import UserSerializer
 
 
-class PayoutView(LoginRequiredMixin, View):
+class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, View):
     template = 'payout.html'
 
     def get(self, request):

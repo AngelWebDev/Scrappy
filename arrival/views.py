@@ -4,11 +4,12 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from .mixins import UserArrivalAccessMixin
 from office.models import Rights, ScrappyUser
 from office.serializers import UserSerializer
 
 
-class ArrivalView(LoginRequiredMixin, View):
+class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
     template = 'arrival.html'
 
     def get(self, request):
