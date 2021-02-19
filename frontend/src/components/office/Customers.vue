@@ -131,13 +131,19 @@
                       v-model="editedItem.company.tax_id"
                       :label="$t('table-data.tax_id')"
                     />
-                    <div class="text-right mt-16 pt-16" v-if="!docData.number">
+                    <div
+                      class="text-right mt-16 pt-16"
+                      v-if="!editedItem.identification.document_id_number"
+                    >
                       <v-btn color="warning" dark @click="openDialogID">
                         {{ $t("table-data.verify") }}
                       </v-btn>
                     </div>
 
-                    <div class="text-left" v-if="docData.number">
+                    <div
+                      class="text-left"
+                      v-if="editedItem.identification.document_id_number"
+                    >
                       <h2 class="text-left py-8">
                         {{ $t("table-data.id") }}
                       </h2>
@@ -148,7 +154,9 @@
                           </span>
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
-                          <strong> {{ docData.type }} </strong>
+                          <strong>
+                            {{ editedItem.identification.document_type }}
+                          </strong>
                         </v-col>
                       </v-row>
                       <v-row class="text-left pa-0 ma-0">
@@ -158,7 +166,21 @@
                           </span>
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
-                          <strong> {{ docData.number }} </strong>
+                          <strong>
+                            {{ editedItem.identification.document_id_number }}
+                          </strong>
+                        </v-col>
+                      </v-row>
+                      <v-row class="text-left pa-0 ma-0">
+                        <v-col class="text-left pa-0 ma-0">
+                          <span class="doc_title">
+                            {{ $t("table-data.doc_name") }} :
+                          </span>
+                        </v-col>
+                        <v-col class="text-left pa-0 ma-0">
+                          <strong>
+                            {{ editedItem.identification.name_on_document }}
+                          </strong>
                         </v-col>
                       </v-row>
                       <v-row class="text-left pa-0 ma-0">
@@ -168,7 +190,11 @@
                           </span>
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
-                          <strong> {{ docData.exp }} </strong>
+                          <strong>
+                            {{
+                              editedItem.identification.document_expiration_date
+                            }}
+                          </strong>
                         </v-col>
                       </v-row>
                       <v-row class="text-left pa-0 ma-0">
@@ -178,7 +204,9 @@
                           </span>
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
-                          <strong> {{ docData.issuer }} </strong>
+                          <strong>
+                            {{ editedItem.identification.issuing_country }}
+                          </strong>
                         </v-col>
                       </v-row>
                       <v-row class="text-left pa-0 ma-0">
@@ -188,7 +216,9 @@
                           </span>
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
-                          <strong> {{ docData.user.name }} </strong>
+                          <strong>
+                            {{ editedItem.identification.document_type }}
+                          </strong>
                         </v-col>
                       </v-row>
                       <v-row class="text-left pa-0 ma-0">
@@ -198,7 +228,9 @@
                           </span>
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
-                          <strong> {{ docData.user.date }} </strong>
+                          <strong>
+                            {{ editedItem.identification.document_type }}
+                          </strong>
                         </v-col>
                       </v-row>
                       <div class="text-right pa-4">
@@ -236,7 +268,7 @@
         </v-dialog>
 
         <v-dialog v-model="dialogID" max-width="600px">
-          <v-card height="600px">
+          <v-card height="750px">
             <v-card-title>
               <span class="headline">{{ $t(`form-data.id_person`) }}</span>
             </v-card-title>
@@ -263,7 +295,7 @@
                           outlined
                           :items="types"
                           :label="$t('table-data.doc_type')"
-                          v-model="docData.type"
+                          v-model="editedItem.identification.document_type"
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -271,7 +303,7 @@
                       <v-col cols="12" class="py-0">
                         <v-text-field
                           outlined
-                          v-model="docData.number"
+                          v-model="editedItem.identification.document_id_number"
                           :label="$t('table-data.doc_number')"
                         ></v-text-field>
                       </v-col>
@@ -280,8 +312,17 @@
                       <v-col cols="12" class="py-0">
                         <v-text-field
                           outlined
-                          v-model="docData.issuer"
+                          v-model="editedItem.identification.issuing_country"
                           :label="$t('table-data.doc_issuer')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-text-field
+                          outlined
+                          v-model="editedItem.identification.name_on_document"
+                          :label="$t('table-data.doc_name')"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -303,13 +344,18 @@
                               outlined
                               :label="$t('table-data.doc_exp')"
                               readonly
-                              :value="docData.exp"
+                              :value="
+                                editedItem.identification
+                                  .document_expiration_date
+                              "
                               v-on="on"
                             ></v-text-field>
                           </template>
                           <v-date-picker
                             locale="en-in"
-                            v-model="docData.exp"
+                            v-model="
+                              editedItem.identification.document_expiration_date
+                            "
                             no-title
                             @input="fromDateMenu = false"
                           ></v-date-picker>
@@ -427,7 +473,11 @@ export default {
     search: "",
     is_company: false,
     solutations: ["Mr", "Mrs", "Dr", "Prof"],
-    types: ["Passport", "ID card", "Drivers License"],
+    types: [
+      { value: "passport", text: "Passport" },
+      { value: "idcard", text: "ID Card" },
+      { value: "driverlicense", text: "Driver License" },
+    ],
     fromDateMenu: false,
 
     headers: [
@@ -443,16 +493,6 @@ export default {
     ],
     items: [],
     editedIndex: -1,
-    docData: {
-      type: "Passport",
-      number: "",
-      issuer: "",
-      exp: "",
-      user: {
-        name: "",
-        date: "",
-      },
-    },
     editedItem: {
       title: "",
       firstname: "",
@@ -469,6 +509,13 @@ export default {
         name: "",
         tax_id: "",
         vat_id: "",
+      },
+      identification: {
+        document_type: "passport",
+        document_id_number: "",
+        name_on_document: null,
+        issuing_country: null,
+        document_expiration_date: null,
       },
     },
     defaultItem: {
@@ -487,6 +534,13 @@ export default {
         name: "",
         tax_id: "",
         vat_id: "",
+      },
+      identification: {
+        document_type: "passport",
+        document_id_number: "",
+        name_on_document: null,
+        issuing_country: null,
+        document_expiration_date: null,
       },
     },
   }),
@@ -533,19 +587,33 @@ export default {
 
     cancelDoc() {
       this.dialogID = false;
-      this.docData = Object.assign(
+      this.editedItem.identification = Object.assign(
         {},
-        { type: "Passport", number: "", issuer: "", exp: "" }
+        this.defaultItem.identification
       );
     },
 
-    saveDoc() {},
+    saveDoc() {
+      // eslint-disable-next-line no-undef
+      updateCustomer(this.editedItem, csrftoken);
+      this.dialogID = false;
+      this.editedItem.identification = Object.assign(
+        {},
+        this.defaultItem.identification
+      );
+    },
 
     editItem(item) {
       // eslint-disable-next-line no-undef
       getCustomer(item.id, csrftoken).then((res) => {
         if (res) {
           this.editedIndex = this.items.indexOf(item);
+          if (!res.result.identification) {
+            res.result.identification = Object.assign(
+              {},
+              this.defaultItem.identification
+            );
+          }
           this.editedItem = Object.assign({}, res.result);
           if (res.result.company && res.result.company.id) {
             this.is_company = true;

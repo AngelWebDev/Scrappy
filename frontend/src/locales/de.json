@@ -27,6 +27,7 @@
     "doc_exp": "Dokument  Ablauf",
     "doc_id": "Dokument ID",
     "doc_issuer": "Dokument  Aussteller",
+    "doc_name": "Voll Name",
     "doc_number": "Dokument  Nummer",
     "doc_type": "Dokument  Art",
     "doc_verify_date": "Verifiziert Datum",

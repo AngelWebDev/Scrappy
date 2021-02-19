@@ -27,6 +27,7 @@
     "doc_exp": "Document Expiration",
     "doc_id": "Document ID",
     "doc_issuer": "Document Issuer",
+    "doc_name": "Full Name",
     "doc_number": "Document Number",
     "doc_type": "Document Type",
     "doc_verify_date": "Verified Date",
