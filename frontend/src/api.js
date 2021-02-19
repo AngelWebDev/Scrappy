@@ -72,6 +72,17 @@ export const createCustomer = async (data, csrftoken) => {
   });
 };
 
+export const verifyIdentification = async (data, csrftoken) => {
+  return await fetch(`${API_URL}/office/identification`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const getCustomer = (id, csrftoken) => {
   return fetch(`${API_URL}/office/customer?id=${id}`, {
     method: "GET",

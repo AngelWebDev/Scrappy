@@ -465,6 +465,7 @@ import {
   deactiveCustomer,
   deleteCustomer,
   getCustomers,
+  verifyIdentification,
 } from "../../api";
 export default {
   name: "customers",
@@ -580,11 +581,9 @@ export default {
 
   methods: {
     initialize() {
-      // eslint-disable-next-line no-undef
       getCustomers(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
-          // eslint-disable-next-line no-undef
           this.items = result.map((item, index) => ({
             ...item,
             no: index + 1,
@@ -609,13 +608,20 @@ export default {
         "MM-DD-YYYY hh:mm"
       );
       Object.assign(this.items[this.editedIndex], this.editedItem);
-      // eslint-disable-next-line no-undef
-      updateCustomer(this.editedItem, this.token);
+      const data = {
+        customer_id: this.editedItem.id,
+        document_type: this.editedItem.identification.document_type,
+        document_id_number: this.editedItem.identification.document_id_number,
+        name_on_document: this.editedItem.identification.name_on_document,
+        issuing_country: this.editedItem.identification.issuing_country,
+        document_expiration_date: this.editedItem.identification
+          .document_expiration_date,
+      };
+      verifyIdentification(data, this.token);
       this.dialogID = false;
     },
 
     editItem(item) {
-      // eslint-disable-next-line no-undef
       getCustomer(item.id, this.token).then((res) => {
         if (res) {
           this.editedIndex = this.items.indexOf(item);
@@ -670,7 +676,6 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
-      // eslint-disable-next-line no-undef
       deleteCustomer(this.editedItem.id, this.token);
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
@@ -686,13 +691,10 @@ export default {
       if (!this.is_company) {
         delete this.editedItem.company;
       }
-      if (!this.editedItem.identification.id) {
-        delete this.editedItem.identification;
-      }
+      delete this.editedItem.identification;
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
 
-        //eslint-disable-next-line no-undef
         updateCustomer(this.editedItem, this.token).then((res) => {
           if (res.ok) {
             this.editing = true;
@@ -725,11 +727,9 @@ export default {
     },
 
     deactive() {
-      // eslint-disable-next-line no-undef
       deactiveCustomer(this.editedItem.id, this.token);
       this.editedItem.status = false;
       delete this.editedItem.name;
-      // eslint-disable-next-line no-undef
       updateCustomer(this.editedItem, this.token).then(() => {
         Object.assign(this.items[this.editedIndex], this.editedItem);
         this.close();
