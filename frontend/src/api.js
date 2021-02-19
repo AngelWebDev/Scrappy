@@ -61,10 +61,13 @@ export const deactiveUser = async (uid) => {
   });
 };
 
-export const createCustomer = async (data) => {
+export const createCustomer = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/customer`, {
     method: "POST",
-    headers,
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
     body: JSON.stringify(data),
   });
 };
