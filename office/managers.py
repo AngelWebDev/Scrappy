@@ -35,6 +35,7 @@ class ScrappyUserManager(BaseUserManager):
         user.is_admin = True
         user.status = self.model.StatusChoices.ACTIVE
         user.save(using=self._db)
+
         return user
 
 

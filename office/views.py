@@ -141,6 +141,7 @@ class OfficeView(LoginRequiredMixin, UserOfficeAccessMixin, View):
     template = 'office.html'
 
     def get(self, request):
+        print(Rights.RightChoices)
         rights = list(Rights.objects.filter(user=request.user).values_list("right", flat=True))
         user_detail = {
             "office": False,

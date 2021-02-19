@@ -34,7 +34,7 @@ class UserAccessByRightMixin(object):
         return redirect_url
 
     def dispatch(self, request, *args, **kwargs):
-        if self.access_page in self.user_rights(request.user):
+        if request.user.is_admin or self.access_page in self.user_rights(request.user):
             return super(UserAccessByRightMixin, self).dispatch(request, *args, **kwargs)
         else:
             return redirect(self.get_redirect_url(request.user))
