@@ -19,7 +19,7 @@ from invitations.adapters import get_invitations_adapter
 from invitations.views import AcceptInvite, accept_invitation
 
 from .mixins import UserOfficeAccessMixin
-from .models import ScrappyUser, Customer, Rights, Company, CustomInvitation
+from .models import ScrappyUser, Customer, Rights, Company, CustomInvitation, Identification
 from .serializers import UserSerializer, CustomerListSerializer, CustomerDetailSerializer, InvitationSerializer
 from .forms import UserSignUpForm
 
@@ -234,7 +234,7 @@ class UserAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
             return Response({"result": "User not found"}, status=400)
 
 
-class CustomerAPIView(LoginRequiredMixin, APIView):
+class CustomerAPIView(APIView):
     model = Customer
     list_serializer = CustomerListSerializer
     detail_serializer = CustomerDetailSerializer
@@ -260,13 +260,19 @@ class CustomerAPIView(LoginRequiredMixin, APIView):
 
     def post(self, request):
         request_data = request.data
-        print(request_data)
         try:
             company_info = request_data.pop("company")
             if company_info:
                 new_company = Company(**company_info)
                 new_company.save()
                 request_data["company_id"] = new_company.id
+
+            identification_info = request_data.pop("identification")
+            if identification_info:
+                new_identification = Identification(**identification_info)
+                new_identification.save()
+                request_data["identification_id"] = new_identification.id
+
             new_customer = self.model(**request_data)
             new_customer.save()
             return Response({"result": self.list_serializer(new_customer).data})

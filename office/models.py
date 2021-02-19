@@ -25,8 +25,8 @@ class ScrappyUser(AbstractBaseUser):
         DEACTIVATED = 'Deactivated', 'Deactivated'
 
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
-    firstname = models.CharField(max_length=255, blank=True, null=True)
-    lastname = models.CharField(max_length=255, blank=True, null=True)
+    firstname = models.CharField(max_length=255, null=True, blank=True)
+    lastname = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.ACTIVE)
     is_admin = models.BooleanField(default=False)
 
@@ -85,8 +85,8 @@ class Identification(models.Model):
     document_id_number = models.CharField(max_length=255)
     name_on_document = models.CharField(max_length=255)
     issuing_country = models.CharField(max_length=255)
-    document_expiration_date = models.DateField(auto_now_add=True)
-    verified_at = models.DateTimeField(blank=True, null=True)
+    document_expiration_date = models.DateField(null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
 
 
 class Company(models.Model):
