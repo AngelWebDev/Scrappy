@@ -141,7 +141,6 @@ class OfficeView(LoginRequiredMixin, UserOfficeAccessMixin, View):
     template = 'office.html'
 
     def get(self, request):
-        print(Rights.RightChoices)
         rights = list(Rights.objects.filter(user=request.user).values_list("right", flat=True))
         user_detail = {
             "office": False,
@@ -246,7 +245,6 @@ class CustomerAPIView(APIView):
         if customer_id:
             try:
                 customer = self.model.objects.get(id=customer_id)
-                print(self.detail_serializer(customer).data)
                 return Response({"result": self.detail_serializer(customer).data})
             except self.model.DoesNotExist:
                 return Response({"result": "Customer not found"}, status=400)
@@ -279,7 +277,6 @@ class CustomerAPIView(APIView):
             new_customer.save()
             return Response({"result": self.list_serializer(new_customer).data})
         except Exception as e:
-            print(e)
             return Response({"result": "Failed to create new customer"}, status=400)
 
     def put(self, request):
@@ -314,7 +311,6 @@ class CustomerAPIView(APIView):
 
             return Response({"result": "success"})
         except Exception as e:
-            print(e)
             return Response({"result": "Failed customer update"}, status=400)
 
     def delete(self, request):
@@ -329,18 +325,12 @@ class CustomerAPIView(APIView):
 class IdentificationCreateAPI(LoginRequiredMixin, CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
-            request_data = request.data
-            customer_id = request_data.pop("customer_id")
-            identification_info = request_data
+            identification_info = request.data
             identification_info["user_id"] = request.user.id
             new_identification = Identification(**identification_info)
             new_identification.save()
 
-            # Update customer's identification data
-            customer = Customer.objects.filter(id=customer_id).first()
-            customer.identification = new_identification
-            customer.save()
-
             return Response({"result": "success"})
         except Exception as e:
+            print(e)
             return Response({"result": "Failed identification verify"}, status=400)

@@ -42,8 +42,12 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_identification(self, obj):
-        identification = Identification.objects.filter(customer=obj).latest('verified_at')
-        return IdentificationSerializer(identification).data
+        try:
+            identification = Identification.objects.filter(customer=obj).latest('verified_at')
+            return IdentificationSerializer(identification).data
+        except Identification.DoesNotExist:
+            return None
+
 
 
 class InvitationSerializer(serializers.ModelSerializer):
