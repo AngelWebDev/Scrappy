@@ -15,7 +15,7 @@ class UserAccessByRightMixin(object):
         return rights
 
     def get_redirect_url(self, user):
-        redirect_page = "/"
+        redirect_page = ""
         rights = self.user_rights(user)
         right_for_access_page = self.access_page
 
@@ -27,10 +27,10 @@ class UserAccessByRightMixin(object):
                 if page != self.access_page and page in rights:
                     redirect_page = page
                     break
-        if redirect_page != "/":
+        if redirect_page != "":
             redirect_url = reverse("{}_view".format(redirect_page.lower()))
         else:
-            redirect_url = redirect_page
+            redirect_url = "/"
         return redirect_url
 
     def dispatch(self, request, *args, **kwargs):
