@@ -91,7 +91,7 @@ class InviteAcceptView(LoginRequiredMixin, AcceptInvite):
                 'invitations/messages/invite_accepted.txt',
                 {'email': invitation.email})
             # Redirect to login since there's hopefully an account already.
-            return redirect(app_settings.LOGIN_REDIRECT)
+            return render(request, 'invitations/accepted.html')
 
         # The key was expired.
         if invitation.key_expired():

@@ -86,7 +86,7 @@ class Identification(models.Model):
     name_on_document = models.CharField(max_length=255)
     issuing_country = models.CharField(max_length=255)
     document_expiration_date = models.DateField(auto_now_add=True)
-    verified_at = models.DateTimeField(auto_now_add=True)
+    verified_at = models.DateTimeField(blank=True, null=True)
 
 
 class Company(models.Model):
