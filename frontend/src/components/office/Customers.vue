@@ -217,7 +217,7 @@
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
                           <strong>
-                            {{ editedItem.identification.document_type }}
+                            {{ user.firstname + " " + user.lastname }}
                           </strong>
                         </v-col>
                       </v-row>
@@ -229,7 +229,7 @@
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
                           <strong>
-                            {{ editedItem.identification.document_type }}
+                            {{ editedItem.identification.verified_at }}
                           </strong>
                         </v-col>
                       </v-row>
@@ -241,6 +241,9 @@
                     </div>
                   </v-col>
                 </v-row>
+                <div class="text-center" v-if="error">
+                  <span class="red--text">{{ error }} </span>
+                </div>
               </v-container>
             </v-card-text>
 
@@ -454,6 +457,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import {
   createCustomer,
   getCustomer,
@@ -471,6 +475,10 @@ export default {
     pending: false,
     editing: false,
     search: "",
+    token: "",
+    error: "",
+    // eslint-disable-next-line no-undef
+    user: authUser,
     is_company: false,
     solutations: ["Mr", "Mrs", "Dr", "Prof"],
     types: [
@@ -551,6 +559,12 @@ export default {
     },
   },
 
+  mounted() {
+    this.token = document
+      .querySelector('input[name="csrfmiddlewaretoken"]')
+      .getAttribute("value");
+  },
+
   watch: {
     dialog(val) {
       val || this.close();
@@ -566,11 +580,8 @@ export default {
 
   methods: {
     initialize() {
-      const csrftoken = document
-        .querySelector('input[name="csrfmiddlewaretoken"]')
-        .getAttribute("value");
       // eslint-disable-next-line no-undef
-      getCustomers(csrftoken)
+      getCustomers(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           // eslint-disable-next-line no-undef
@@ -594,25 +605,37 @@ export default {
     },
 
     saveDoc() {
-      // eslint-disable-next-line no-undef
-      updateCustomer(this.editedItem, csrftoken);
-      this.dialogID = false;
-      this.editedItem.identification = Object.assign(
-        {},
-        this.defaultItem.identification
+      this.editedItem.identification.verified_at = moment(new Date()).format(
+        "MM-DD-YYYY hh:mm"
       );
+      Object.assign(this.items[this.editedIndex], this.editedItem);
+      // eslint-disable-next-line no-undef
+      updateCustomer(this.editedItem, this.token);
+      this.dialogID = false;
     },
 
     editItem(item) {
       // eslint-disable-next-line no-undef
-      getCustomer(item.id, csrftoken).then((res) => {
+      getCustomer(item.id, this.token).then((res) => {
         if (res) {
           this.editedIndex = this.items.indexOf(item);
+          if (!res.result.company) {
+            res.result.company = Object.assign({}, this.defaultItem.company);
+          }
           if (!res.result.identification) {
             res.result.identification = Object.assign(
               {},
               this.defaultItem.identification
             );
+          }
+
+          if (
+            res.result.identification &&
+            res.result.identification.verified_at
+          ) {
+            res.result.identification.verified_at = moment(
+              res.result.identification.verified_at
+            ).format("MM-DD-YYYY hh:mm");
           }
           this.editedItem = Object.assign({}, res.result);
           if (res.result.company && res.result.company.id) {
@@ -648,7 +671,7 @@ export default {
     closeDelete() {
       this.dialogDelete = false;
       // eslint-disable-next-line no-undef
-      deleteCustomer(this.editedItem.id, csrftoken);
+      deleteCustomer(this.editedItem.id, this.token);
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -656,30 +679,58 @@ export default {
     },
 
     save() {
+      const that = this;
+      if (this.editedItem.company.id === "") {
+        delete this.editedItem.company.id;
+      }
+      if (!this.is_company) {
+        delete this.editedItem.company;
+      }
+      if (!this.editedItem.identification.id) {
+        delete this.editedItem.identification;
+      }
       if (this.editedIndex > -1) {
         Object.assign(this.items[this.editedIndex], this.editedItem);
-        // eslint-disable-next-line no-undef
-        updateCustomer(this.editedItem, csrftoken);
-        this.editing = true;
+
+        //eslint-disable-next-line no-undef
+        updateCustomer(this.editedItem, this.token).then((res) => {
+          if (res.ok) {
+            this.editing = true;
+            that.close();
+          } else {
+            this.error = res.statusText;
+          }
+        });
       } else {
         if (this.editedItem.email) {
-          if (this.editedItem.company.id === "") {
-            delete this.editedItem.company.id;
-          }
-          createCustomer(this.editedItem);
-          this.items.push({ ...this.editedItem, no: this.items.length + 1 });
+          createCustomer(this.editedItem, this.token).then((res) => {
+            if (res.ok) {
+              this.items.push({
+                ...this.editedItem,
+                no: this.items.length + 1,
+              });
+              that.close();
+            } else {
+              if (res.status === 400) {
+                this.error = "Bad Request. Please Check Parameters.";
+              } else if (res.status === 403) {
+                this.error = "Forbidden. Please Log in Again.";
+              } else {
+                this.error = res.statusText;
+              }
+            }
+          });
         }
       }
-      this.close();
     },
 
     deactive() {
       // eslint-disable-next-line no-undef
-      deactiveCustomer(this.editedItem.id, csrftoken);
+      deactiveCustomer(this.editedItem.id, this.token);
       this.editedItem.status = false;
       delete this.editedItem.name;
       // eslint-disable-next-line no-undef
-      updateCustomer(this.editedItem, csrftoken).then(() => {
+      updateCustomer(this.editedItem, this.token).then(() => {
         Object.assign(this.items[this.editedIndex], this.editedItem);
         this.close();
       });
