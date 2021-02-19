@@ -80,7 +80,7 @@ class Identification(models.Model):
         PASSPORT = 'Passport', 'Passport'
         DRIVERLICENSE = 'Driver License', 'Driver License'
 
-    user = models.OneToOneField(ScrappyUser, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(ScrappyUser, on_delete=models.SET_NULL, null=True)
     document_type = models.CharField(max_length=20, choices=DocumentTypeChoices.choices)
     document_id_number = models.CharField(max_length=255)
     name_on_document = models.CharField(max_length=255)

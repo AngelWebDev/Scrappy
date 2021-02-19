@@ -314,16 +314,13 @@ class CustomerAPIView(APIView):
         # Update identification information
         if identification_info:
             identification_info["user_id"] = request.user.id
-            if "id" in identification_info:
-                Identification.objects.filter(id=identification_info["id"]).update(**identification_info)
-            else:
-                new_identification = Identification(**identification_info)
-                new_identification.save()
+            new_identification = Identification(**identification_info)
+            new_identification.save()
 
-                # Update customer's identification data
-                customer = customer_obj.first()
-                customer.identification = new_identification
-                customer.save()
+            # Update customer's identification data
+            customer = customer_obj.first()
+            customer.identification = new_identification
+            customer.save()
 
         return Response({"result": "success"})
         # except Exception as e:
