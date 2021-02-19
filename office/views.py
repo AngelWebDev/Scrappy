@@ -234,7 +234,7 @@ class UserAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
             return Response({"result": "User not found"}, status=400)
 
 
-class CustomerAPIView(APIView):
+class CustomerAPIView(LoginRequiredMixin, APIView):
     model = Customer
     list_serializer = CustomerListSerializer
     detail_serializer = CustomerDetailSerializer
@@ -270,6 +270,7 @@ class CustomerAPIView(APIView):
             identification_info = request_data.pop("identification")
             if identification_info:
                 new_identification = Identification(**identification_info)
+                new_identification.user = request.user
                 new_identification.save()
                 request_data["identification_id"] = new_identification.id
 
@@ -284,9 +285,12 @@ class CustomerAPIView(APIView):
         request_data = request.data
         try:
             company_info = request_data.pop("company")
+            identification_info = request_data.pop("identification")
             self.model.objects.filter(id=request_data["id"]).update(**request_data)
             if company_info:
                 Company.objects.filter(id=company_info["id"]).update(**company_info)
+            if identification_info:
+                Identification.objects.filter(user=request.user).update(**identification_info)
             return Response({"result": "success"})
         except Exception as e:
             return Response({"result": "Failed customer update"}, status=400)
