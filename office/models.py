@@ -71,24 +71,6 @@ class Rights(models.Model):
     objects = RightsManager()
 
 
-class Identification(models.Model):
-    class Meta:
-        db_table = "identification"
-
-    class DocumentTypeChoices(models.TextChoices):
-        IDCARD = 'IDCard', 'IDCard'
-        PASSPORT = 'Passport', 'Passport'
-        DRIVERLICENSE = 'Driver License', 'Driver License'
-
-    user = models.ForeignKey(ScrappyUser, on_delete=models.SET_NULL, null=True)
-    document_type = models.CharField(max_length=20, choices=DocumentTypeChoices.choices)
-    document_id_number = models.CharField(max_length=255)
-    name_on_document = models.CharField(max_length=255)
-    issuing_country = models.CharField(max_length=255)
-    document_expiration_date = models.DateField(null=True, blank=True)
-    verified_at = models.DateTimeField(auto_now_add=True)
-
-
 class Company(models.Model):
     class Meta:
         db_table = "company"
@@ -120,11 +102,29 @@ class Customer(models.Model):
     title = models.CharField(max_length=255, choices=TitleChoices.choices, default=TitleChoices.MR)
     comments = models.TextField(null=True, blank=True)
     status = models.BooleanField(default=True)
-    identification = models.OneToOneField(Identification, on_delete=models.SET_NULL, null=True, blank=True)
     company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.email
+
+
+class Identification(models.Model):
+    class Meta:
+        db_table = "identification"
+
+    class DocumentTypeChoices(models.TextChoices):
+        IDCARD = 'IDCard', 'IDCard'
+        PASSPORT = 'Passport', 'Passport'
+        DRIVERLICENSE = 'Driver License', 'Driver License'
+
+    user = models.ForeignKey(ScrappyUser, on_delete=models.SET_NULL, null=True)
+    document_type = models.CharField(max_length=20, choices=DocumentTypeChoices.choices)
+    document_id_number = models.CharField(max_length=255)
+    name_on_document = models.CharField(max_length=255)
+    issuing_country = models.CharField(max_length=255)
+    document_expiration_date = models.DateField(null=True, blank=True)
+    verified_at = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
 
 class Journal(models.Model):

@@ -9,9 +9,14 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class IdentificationSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
     class Meta:
         model = Identification
-        fields = '__all__'
+        exclude = ('user', )
+
+    def get_username(self, obj):
+        return "{} {}".format(obj.user.firstname, obj.user.lastname)
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -29,12 +34,16 @@ class CustomerListSerializer(serializers.ModelSerializer):
 
 
 class CustomerDetailSerializer(serializers.ModelSerializer):
-    identification = IdentificationSerializer()
+    identification = serializers.SerializerMethodField()
     company = CompanySerializer()
 
     class Meta:
         model = Customer
         fields = "__all__"
+
+    def get_identification(self, obj):
+        identification = Identification.objects.filter(customer=obj).latest('verified_at')
+        return IdentificationSerializer(identification).data
 
 
 class InvitationSerializer(serializers.ModelSerializer):

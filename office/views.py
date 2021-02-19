@@ -10,7 +10,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -246,6 +246,7 @@ class CustomerAPIView(APIView):
         if customer_id:
             try:
                 customer = self.model.objects.get(id=customer_id)
+                print(self.detail_serializer(customer).data)
                 return Response({"result": self.detail_serializer(customer).data})
             except self.model.DoesNotExist:
                 return Response({"result": "Customer not found"}, status=400)
@@ -283,49 +284,38 @@ class CustomerAPIView(APIView):
 
     def put(self, request):
         request_data = request.data
-        # try:
-        customer_id = request_data["id"]
-        company_info = request_data.pop("company", None)
-        identification_info = request_data.pop("identification", None)
+        try:
+            customer_id = request_data["id"]
+            company_info = request_data.pop("company", None)
+            identification_info = request_data.pop("identification", None)
 
-        customer_obj = self.model.objects.filter(id=customer_id)
-        # Update customer information
-        customer_obj.update(**request_data)
+            customer_obj = self.model.objects.filter(id=customer_id)
+            # Update customer information
+            customer_obj.update(**request_data)
 
-        # Update company information
-        if company_info:
-            if "id" in company_info:
-                Company.objects.filter(id=company_info["id"]).update(**company_info)
+            # Update company information
+            if company_info:
+                if "id" in company_info:
+                    Company.objects.filter(id=company_info["id"]).update(**company_info)
+                else:
+                    new_company = Company(**company_info)
+                    new_company.save()
+
+                    # Update customer's company data
+                    customer = customer_obj.first()
+                    customer.company = new_company
+                    customer.save()
             else:
-                new_company = Company(**company_info)
-                new_company.save()
-
-                # Update customer's company data
                 customer = customer_obj.first()
-                customer.company = new_company
-                customer.save()
-        else:
-            customer = customer_obj.first()
-            if customer.company_id:
-                Company.objects.filter(pk=customer.company_id).delete()
-                customer.company_id = None
-                customer.save()
+                if customer.company_id:
+                    Company.objects.filter(pk=customer.company_id).delete()
+                    customer.company_id = None
+                    customer.save()
 
-        # Update identification information
-        if identification_info:
-            identification_info["user_id"] = request.user.id
-            new_identification = Identification(**identification_info)
-            new_identification.save()
-
-            # Update customer's identification data
-            customer = customer_obj.first()
-            customer.identification = new_identification
-            customer.save()
-
-        return Response({"result": "success"})
-        # except Exception as e:
-        #     print(e)
-        #     return Response({"result": "Failed customer update"}, status=400)
+            return Response({"result": "success"})
+        except Exception as e:
+            print(e)
+            return Response({"result": "Failed customer update"}, status=400)
 
     def delete(self, request):
         request_data = request.data
@@ -334,3 +324,23 @@ class CustomerAPIView(APIView):
             return Response({"result": "success"})
         except Exception as e:
             return Response({"result": "Failed customer delete"}, status=400)
+
+
+class IdentificationCreateAPI(LoginRequiredMixin, CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            request_data = request.data
+            customer_id = request_data.pop("customer_id")
+            identification_info = request_data
+            identification_info["user_id"] = request.user.id
+            new_identification = Identification(**identification_info)
+            new_identification.save()
+
+            # Update customer's identification data
+            customer = Customer.objects.filter(id=customer_id).first()
+            customer.identification = new_identification
+            customer.save()
+
+            return Response({"result": "success"})
+        except Exception as e:
+            return Response({"result": "Failed identification verify"}, status=400)
