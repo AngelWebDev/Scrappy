@@ -3,14 +3,14 @@
     <NavigationBar :selectedItem="0" />
     <AppBar />
     <Arrival />
-    <Footer />
+    <!-- <Footer /> -->
   </v-app>
 </template>
 
 <script>
 import NavigationBar from "./components/NavigationBar.vue";
 import AppBar from "./components/AppBar.vue";
-import Footer from "./components/Footer.vue";
+// import Footer from "./components/Footer.vue";
 import Arrival from "./components/Arrival.vue";
 import "./assets/custom.css";
 
@@ -19,7 +19,7 @@ export default {
   components: {
     NavigationBar,
     AppBar,
-    Footer,
+    // Footer,
     Arrival,
   },
 };
