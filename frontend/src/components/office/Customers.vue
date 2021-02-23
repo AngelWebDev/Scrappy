@@ -217,7 +217,7 @@
                         </v-col>
                         <v-col class="text-left pa-0 ma-0">
                           <strong>
-                            {{ user.firstname + " " + user.lastname }}
+                            {{ editedItem.identification.username }}
                           </strong>
                         </v-col>
                       </v-row>
@@ -654,6 +654,8 @@ export default {
     },
 
     deleteItem(item) {
+      item.company = Object.assign({}, this.defaultItem.company);
+      item.identification = Object.assign({}, this.defaultItem.identification);
       this.editedIndex = this.items.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
@@ -705,23 +707,20 @@ export default {
         });
       } else {
         if (this.editedItem.email) {
-          createCustomer(this.editedItem, this.token).then((res) => {
-            if (res.ok) {
-              this.items.push({
-                ...this.editedItem,
-                no: this.items.length + 1,
-              });
-              that.close();
-            } else {
-              if (res.status === 400) {
-                this.error = "Bad Request. Please Check Parameters.";
-              } else if (res.status === 403) {
-                this.error = "Forbidden. Please Log in Again.";
+          createCustomer(this.editedItem, this.token)
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.result) {
+                res.result.company = Object.assign({}, {});
+                this.items.push({
+                  ...res.result,
+                  no: this.items.length + 1,
+                });
+                that.close();
               } else {
-                this.error = res.statusText;
+                this.error = "Something went wrong.";
               }
-            }
-          });
+            });
         }
       }
     },
