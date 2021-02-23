@@ -5,8 +5,11 @@ from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .mixins import UserArrivalAccessMixin
+from .models import Arrival
 from office.models import Rights, ScrappyUser
-from office.serializers import UserSerializer
+from office.serializers import UserSerializer, CustomerListSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
@@ -35,3 +38,16 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         }
 
         return render(request, self.template, context)
+
+
+class ArrivalAPI(APIView):
+    def post(self, request):
+        try:
+            arrival_info = request.data
+            arrival_info['user_id'] = request.user.id
+            arrival_info['net_weight_kg'] = arrival_info['gross_weight_kg'] - arrival_info['tare_kg']
+            new_arrival = Arrival(**arrival_info)
+            new_arrival.save()
+            return Response({"result": "success"}, status=200)
+        except Exception as e:
+            return Response({"result": "failed"}, status=400)
