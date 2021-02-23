@@ -1,12 +1,16 @@
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .mixins import UserArrivalAccessMixin
+from .models import Arrival, Material
+from .serializers import MaterialSerializer
 from office.models import Rights, ScrappyUser
-from office.serializers import UserSerializer
+from office.serializers import UserSerializer, CustomerListSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
@@ -35,3 +39,53 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         }
 
         return render(request, self.template, context)
+
+
+class ArrivalAPI(APIView):
+    def post(self, request):
+        try:
+            arrival_info = request.data
+            arrival_info['user_id'] = request.user.id
+            arrival_info['net_weight_kg'] = arrival_info['gross_weight_kg'] - arrival_info['tare_kg']
+            new_arrival = Arrival(**arrival_info)
+            new_arrival.save()
+            return Response({"result": "success"}, status=200)
+        except Exception as e:
+            return Response({"result": "failed"}, status=400)
+
+
+class MaterialAPI(APIView):
+    def get(self, request):
+        if "id" in request.data:
+            material = get_object_or_404(Material, request.data["id"])
+            result = MaterialSerializer(material).data
+        else:
+            materials = get_list_or_404(Material)
+            result = MaterialSerializer(materials, many=True).data
+
+        return Response({"result": result})
+
+    def post(self, request):
+        try:
+            new_material = Material(**request.data)
+            new_material.save()
+            return Response({"result": MaterialSerializer(new_material).data})
+        except Exception as e:
+            return Response({"result": "Failed to create new material"}, status=400)
+
+    def put(self, request):
+        try:
+            material_id = request.data["id"]
+            Material.objects.filter(id=material_id).update(**request.data)
+            return Response({"result": "success"})
+        except Exception as e:
+            return Response({"result": "failed"}, status=400)
+
+    def delete(self, request):
+        material_id = request.data["id"]
+        material = Material.objects.filter(id=material_id).first()
+        if material:
+            material.delete()
+            return Response({"result": "success"})
+        else:
+            return Response({"result": "material no exist"}, status=400)
