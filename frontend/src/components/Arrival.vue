@@ -24,6 +24,7 @@
           :label="$t('table-data.weight')"
           v-model="form.weight"
           outlined
+          suffix="kg"
         />
       </v-col>
       <v-col cols="7" class="text-left pr-12">
