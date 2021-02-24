@@ -19,12 +19,14 @@
 import Users from "./office/Users";
 import Customers from "./office/Customers";
 import Reports from "./office/Reports";
+import Materials from "./office/Materials";
 export default {
   name: "office-tab-bar",
   components: {
     Users,
     Customers,
     Reports,
+    Materials,
   },
   data() {
     return {
@@ -33,6 +35,7 @@ export default {
         { title: "users", content: "Users" },
         { title: "customers", content: "Customers" },
         { title: "reports", content: "Reports" },
+        { title: "materials", content: "Materials" },
       ],
       right: null,
     };

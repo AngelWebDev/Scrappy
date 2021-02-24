@@ -131,3 +131,67 @@ export const deactiveCustomer = async (cid) => {
     headers,
   });
 };
+
+export const getMaterial = (id, csrftoken) => {
+  return fetch(`${API_URL}/arrival/material?id=${id}`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  }).then((res) => res.json());
+};
+
+export const getMaterials = async (csrftoken) => {
+  return await fetch(`${API_URL}/arrival/material`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
+export const updateMaterial = async (data, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/material`, {
+    method: "PUT",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const deleteMaterial = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/material`, {
+    method: "DELETE",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify({ id: id }),
+  });
+};
+
+export const createMaterial = async (data, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/material`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const createArrival = async (data, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/shipment`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify(data),
+  });
+};

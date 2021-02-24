@@ -11,6 +11,7 @@
   },
   "office": {
     "customers": "Customers",
+    "materials": "Materials",
     "reports": "Reports",
     "users": "Users"
   },
@@ -49,6 +50,7 @@
     "paid_out_by": "Paid Out By",
     "pending": "Invitation pending",
     "phone": "Phone",
+    "price_per_kg": "Price per 1Kg",
     "lastname": "Last Name",
     "material": "Material",
     "name": "Name",
@@ -56,12 +58,13 @@
     "payout": "Payout",
     "solutation": "Solutation",
     "status": "Status",
+    "tare": "Tare Weight",
     "tax_id": "Tax Number",
     "value": "Value",
     "vat_id": "VAT ID",
     "verify": "Verify Identity",
     "verify_again": "Verify Again",
-    "weight": "Weight",
+    "weight": "Gross Weight",
     "zip": "Zip"
   },
   "form-data": {
@@ -72,8 +75,10 @@
     "clear": "Clear",
     "close": "Close",
     "create-customer": "Create Customer",
+    "create-material": "Create Material",
     "deactive": "Deactive",
     "edit-customer": "Edit Customer",
+    "edit-material": "Edit Material",
     "edit user": "Edit User",
     "id_person": "Identify Person",
     "invite": "Invite",

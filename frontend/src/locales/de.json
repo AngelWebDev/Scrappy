@@ -11,6 +11,7 @@
   },
   "office": {
     "customers": "Kunden",
+    "materials": "Materialien",
     "reports": "Berichte",
     "users": "Benutzer"
   },
@@ -49,6 +50,7 @@
     "paid_out_by": "Bezahlt aus Durch",
     "pending": "Einladung ausstehend",
     "phone": "Telefon",
+    "price_per_kg": "Preis pro 1Kg",
     "lastname": "Letzte Name",
     "material": "Material",
     "name": "Name",
@@ -56,12 +58,13 @@
     "payout": "Auszahlung",
     "solutation": "Lösung",
     "status": "Status",
+    "tare": "Tara Gewicht",
     "tax_id": "MwSt Nummer",
     "value": "Wert",
     "vat_id": "VAT ID",
     "verify": "Überprüfen Identität",
     "verify_again": "Überprüfen Nochmal",
-    "weight": "Gewicht",
+    "weight": "Brutto Gewicht",
     "zip": "Zip"
   },
   "form-data": {
@@ -72,8 +75,10 @@
     "clear": "klar",
     "close": "Schließen",
     "create-customer": "Erstellen Kundin",
+    "create-material": "Erstellen Material",
     "deactive": "Deaktivieren",
     "edit-customer": "Bearbeiten Kundin",
+    "edit-material": "Bearbeiten Material",
     "edit user": "Bearbeiten Nutzerin",
     "id_person": "Identifizieren Person",
     "invite": "Einladen",

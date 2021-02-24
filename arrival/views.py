@@ -46,11 +46,12 @@ class ArrivalAPI(APIView):
         try:
             arrival_info = request.data
             arrival_info['user_id'] = request.user.id
-            arrival_info['net_weight_kg'] = arrival_info['gross_weight_kg'] - arrival_info['tare_kg']
+            arrival_info['net_weight_kg'] = float(arrival_info['gross_weight_kg']) - float(arrival_info['tare_kg'])
             new_arrival = Arrival(**arrival_info)
             new_arrival.save()
             return Response({"result": "success"}, status=200)
         except Exception as e:
+            print(e)
             return Response({"result": "failed"}, status=400)
 
 
@@ -67,10 +68,13 @@ class MaterialAPI(APIView):
 
     def post(self, request):
         try:
-            new_material = Material(**request.data)
+            material_info = request.data
+            material_info['price_per_kg'] = float(material_info['price_per_kg'])
+            new_material = Material(**material_info)
             new_material.save()
             return Response({"result": MaterialSerializer(new_material).data})
         except Exception as e:
+            print(e)
             return Response({"result": "Failed to create new material"}, status=400)
 
     def put(self, request):
