@@ -57,7 +57,7 @@ class ArrivalAPI(APIView):
 class MaterialAPI(APIView):
     def get(self, request):
         if "id" in request.data:
-            material = get_object_or_404(Material, request.data["id"])
+            material = get_object_or_404(Material, id=request.data["id"])
             result = MaterialSerializer(material).data
         else:
             materials = get_list_or_404(Material)
