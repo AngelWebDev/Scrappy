@@ -4,49 +4,58 @@
     <v-row>
       <v-col cols="5">
         <v-autocomplete
-          v-model="form.customer"
+          v-model="form.customer_id"
           :items="customers"
           outlined
           dense
           chips
           small-chips
           :label="$t('table-data.customer')"
+          v-on:change="onChange"
         />
         <v-select
           dense
           :items="materials"
-          v-model="form.material"
+          v-model="form.material_id"
           :label="$t('table-data.material')"
           outlined
         />
         <v-text-field
           dense
           :label="$t('table-data.weight')"
-          v-model="form.weight"
+          v-model="form.gross_weight_kg"
           outlined
+          suffix="kg"
+        />
+        <v-text-field
+          dense
+          :label="$t('table-data.tare')"
+          v-model="form.tare_kg"
+          outlined
+          suffix="kg"
         />
       </v-col>
       <v-col cols="7" class="text-left pr-12">
-        <v-simple-table v-if="customer.id === null">
+        <v-simple-table v-if="customer.id !== null">
           <template v-slot:default>
             <tbody>
               <tr>
                 <td>{{ $t("table-data.name") }}:</td>
-                <td>{{ customer.name }}</td>
+                <td>{{ customer.firstname + " " + customer.lastname }}</td>
               </tr>
               <tr>
                 <td>{{ $t("table-data.company") }}:</td>
-                <td>{{ customer.name }}</td>
+                <td>{{ customer.company.name }}</td>
               </tr>
               <tr>
                 <td>{{ $t("table-data.address") }}:</td>
-                <td>{{ customer.name }}</td>
+                <td>{{ customer.street }}</td>
               </tr>
               <tr>
                 <td>
                   {{ $t("table-data.zip") }} / {{ $t("table-data.city") }}:
                 </td>
-                <td>{{ customer.name }}</td>
+                <td>{{ customer.zip + "/" + customer.city }}</td>
               </tr>
             </tbody>
           </template>
@@ -55,41 +64,150 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <v-btn depressed>
+        <v-btn depressed @click="cancel">
           {{ $t("form-data.clear") }}
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn depressed color="primary">
+        <v-btn depressed color="primary" @click="save">
           {{ $t("form-data.save") }}
         </v-btn>
       </v-col>
     </v-row>
+    <br />
+    <br />
+    <div class="text-center" v-if="error">
+      <span class="red--text">{{ error }} </span>
+    </div>
   </v-container>
 </template>
 
 <script>
+import { getCustomers, getCustomer, createArrival } from "../api";
 export default {
   name: "arrival",
-  components: {},
   data() {
     return {
-      customers: ["foo", "bar", "fizz", "buzz"],
+      customers: [],
       customer: {
         id: null,
-        name: null,
+        firstname: "",
+        lastname: "",
         street: null,
         zip: null,
         city: null,
-        company: {},
+        company: {
+          id: "",
+          name: "",
+          tax_id: "",
+          vat_id: "",
+        },
       },
-      materials: ["Cooper", "Iron", "Wood", "Ceramics"],
+      materials: [
+        { value: 1, text: "Cooper" },
+        { value: 2, text: "Iron" },
+        { value: 3, text: "Wood" },
+        { value: 4, text: "Ceramics" },
+      ],
       form: {
-        customer: {},
-        material: "Cooper",
-        weight: 0,
+        customer_id: null,
+        material_id: "Cooper",
+        gross_weight_kg: 0,
+        tare_kg: 0,
       },
+      error: "",
+      token: "",
     };
+  },
+  created() {
+    this.token = document
+      .querySelector('input[name="csrfmiddlewaretoken"]')
+      .getAttribute("value");
+    this.initialize();
+  },
+  methods: {
+    initialize() {
+      getCustomers(this.token)
+        .then((res) => res.json())
+        .then(({ result }) => {
+          console.log("result", result);
+          this.customers = result.map((item) => ({
+            value: item.id,
+            text: item.company
+              ? item.firstname +
+                " " +
+                item.lastname +
+                ", " +
+                item.company.name +
+                ", " +
+                item.street +
+                ", " +
+                item.zip
+              : item.firstname +
+                " " +
+                item.lastname +
+                ", " +
+                item.street +
+                ", " +
+                item.zip,
+          }));
+        });
+    },
+    onChange(id) {
+      getCustomer(id, this.token).then((res) => {
+        if (res) {
+          if (!res.result.company) {
+            res.result.company = Object.assign(
+              {},
+              {
+                id: "",
+                name: "",
+                tax_id: "",
+                vat_id: "",
+              }
+            );
+          }
+          this.customer = Object.assign({}, res.result);
+        }
+      });
+    },
+    save() {
+      createArrival(this.form, this.token).then((res) => {
+        if (res.status === 200) {
+          this.cancel();
+        } else {
+          this.error = "Something went wrong";
+        }
+      });
+    },
+    cancel() {
+      this.customer = Object.assign(
+        {},
+        {
+          id: null,
+          firstname: "",
+          lastname: "",
+          street: null,
+          zip: null,
+          city: null,
+          company: {
+            id: "",
+            name: "",
+            tax_id: "",
+            vat_id: "",
+          },
+        }
+      );
+      this.form = Object.assign(
+        {},
+        {
+          customer_id: null,
+          material_id: null,
+          gross_weight_kg: 0,
+          tare_kg: 0,
+        }
+      );
+    },
   },
 };
 </script>
