@@ -1,20 +1,25 @@
 import json
 
 from django.shortcuts import render
-from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
+from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView
+from rest_framework.response import Response
 
 from .mixins import UserPayoutAccessMixin
+from .models import Payout
+from arrival.models import Arrival
+from arrival.serializers import ArrivalInPayoutSerializerList, ArrivalInPayoutSerializerDetail
 from office.models import Rights, ScrappyUser
-from office.serializers import UserSerializer
+from office.serializers import UserSerializer, Customer
 
 
-class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, View):
-    template = 'payout.html'
+class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, DetailView):
+    template_name = 'payout.html'
+    context_object_name = 'user'
 
-    def get(self, request):
-        # send logged in user's data including rights info
-        rights = list(Rights.objects.filter(user=request.user).values_list("right", flat=True))
+    def get_object(self):
+        rights = list(Rights.objects.filter(user=self.request.user).values_list("right", flat=True))
         user_detail = {
             "office": False,
             "payout": False,
@@ -27,11 +32,33 @@ class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, View):
             user_detail['payout'] = True
         if 'Arrival' in rights:
             user_detail['arrival'] = True
-        user = ScrappyUser.objects.filter(id=request.user.id).first()
+        user = ScrappyUser.objects.filter(id=self.request.user.id).first()
         user_serialized = UserSerializer(user)
         user_detail.update(user_serialized.data)
-        context = {
-            "user": json.dumps(user_detail)
-        }
 
-        return render(request, self.template, context)
+        return json.dumps(user_detail)
+
+
+class ArrivalPayoutListAPI(ListAPIView):
+    serializer_class = ArrivalInPayoutSerializerList
+
+    def get_queryset(self):
+        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN).all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"result": serializer.data})
+
+
+class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
+    lookup_field = 'id'
+    serializer_class = ArrivalInPayoutSerializerDetail
+
+    def get_queryset(self):
+        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN).all()
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({"result": serializer.data})

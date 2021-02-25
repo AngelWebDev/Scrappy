@@ -49,7 +49,6 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
             return None
 
 
-
 class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomInvitation
