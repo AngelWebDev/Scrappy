@@ -1,8 +1,8 @@
 <template v-slot:extension>
-  <v-container fluid class="arrival_container">
+  <v-container fluid class="arrival_container col-8">
     <h1 class="tab-title text-left pb-16">{{ $t("side-bar.arrival") }}</h1>
     <v-row>
-      <v-col cols="5">
+      <v-col cols="7">
         <v-autocomplete
           v-model="form.customer_id"
           :items="customers"
@@ -25,6 +25,7 @@
           :label="$t('table-data.weight')"
           v-model="form.gross_weight_kg"
           outlined
+          type="number"
           suffix="kg"
         />
         <v-text-field
@@ -32,10 +33,11 @@
           :label="$t('table-data.tare')"
           v-model="form.tare_kg"
           outlined
+          type="number"
           suffix="kg"
         />
       </v-col>
-      <v-col cols="7" class="text-left pr-12">
+      <v-col cols="5" class="text-left pr-12">
         <v-simple-table v-if="customer.id !== null">
           <template v-slot:default>
             <tbody>

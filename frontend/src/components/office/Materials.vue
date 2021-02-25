@@ -33,6 +33,7 @@
                     />
                     <v-text-field
                       outlined
+                      type="number"
                       v-model="editedItem.price_per_kg"
                       :label="$t('table-data.price_per_kg')"
                     />
