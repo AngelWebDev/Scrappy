@@ -49,4 +49,7 @@ export default {
   margin-top: 150px;
   padding-left: 20px;
 }
+.v-window {
+  overflow: visible !important;
+}
 </style>

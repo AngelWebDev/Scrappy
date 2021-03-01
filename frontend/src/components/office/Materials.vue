@@ -178,7 +178,6 @@ export default {
 
     editItem(item) {
       getMaterial(item.id, this.token).then((res) => {
-        console.log("angel log", res);
         if (res) {
           this.editedIndex = this.items.indexOf(item);
           this.editedItem = Object.assign({}, res.result);

@@ -107,6 +107,8 @@
       </v-toolbar>
     </template>
 
+    <template v-slot:[`item.price`]="{ item }"> {{ item.price }} EUR </template>
+
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">
         Reset
@@ -116,7 +118,7 @@
 </template>
 
 <script>
-import { getUsers } from "../../api";
+import { getArrivedList } from "../../api";
 import moment from "moment";
 export default {
   name: "open",
@@ -126,12 +128,12 @@ export default {
     error: false,
     success: false,
     headers: [
-      { text: "Customer", value: "name" },
+      { text: "Customer", value: "customer" },
       { text: "City", value: "city" },
       { text: "Material", value: "material" },
-      { text: "Weight", value: "weight" },
-      { text: "Date/Time", value: "date" },
-      { text: "Amount", value: "amount" },
+      { text: "Weight", value: "net_weight_kg" },
+      { text: "Date/Time", value: "arrived_at" },
+      { text: "Amount", value: "price" },
     ],
     fromDateMenu: false,
     items: [],
@@ -175,12 +177,12 @@ export default {
       this.token = document
         .querySelector('input[name="csrfmiddlewaretoken"]')
         .getAttribute("value");
-      getUsers(this.token)
+      getArrivedList(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           this.items = result.map((item) => ({
-            name: item.firstname + " " + item.lastname,
             ...item,
+            arrived_at: moment(item.arrived_at).format("MM-DD-YYYY hh:mm"),
           }));
         });
     },
