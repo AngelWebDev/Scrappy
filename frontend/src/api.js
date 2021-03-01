@@ -195,3 +195,13 @@ export const createArrival = async (data, csrftoken) => {
     body: JSON.stringify(data),
   });
 };
+
+export const getArrivedList = async (csrftoken) => {
+  return await fetch(`${API_URL}/payout/arrived`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};

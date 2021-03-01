@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { getCustomers, getCustomer, createArrival } from "../api";
+import { getCustomers, getCustomer, createArrival, getMaterials } from "../api";
 export default {
   name: "arrival",
   data() {
@@ -105,12 +105,7 @@ export default {
           vat_id: "",
         },
       },
-      materials: [
-        { value: 1, text: "Cooper" },
-        { value: 2, text: "Iron" },
-        { value: 3, text: "Wood" },
-        { value: 4, text: "Ceramics" },
-      ],
+      materials: [],
       form: {
         customer_id: null,
         material_id: "Cooper",
@@ -132,7 +127,6 @@ export default {
       getCustomers(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
-          console.log("result", result);
           this.customers = result.map((item) => ({
             value: item.id,
             text: item.company
@@ -152,6 +146,15 @@ export default {
                 item.street +
                 ", " +
                 item.zip,
+          }));
+        });
+
+      getMaterials(this.token)
+        .then((res) => res.json())
+        .then(({ result }) => {
+          this.materials = result.map((item) => ({
+            value: item.id,
+            text: item.name,
           }));
         });
     },
