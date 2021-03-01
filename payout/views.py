@@ -39,7 +39,7 @@ class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, DetailView):
         return json.dumps(user_detail)
 
 
-class ArrivalPayoutListAPI(ListAPIView):
+class ArrivalPayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
     serializer_class = ArrivalInPayoutSerializerList
 
     def get_queryset(self):
@@ -51,7 +51,7 @@ class ArrivalPayoutListAPI(ListAPIView):
         return Response({"result": serializer.data})
 
 
-class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
+class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveUpdateAPIView):
     lookup_field = 'id'
     serializer_class = ArrivalInPayoutSerializerDetail
 
@@ -77,7 +77,7 @@ class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
         return Response({"result": "success"})
 
 
-class PayoutListAPI(ListAPIView):
+class PayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
     queryset = Payout.objects.all()
     serializer_class = PayoutListSerializer
 
@@ -87,7 +87,7 @@ class PayoutListAPI(ListAPIView):
         return Response({"result": serializer.data})
 
 
-class PayoutDetailAPI(RetrieveAPIView):
+class PayoutDetailAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveAPIView):
     queryset = Payout.objects.all()
     lookup_url_kwarg = 'id'
     serializer_class = PayoutDetailSerializer

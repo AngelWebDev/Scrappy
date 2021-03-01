@@ -8,7 +8,7 @@ from .mixins import UserArrivalAccessMixin
 from .models import Arrival, Material
 from .serializers import MaterialSerializer
 from office.models import Rights, ScrappyUser
-from office.serializers import UserSerializer, CustomerListSerializer
+from office.serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -41,7 +41,7 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         return render(request, self.template, context)
 
 
-class ArrivalAPI(APIView):
+class ArrivalAPI(LoginRequiredMixin, UserArrivalAccessMixin, APIView):
     def post(self, request):
         try:
             arrival_info = request.data
@@ -55,7 +55,7 @@ class ArrivalAPI(APIView):
             return Response({"result": "failed"}, status=400)
 
 
-class MaterialAPI(APIView):
+class MaterialAPI(LoginRequiredMixin, UserArrivalAccessMixin, APIView):
     def get(self, request):
         if "id" in request.query_params:
             material = get_object_or_404(Material, id=request.query_params.get("id"))

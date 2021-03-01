@@ -164,7 +164,7 @@ class OfficeView(LoginRequiredMixin, UserOfficeAccessMixin, View):
         return render(request, self.template, context)
 
 
-class UserAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
+class UserAPI(LoginRequiredMixin, UserOfficeAccessMixin, RetrieveUpdateDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         users = []
         try:
@@ -233,7 +233,7 @@ class UserAPI(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
             return Response({"result": "User not found"}, status=400)
 
 
-class CustomerAPIView(APIView):
+class CustomerAPIView(LoginRequiredMixin, UserOfficeAccessMixin, APIView):
     model = Customer
     list_serializer = CustomerListSerializer
     detail_serializer = CustomerDetailSerializer
@@ -322,7 +322,7 @@ class CustomerAPIView(APIView):
             return Response({"result": "Failed customer delete"}, status=400)
 
 
-class IdentificationCreateAPI(LoginRequiredMixin, CreateAPIView):
+class IdentificationCreateAPI(LoginRequiredMixin, UserOfficeAccessMixin, CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             identification_info = request.data

@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from .models import Arrival, Material
-from office.models import Customer
-from payout.models import Payout
 
 
 class ArrivalSerializer(serializers.ModelSerializer):
@@ -52,7 +50,3 @@ class ArrivalInPayoutSerializerDetail(ArrivalInPayoutSerializerList):
             return obj.customer.company.name
         else:
             return None
-
-    # def update(self, instance, validated_data):
-    #     instance.status = Arrival.StatusChoices.PAID
-    #     new_payout = PayOut
