@@ -1,17 +1,17 @@
 import json
 
-from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
-from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView
+from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 
 from .mixins import UserPayoutAccessMixin
 from .models import Payout
+from .serializers import PayoutListSerializer, PayoutDetailSerializer
 from arrival.models import Arrival
 from arrival.serializers import ArrivalInPayoutSerializerList, ArrivalInPayoutSerializerDetail
 from office.models import Rights, ScrappyUser
-from office.serializers import UserSerializer, Customer
+from office.serializers import UserSerializer
 
 
 class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, DetailView):
@@ -75,3 +75,24 @@ class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
         new_payout.save()
 
         return Response({"result": "success"})
+
+
+class PayoutListAPI(ListAPIView):
+    queryset = Payout.objects.all()
+    serializer_class = PayoutListSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response({"result": serializer.data})
+
+
+class PayoutDetailAPI(RetrieveAPIView):
+    queryset = Payout.objects.all()
+    lookup_url_kwarg = 'id'
+    serializer_class = PayoutDetailSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.serializer_class(instance)
+        return Response({"result": serializer.data})
