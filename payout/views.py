@@ -62,3 +62,16 @@ class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response({"result": serializer.data})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.status = Arrival.StatusChoices.PAID
+        instance.save()
+
+        new_payout = Payout()
+        new_payout.arrival = instance
+        new_payout.user = request.user
+        new_payout.paid_amount = self.serializer_class(instance).get_price(instance)
+        new_payout.save()
+
+        return Response({"result": "success"})
