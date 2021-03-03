@@ -27,12 +27,12 @@
                     <v-text-field
                       outlined
                       disabled
-                      v-model="editedItem.datetime"
+                      v-model="editedItem.arrived_at"
                       :label="$t('table-data.paid_out_at')"
                     />
                     <v-text-field
                       outlined
-                      v-model="editedItem.amount"
+                      v-model="editedItem.price"
                       :label="$t('table-data.amount')"
                       suffix="EUR"
                     />
@@ -46,7 +46,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.name }}
+                          {{ editedItem.customer }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -58,7 +58,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          n/a
+                          {{ editedItem.company_name }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -70,7 +70,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.address }}
+                          {{ editedItem.street }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { getArrivedList } from "../../api";
+import { getOpenList, getOpen, createPaid } from "../../api";
 import moment from "moment";
 export default {
   name: "open",
@@ -140,21 +140,27 @@ export default {
     editedIndex: -1,
     editedItem: {
       id: "",
-      firstname: "",
-      lastname: "",
-      email: "",
-      datetime: "",
-      payout: false,
-      office: false,
+      arrived_at: "",
+      city: "",
+      customer: "",
+      material: "",
+      net_weight_kg: 0,
+      price: 0,
+      street: "",
+      zip: "",
+      company_name: "",
     },
     defaultItem: {
       id: "",
-      firstname: "",
-      lastname: "",
-      email: "",
-      arrival: false,
-      payout: false,
-      office: false,
+      arrived_at: "",
+      city: "",
+      customer: "",
+      material: "",
+      net_weight_kg: 0,
+      price: 0,
+      street: "",
+      zip: "",
+      company_name: "",
     },
     token: "",
   }),
@@ -177,7 +183,7 @@ export default {
       this.token = document
         .querySelector('input[name="csrfmiddlewaretoken"]')
         .getAttribute("value");
-      getArrivedList(this.token)
+      getOpenList(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           this.items = result.map((item) => ({
@@ -188,14 +194,27 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-      this.editing = true;
-      this.editedItem.datetime = moment(new Date()).format("MM-DD-YYYY hh:mm");
+      getOpen(item.id, this.token).then(({ result }) => {
+        this.editedIndex = this.items.indexOf(item);
+        if (result) {
+          this.editedItem = Object.assign({}, result);
+        }
+        this.dialog = true;
+        this.editing = true;
+        this.editedItem.arrived_at = moment(new Date()).format(
+          "MM-DD-YYYY hh:mm"
+        );
+      });
     },
 
-    paid() {},
+    paid() {
+      createPaid(this.editedItem.id, this.token).then(({ result }) => {
+        if (result === "success") {
+          this.initialize();
+          this.close();
+        }
+      });
+    },
 
     close() {
       this.dialog = false;

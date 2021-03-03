@@ -4,7 +4,7 @@
     :items="items"
     :search="search"
     class="elevation-1"
-    @click:row="openModal"
+    @click:row="editItem"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -39,7 +39,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.material }}
+                          {{ editedItem.arrival.material }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -52,7 +52,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.arrival }}
+                          {{ editedItem.arrival.arrived_at }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -65,7 +65,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.weight }}
+                          {{ editedItem.arrival.net_weight_kg }} kg
                         </strong>
                       </v-col>
                     </v-row>
@@ -77,9 +77,7 @@
                         </span>
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
-                        <strong>
-                          {{ editedItem.value }}
-                        </strong>
+                        <h2>{{ editedItem.arrival.price }} EUR</h2>
                       </v-col>
                     </v-row>
 
@@ -91,7 +89,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.paid_out }}
+                          {{ editedItem.paid_at }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -104,7 +102,11 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.paid_out_by }}
+                          {{
+                            editedItem.user.firstname +
+                              " " +
+                              editedItem.user.lastname
+                          }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -119,7 +121,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.name }}
+                          {{ editedItem.arrival.customer }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -131,7 +133,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          n/a
+                          {{ editedItem.arrival.company_name }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -143,7 +145,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.address }}
+                          {{ editedItem.arrival.street }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -157,7 +159,9 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.zip }}/{{ editedItem.city }}
+                          {{ editedItem.arrival.zip }}/{{
+                            editedItem.arrival.city
+                          }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -187,7 +191,8 @@
 </template>
 
 <script>
-import { getUsers } from "../../api";
+import { getPaidList, getPaid } from "../../api";
+import moment from "moment";
 export default {
   name: "paid",
   data: () => ({
@@ -197,34 +202,40 @@ export default {
     success: false,
     search: "",
     headers: [
-      { text: "Customer", value: "name" },
-      { text: "City", value: "city" },
-      { text: "Material", value: "material" },
-      { text: "Weight", value: "weight" },
-      { text: "Date/Time", value: "date" },
-      { text: "Amount", value: "amount" },
-      { text: "Paid At", value: "paid_date" },
+      { text: "Customer", value: "arrival.customer" },
+      { text: "City", value: "arrival.city" },
+      { text: "Material", value: "arrival.material" },
+      { text: "Weight", value: "arrival.net_weight_kg" },
+      { text: "Date/Time", value: "arrival.arrived_at" },
+      { text: "Amount", value: "arrival.price" },
+      { text: "Paid At", value: "paid_at" },
     ],
     fromDateMenu: false,
     items: [],
     editedIndex: -1,
     editedItem: {
       id: "",
-      firstname: "",
-      lastname: "",
-      email: "",
-      arrival: false,
-      payout: false,
-      office: false,
-    },
-    defaultItem: {
-      id: "",
-      firstname: "",
-      lastname: "",
-      email: "",
-      arrival: false,
-      payout: false,
-      office: false,
+      paid_at: "",
+      paid_amount: 0,
+      user: {
+        id: "",
+        email: "",
+        firstname: "",
+        lastname: "",
+        status: "",
+      },
+      arrival: {
+        id: "",
+        customer: "",
+        city: "",
+        material: "",
+        net_weight_kg: 0,
+        arrived_at: "",
+        price: 0,
+        street: "",
+        company_name: "",
+        zip: "",
+      },
     },
     token: "",
   }),
@@ -232,9 +243,6 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
     },
   },
 
@@ -247,43 +255,43 @@ export default {
       this.token = document
         .querySelector('input[name="csrfmiddlewaretoken"]')
         .getAttribute("value");
-      getUsers(this.token)
+      getPaidList(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           this.items = result.map((item) => ({
-            name: item.firstname + " " + item.lastname,
-            ...item,
+            id: item.id,
+            paid_at: moment(item.paid_at).format("MM-DD-YYYY hh:mm"),
+            arrival: {
+              ...item.arrival,
+              arrived_at: moment(item.arrival.arrived_at).format(
+                "MM-DD-YYYY hh:mm"
+              ),
+            },
           }));
         });
     },
 
-    openModal(item) {
-      this.dialog = true;
-      this.editedItem = item;
-    },
-
     editItem(item) {
       this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-      this.editing = true;
+      getPaid(item.id, this.token).then(({ result }) => {
+        this.editedItem = Object.assign({}, result);
+        this.editedItem.paid_at = moment(this.editedItem.paid_at).format(
+          "MM-DD-YYYY hh:mm"
+        );
+        this.editedItem.arrival.arrived_at = moment(
+          this.editedItem.arrival.arrived_at
+        ).format("MM-DD-YYYY hh:mm");
+        this.dialog = true;
+        this.editing = true;
+      });
     },
-
-    paid() {},
 
     close() {
       this.dialog = false;
       this.editing = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       });
-    },
-
-    closeDelete() {
-      this.dialogDelete = false;
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
     },
   },
 };

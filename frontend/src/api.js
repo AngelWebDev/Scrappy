@@ -196,12 +196,53 @@ export const createArrival = async (data, csrftoken) => {
   });
 };
 
-export const getArrivedList = async (csrftoken) => {
-  return await fetch(`${API_URL}/payout/arrived`, {
+export const getOpenList = async (csrftoken) => {
+  return await fetch(`${API_URL}/payout/open`, {
     method: "GET",
     headers: {
       ...headers,
       "X-CSRFTOKEN": csrftoken,
     },
   });
+};
+
+export const getOpen = (id, csrftoken) => {
+  return fetch(`${API_URL}/payout/open/${id}`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  }).then((res) => res.json());
+};
+
+export const createPaid = (id, csrftoken) => {
+  return fetch(`${API_URL}/payout/open/${id}/`, {
+    method: "PUT",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: null,
+  }).then((res) => res.json());
+};
+
+export const getPaidList = async (csrftoken) => {
+  return await fetch(`${API_URL}/payout/paid`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
+export const getPaid = (id, csrftoken) => {
+  return fetch(`${API_URL}/payout/paid/${id}/`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  }).then((res) => res.json());
 };
