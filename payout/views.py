@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from .mixins import UserPayoutAccessMixin
 from .models import Payout
-from .serializers import PayoutListSerializer, PayoutDetailSerializer
+from .serializers import PayoutListSerializer, PayoutDetailSerializer, PayoutReportSerializer
 from arrival.models import Arrival
 from arrival.serializers import ArrivalInPayoutSerializerList, ArrivalInPayoutSerializerDetail
 from office.models import Rights, ScrappyUser
@@ -95,4 +95,19 @@ class PayoutDetailAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveAPIView
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.serializer_class(instance)
+        return Response({"result": serializer.data})
+
+
+class PayoutReportAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
+    serializer_class = PayoutReportSerializer
+
+    def get_queryset(self):
+        if 'date' in self.request.query_params:
+            return Payout.objects.filter(paid_at=self.request.query_params['date'])
+        else:
+            return Payout.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
         return Response({"result": serializer.data})
