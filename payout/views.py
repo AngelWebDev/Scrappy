@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
@@ -98,12 +99,14 @@ class PayoutDetailAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveAPIView
         return Response({"result": serializer.data})
 
 
-class PayoutReportAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
+class PayoutReportAPI(ListAPIView):
     serializer_class = PayoutReportSerializer
 
     def get_queryset(self):
         if 'date' in self.request.query_params:
-            return Payout.objects.filter(paid_at=self.request.query_params['date'])
+            start_date = datetime.datetime.strptime(self.request.query_params['date'], "%Y-%m-%d")
+            end_date = start_date + datetime.timedelta(days=1)
+            return Payout.objects.filter(paid_at__range=[start_date, end_date])
         else:
             return Payout.objects.all()
 
