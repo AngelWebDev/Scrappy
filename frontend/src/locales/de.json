@@ -1,4 +1,20 @@
 {
+  "pdf": {
+    "date": "Datum",
+    "title": "Trödlerbuch",
+    "transaction-id": "Transaktion-ID",
+    "customer-no": "Kunden-No",
+    "customer-name": "Kunden Name",
+    "tax-id": "MwSt ID",
+    "vat-id": "VAT ID",
+    "car-license-number": "Wagen Lizenz Number",
+    "material": "Material",
+    "net-weight": "Netz-Gewicht",
+    "price-per-kg": "Preis pro kg",
+    "position-value": "Position Wert",
+    "vat-amount": "Vat Menge",
+    "gross-amount": "Brutto Menge"
+  },
   "app-bar": {
     "change-password": "Ändere das Passwort",
     "logged-in-user": "Angemeldeter Benutzer ",
@@ -31,6 +47,7 @@
     "company_name": "Unternehmen  Name",
     "customer": "Kundin",
     "date/time": "Datum/Zeit",
+    "description": "Wählen Datum",
     "doc_exp": "Dokument  Ablauf",
     "doc_id": "Dokument ID",
     "doc_issuer": "Dokument  Aussteller",
@@ -51,6 +68,7 @@
     "pending": "Einladung ausstehend",
     "phone": "Telefon",
     "price_per_kg": "Preis pro 1Kg",
+    "print": "Drucken",
     "lastname": "Letzte Name",
     "material": "Material",
     "name": "Name",

@@ -1,4 +1,20 @@
 {
+  "pdf": {
+    "date": "Date",
+    "title": "Payout History",
+    "transaction-id": "Transaction-ID",
+    "customer-no": "Customer-No",
+    "customer-name": "Customer Name",
+    "tax-id": "Tax ID",
+    "vat-id": "VAT ID",
+    "car-license-number": "Car Licese Number",
+    "material": "Material",
+    "net-weight": "Net-Weight",
+    "price-per-kg": "Price per kg",
+    "position-value": "Position Value",
+    "vat-amount": "Vat Amount",
+    "gross-amount": "Gross Amount"
+  },
   "app-bar": {
     "change-password": "Change Password",
     "logged-in-user": "Logged In User",
@@ -31,6 +47,7 @@
     "company_name": "Company Name",
     "customer": "Customer",
     "date/time": "Date/Time",
+    "description": "Select Date",
     "doc_exp": "Document Expiration",
     "doc_id": "Document ID",
     "doc_issuer": "Document Issuer",
@@ -51,6 +68,7 @@
     "pending": "Invitation pending",
     "phone": "Phone",
     "price_per_kg": "Price per 1Kg",
+    "print": "Print",
     "lastname": "Last Name",
     "material": "Material",
     "name": "Name",

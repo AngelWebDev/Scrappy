@@ -16,7 +16,7 @@
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  label="Select the Transaction Date"
+                  :label="$t(`table-data.description`)"
                   readonly
                   :value="date"
                   v-on="on"
@@ -32,12 +32,8 @@
             </v-menu>
           </v-col>
           <v-col cols="6" class="text-right">
-            <v-btn
-              color="primary"
-              :disabled="date ? false : true"
-              @click="generatePDF"
-            >
-              Print
+            <v-btn color="primary" :disabled="!isPrint" @click="generatePDF">
+              {{ $t("table-data.print") }}
             </v-btn>
           </v-col>
         </v-row>
@@ -48,6 +44,40 @@
       <v-btn color="primary" @click="initialize">
         Reset
       </v-btn>
+    </template>
+
+    <template v-slot:[`header.id`]="{ header }">
+      {{ $t("pdf.transaction-id") }}
+    </template>
+    <template v-slot:[`header.customerNo`]="{ header }">
+      {{ $t(`pdf.customer-no`) }}
+    </template>
+    <template v-slot:[`header.customerName`]="{ header }">
+      {{ $t(`pdf.customer-name`) }}
+    </template>
+    <template v-slot:[`header.taxID`]="{ header }">
+      {{ $t(`pdf.tax-id`) }}
+    </template>
+    <template v-slot:[`header.vatID`]="{ header }">
+      {{ $t(`pdf.vat-id`) }}
+    </template>
+    <template v-slot:[`header.material`]="{ header }">
+      {{ $t(`pdf.material`) }}
+    </template>
+    <template v-slot:[`header.netWeight`]="{ header }">
+      {{ $t(`pdf.net-weight`) }}
+    </template>
+    <template v-slot:[`header.pricePerKg`]="{ header }">
+      {{ $t(`pdf.price-per-kg`) }}
+    </template>
+    <template v-slot:[`header.positionValue`]="{ header }">
+      {{ $t(`pdf.position-value`) }}
+    </template>
+    <template v-slot:[`header.vatAmount`]="{ header }">
+      {{ $t(`pdf.vat-amount`) }}
+    </template>
+    <template v-slot:[`header.grossAmount`]="{ header }">
+      {{ $t(`pdf.gross-amount`) }}
     </template>
   </v-data-table>
 </template>
@@ -76,6 +106,7 @@ export default {
     ],
     items: [],
     date: "",
+    isPrint: false,
     fromDateMenu: false,
     token: "",
   }),
@@ -91,26 +122,36 @@ export default {
         .getAttribute("value");
     },
     onChangeDate() {
-      getReportsData(this.token)
-        .then((res) => res.json())
-        .then(({ result }) => {
-          this.items = result.map((item) => ({
-            id: item.id,
-            customerNo: item.customer.id,
-            customerName:
-              item.customer.firstname + " " + item.customer.lastname,
-            taxID: item.customer.company ? item.customer.company.tax_id : "",
-            vatID: item.customer.company ? item.customer.company.vat_id : "",
-            // CLN: item.CLN,
-            // materialCategory: item.category,
-            material: item.material.name,
-            netWeight: item.net_weight,
-            pricePerKg: item.price_per_kg,
-            positionValue: item.net_weight * item.price_per_kg,
-            vatAmount: item.vat_amount,
-            grossAmount: item.vat_amount + item.net_weight * item.price_per_kg,
-          }));
-        });
+      if (this.date) {
+        getReportsData(this.date, this.token)
+          .then((res) => res.json())
+          .then(({ result }) => {
+            if (result.length > 0) {
+              this.isPrint = true;
+              this.items = result.map((item) => ({
+                id: item.id,
+                customerNo: item.customer.id,
+                customerName:
+                  item.customer.firstname + " " + item.customer.lastname,
+                taxID: item.customer.company
+                  ? item.customer.company.tax_id
+                  : "",
+                vatID: item.customer.company
+                  ? item.customer.company.vat_id
+                  : "",
+                // CLN: item.CLN,
+                // materialCategory: item.category,
+                material: item.material.name,
+                netWeight: item.net_weight,
+                pricePerKg: item.price_per_kg,
+                positionValue: item.net_weight * item.price_per_kg,
+                vatAmount: item.vat_amount,
+                grossAmount:
+                  item.vat_amount + item.net_weight * item.price_per_kg,
+              }));
+            }
+          });
+      }
     },
     generatePDF() {
       let pdfName = "report_" + this.date.replaceAll("-", "").trim();
@@ -123,14 +164,19 @@ export default {
           //Header
           doc.setFont("helvetica", "Bold");
           doc.setFontSize(30);
-          doc.text("Trödlerbuch", doc.internal.pageSize.width / 2, 30, {
+          doc.text(this.$t(`pdf.title`), doc.internal.pageSize.width / 2, 30, {
             align: "center",
           });
           doc.setFont("helvetica");
           doc.setFontSize(10);
-          doc.text("Date: " + this.date, doc.internal.pageSize.width - 10, 30, {
-            align: "right",
-          });
+          doc.text(
+            `${this.$t("pdf.date")}: ` + this.date,
+            doc.internal.pageSize.width - 10,
+            30,
+            {
+              align: "right",
+            }
+          );
           doc.setDrawColor("gray");
           doc.setLineWidth(0, 5);
           doc.line(10, 35, doc.internal.pageSize.width - 10, 35);
@@ -141,19 +187,19 @@ export default {
               let height = j * 50 + 45;
               doc.setFont("helvetica");
               doc.setFontSize(10);
-              doc.text("Transaction-ID", 10, height);
-              doc.text("Customer-No", 40, height);
-              doc.text("Customer Name", 65, height);
-              doc.text("Tax ID", 100, height);
-              doc.text("VAT ID", 130, height);
-              doc.text("Car Licenseplate Number", 160, height);
+              doc.text(this.$t("pdf.transaction-id"), 10, height);
+              doc.text(this.$t("pdf.customer-no"), 40, height);
+              doc.text(this.$t("pdf.customer-name"), 65, height);
+              doc.text(this.$t("pdf.tax-id"), 100, height);
+              doc.text(this.$t("pdf.vat-id"), 130, height);
+              doc.text(this.$t("pdf.car-license-number"), 160, height);
 
-              doc.text("Material", 10, height + 20);
-              doc.text("Net-Weight", 40, height + 20);
-              doc.text("Price_per_kg", 70, height + 20);
-              doc.text("Position Value", 100, height + 20);
-              doc.text("Vat Amount", 130, height + 20);
-              doc.text("Gross Amount", 160, height + 20);
+              doc.text(this.$t("pdf.material"), 10, height + 20);
+              doc.text(this.$t("pdf.net-weight"), 40, height + 20);
+              doc.text(this.$t("pdf.price-per-kg"), 70, height + 20);
+              doc.text(this.$t("pdf.position-value"), 100, height + 20);
+              doc.text(this.$t("pdf.vat-amount"), 130, height + 20);
+              doc.text(this.$t("pdf.gross-amount"), 160, height + 20);
             }
           }
 

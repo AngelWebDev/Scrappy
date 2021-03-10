@@ -247,8 +247,8 @@ export const getPaid = (id, csrftoken) => {
   }).then((res) => res.json());
 };
 
-export const getReportsData = async (csrftoken) => {
-  return await fetch(`${API_URL}/payout/report`, {
+export const getReportsData = async (date, csrftoken) => {
+  return await fetch(`${API_URL}/payout/report/?date=${date}`, {
     method: "GET",
     headers: {
       ...headers,
