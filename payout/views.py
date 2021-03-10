@@ -99,7 +99,7 @@ class PayoutDetailAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveAPIView
         return Response({"result": serializer.data})
 
 
-class PayoutReportAPI(ListAPIView):
+class PayoutReportAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
     serializer_class = PayoutReportSerializer
 
     def get_queryset(self):
