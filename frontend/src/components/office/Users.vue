@@ -61,6 +61,11 @@
                     ></v-checkbox>
                   </v-col>
                 </v-row>
+                <v-row>
+                  <div class="text-center" v-if="error">
+                    <span class="red--text">{{ error }} </span>
+                  </div>
+                </v-row>
               </v-container>
             </v-card-text>
 
@@ -187,7 +192,7 @@ export default {
     dialogDelete: false,
     pending: false,
     editing: false,
-    error: false,
+    error: null,
     success: false,
     headers: [
       { text: "Name", value: "name" },
@@ -284,7 +289,7 @@ export default {
       this.dialog = false;
       this.editing = false;
       this.pending = false;
-      this.error = "";
+      this.error = null;
       this.success = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
@@ -310,11 +315,8 @@ export default {
           this.close();
         });
       } else {
-        if (
-          this.editedItem.email &&
-          this.editedItem.firstname &&
-          this.editedItem.lastname
-        ) {
+        this.validation();
+        if (!this.error) {
           this.pending = true;
           delete this.editedItem.name;
           delete this.editedItem.id;
@@ -325,7 +327,7 @@ export default {
               if (res.result === "success") {
                 this.success = true;
               } else {
-                this.error = true;
+                this.error = "Something went wrong.";
               }
             });
         }
@@ -356,6 +358,17 @@ export default {
       // eslint-disable-next-line no-undef
       cancelInviteUser(data, csrftoken);
       this.close();
+    },
+    validation() {
+      if (!this.editedItem.email) {
+        this.error = "Please enter email address.";
+      } else if (!this.editedItem.firstname) {
+        this.error = "Please enter First Name.";
+      } else if (!this.editedItem.lastname) {
+        this.error = "Please enter Last Name.";
+      } else {
+        this.error = null;
+      }
     },
   },
 };

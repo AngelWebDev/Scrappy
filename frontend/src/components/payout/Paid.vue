@@ -10,7 +10,7 @@
       <v-toolbar flat>
         <v-text-field
           v-model="search"
-          label="Filter"
+          label="Search"
           single-line
           hide-details
         />
@@ -202,13 +202,12 @@ export default {
     success: false,
     search: "",
     headers: [
+      { text: "Customer#", value: "arrival.customer_id" },
       { text: "Customer", value: "arrival.customer" },
-      { text: "City", value: "arrival.city" },
-      { text: "Material", value: "arrival.material" },
-      { text: "Weight", value: "arrival.net_weight_kg" },
-      { text: "Date/Time", value: "arrival.arrived_at" },
+      { text: "Payout#", value: "arrival.payout_id" },
       { text: "Amount", value: "arrival.price" },
       { text: "Paid At", value: "paid_at" },
+      { text: "User", value: "username" },
     ],
     fromDateMenu: false,
     items: [],

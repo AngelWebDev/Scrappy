@@ -2,11 +2,18 @@
   <v-data-table
     :headers="headers"
     :items="items"
+    :search="search"
     class="elevation-1"
     @click:row="editItem"
   >
     <template v-slot:top>
       <v-toolbar flat>
+        <v-text-field
+          v-model="search"
+          label="Search"
+          single-line
+          hide-details
+        />
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="700px">
           <v-card>
@@ -127,11 +134,11 @@ export default {
     editing: false,
     error: false,
     success: false,
+    search: "",
     headers: [
+      { text: "Customer#", value: "customer_id" },
       { text: "Customer", value: "customer" },
       { text: "City", value: "city" },
-      { text: "Material", value: "material" },
-      { text: "Weight", value: "net_weight_kg" },
       { text: "Date/Time", value: "arrived_at" },
       { text: "Amount", value: "price" },
     ],
