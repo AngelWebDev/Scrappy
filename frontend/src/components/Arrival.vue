@@ -20,22 +20,40 @@
           :label="$t('table-data.material')"
           outlined
         />
-        <v-text-field
-          dense
-          :label="$t('table-data.weight')"
-          v-model="form.gross_weight_kg"
-          outlined
-          type="number"
-          suffix="kg"
-        />
-        <v-text-field
-          dense
-          :label="$t('table-data.tare')"
-          v-model="form.tare_kg"
-          outlined
-          type="number"
-          suffix="kg"
-        />
+
+        <v-row>
+          <v-col cols="4">
+            <v-text-field
+              dense
+              :label="$t('table-data.weight')"
+              v-model="form.gross_weight_kg"
+              outlined
+              type="number"
+              suffix="kg"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              dense
+              :label="$t('table-data.tare')"
+              v-model="form.tare_kg"
+              outlined
+              type="number"
+              suffix="kg"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              dense
+              :label="$t('table-data.net')"
+              :value="form.gross_weight_kg - form.tare_kg"
+              outlined
+              disabled
+              type="number"
+              suffix="kg"
+            />
+          </v-col>
+        </v-row>
       </v-col>
       <v-col cols="5" class="text-left pr-12">
         <v-simple-table v-if="customer.id !== null">
@@ -70,9 +88,14 @@
           {{ $t("form-data.clear") }}
         </v-btn>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="3">
         <v-btn depressed color="primary" @click="save">
           {{ $t("form-data.save") }}
+        </v-btn>
+      </v-col>
+      <v-col cols="3">
+        <v-btn depressed color="primary" @click="finish">
+          {{ $t("form-data.finish") }}
         </v-btn>
       </v-col>
     </v-row>
@@ -81,6 +104,20 @@
     <div class="text-center" v-if="error">
       <span class="red--text">{{ error }} </span>
     </div>
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      :hide-default-footer="true"
+      class="elevation-1"
+      v-if="items.length > 0"
+      @click:row="editItem"
+    >
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-icon small @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
   </v-container>
 </template>
 
@@ -90,7 +127,15 @@ export default {
   name: "arrival",
   data() {
     return {
+      headers: [
+        { text: "Material", value: "material" },
+        { text: "Gross Kg", value: "gross_weight_kg" },
+        { text: "Tare Kg", value: "tare_kg" },
+        { text: "Net Kg", value: "net_weight_kg" },
+        { text: "Actions", value: "actions" },
+      ],
       customers: [],
+      items: [],
       customer: {
         id: null,
         firstname: "",
@@ -108,7 +153,7 @@ export default {
       materials: [],
       form: {
         customer_id: null,
-        material_id: "Cooper",
+        material_id: null,
         gross_weight_kg: 0,
         tare_kg: 0,
       },
@@ -159,6 +204,7 @@ export default {
         });
     },
     onChange(id) {
+      this.error = "";
       getCustomer(id, this.token).then((res) => {
         if (res) {
           if (!res.result.company) {
@@ -177,6 +223,25 @@ export default {
       });
     },
     save() {
+      this.validation();
+
+      if (this.error !== "") return;
+
+      createArrival(this.form, this.token).then((res) => {
+        if (res.status === 200) {
+          this.form.material_id = null;
+          this.form.gross_weight_kg = 0;
+          this.form.tare_kg = 0;
+        } else {
+          this.error = "Something went wrong";
+        }
+      });
+    },
+    finish() {
+      this.validation();
+
+      if (this.error !== "") return;
+
       createArrival(this.form, this.token).then((res) => {
         if (res.status === 200) {
           this.cancel();
@@ -184,6 +249,21 @@ export default {
           this.error = "Something went wrong";
         }
       });
+    },
+    validation() {
+      if (this.form.customer_id === null) {
+        this.error = "Please select a customer";
+      } else if (this.form.material_id === null) {
+        this.error = "Please select a Material";
+      } else if (this.form.gross_weight_kg === 0) {
+        this.error = "Gross Weight can not be 0";
+      } else if (
+        Number(this.form.tare_kg) >= Number(this.form.gross_weight_kg)
+      ) {
+        this.error = "Gross Weight must be greater than Tare Weight";
+      } else {
+        this.error = "";
+      }
     },
     cancel() {
       this.customer = Object.assign(
@@ -203,6 +283,7 @@ export default {
           },
         }
       );
+      this.error = "";
       this.form = Object.assign(
         {},
         {
