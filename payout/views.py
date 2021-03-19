@@ -40,11 +40,11 @@ class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, DetailView):
         return json.dumps(user_detail)
 
 
-class ArrivalPayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
+class ArrivalPayoutListAPI(ListAPIView):
     serializer_class = ArrivalInPayoutSerializerList
 
     def get_queryset(self):
-        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN).all()
+        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN, user_id=12).all()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()

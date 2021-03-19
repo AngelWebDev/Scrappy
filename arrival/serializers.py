@@ -1,3 +1,5 @@
+from functools import reduce
+
 from rest_framework import serializers
 from .models import Arrival, ArrivalPos, Material
 
@@ -23,12 +25,11 @@ class MaterialSerializer(serializers.ModelSerializer):
 class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
     city = serializers.SerializerMethodField()
-    material = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
 
     class Meta:
         model = Arrival
-        fields = ['id', 'customer', 'city', 'material', 'net_weight_kg', 'arrived_at', 'price']
+        fields = ['id', 'customer_id',  'customer', 'city', 'arrived_at', 'price']
 
     def get_customer(self, obj):
         return "{} {}".format(obj.customer.firstname, obj.customer.lastname)
@@ -36,11 +37,9 @@ class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
     def get_city(self, obj):
         return obj.customer.city
 
-    def get_material(self, obj):
-        return obj.material.name
-
     def get_price(self, obj):
-        return obj.net_weight_kg * obj.material.price_per_kg
+        arrival_pos = ArrivalPos.objects.filter(arrival_id=obj.id).all()
+        return reduce(lambda sum, item: sum + item.net_weight_kg * item.material.price_per_kg, arrival_pos, 0.0)
 
 
 class ArrivalInPayoutSerializerDetail(ArrivalInPayoutSerializerList):
