@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views.generic import View
@@ -10,7 +11,7 @@ from .serializers import MaterialSerializer, ArrivalPosSerializer
 from office.models import Rights, ScrappyUser
 from office.serializers import UserSerializer
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from rest_framework.response import Response
 
 
@@ -42,23 +43,56 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         return render(request, self.template, context)
 
 
-class ArrivalAPI(CreateAPIView):
+class ArrivalCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreateAPIView):
     serializer_class = ArrivalPosSerializer
+
+    def list(self, request, *args, **kwargs):
+        try:
+            arrival_pos = ArrivalPos.objects.filter(
+                arrival__customer_id=request.query_params['customer_id'],
+                arrival__user_id=request.user.id,
+                arrival__status=Arrival.StatusChoices.OPEN
+            ).order_by('-arrival__arrived_at').all()
+            if arrival_pos:
+                context = {"result": ArrivalPosSerializer(arrival_pos, many=True).data}
+                return Response(context, status=200)
+            else:
+                return Response({"result": "No Content"}, status=204)
+        except:
+            return Response({"result": "failed"}, status=400)
 
     def create(self, request, *args, **kwargs):
         try:
             arrival_pos = request.data
             customer_id = arrival_pos.pop('customer_id')
-            arrival = Arrival(customer_id=customer_id, user_id=12)
-            arrival.save()
-
-            arrival_pos['net_weight_kg'] = float(arrival_pos['gross_weight_kg']) - float(arrival_pos['tare_kg'])
+            shipment_time = arrival_pos.pop('arrived_at')
+            arrival, is_created = Arrival.objects.get_or_create(
+                customer_id=customer_id, user=request.user, arrived_at=shipment_time)
+            arrival_pos['net_weight_kg'] = Decimal(arrival_pos['gross_weight_kg']) - Decimal(arrival_pos['tare_kg'])
             arrival_pos['arrival_id'] = arrival.id
             new_arrival_pos = ArrivalPos(**arrival_pos)
             new_arrival_pos.save()
             return Response({"result": self.serializer_class(new_arrival_pos).data}, status=200)
         except Exception as e:
             print(e)
+            return Response({"result": "failed"}, status=400)
+
+
+class ArrivalPosDestroyAPI(LoginRequiredMixin, UserArrivalAccessMixin, DestroyAPIView):
+    queryset = ArrivalPos.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            remove_obj = self.get_object()
+            remove_obj.delete()
+
+            # Remove Arrival data if belonged ArrivalPos data is empty
+            arrival_pos = ArrivalPos.objects.filter(arrival_id=remove_obj.arrival_id).all()
+            if not arrival_pos:
+                Arrival.objects.filter(id=remove_obj.arrival_id).delete()
+
+            return Response({"result": "success"}, status=200)
+        except:
             return Response({"result": "failed"}, status=400)
 
 
