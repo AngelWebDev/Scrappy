@@ -40,11 +40,11 @@ class PayoutView(LoginRequiredMixin, UserPayoutAccessMixin, DetailView):
         return json.dumps(user_detail)
 
 
-class ArrivalPayoutListAPI(ListAPIView):
+class ArrivalPayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
     serializer_class = ArrivalInPayoutSerializerList
 
     def get_queryset(self):
-        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN, user_id=12).all()
+        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN, user=self.request.user).all()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -57,7 +57,7 @@ class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, 
     serializer_class = ArrivalInPayoutSerializerDetail
 
     def get_queryset(self):
-        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN).all()
+        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN, user=self.request.user).all()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -79,8 +79,10 @@ class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, 
 
 
 class PayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
-    queryset = Payout.objects.all()
     serializer_class = PayoutListSerializer
+
+    def get_queryset(self):
+        return Payout.objects.filter(user=self.request.user).all()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
