@@ -5,11 +5,12 @@ from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .mixins import UserArrivalAccessMixin
-from .models import Arrival, Material
-from .serializers import MaterialSerializer
+from .models import Arrival, ArrivalPos, Material
+from .serializers import MaterialSerializer, ArrivalPosSerializer
 from office.models import Rights, ScrappyUser
 from office.serializers import UserSerializer
 from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
 
@@ -41,15 +42,21 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         return render(request, self.template, context)
 
 
-class ArrivalAPI(LoginRequiredMixin, UserArrivalAccessMixin, APIView):
-    def post(self, request):
+class ArrivalAPI(CreateAPIView):
+    serializer_class = ArrivalPosSerializer
+
+    def create(self, request, *args, **kwargs):
         try:
-            arrival_info = request.data
-            arrival_info['user_id'] = request.user.id
-            arrival_info['net_weight_kg'] = float(arrival_info['gross_weight_kg']) - float(arrival_info['tare_kg'])
-            new_arrival = Arrival(**arrival_info)
-            new_arrival.save()
-            return Response({"result": "success"}, status=200)
+            arrival_pos = request.data
+            customer_id = arrival_pos.pop('customer_id')
+            arrival = Arrival(customer_id=customer_id, user_id=12)
+            arrival.save()
+
+            arrival_pos['net_weight_kg'] = float(arrival_pos['gross_weight_kg']) - float(arrival_pos['tare_kg'])
+            arrival_pos['arrival_id'] = arrival.id
+            new_arrival_pos = ArrivalPos(**arrival_pos)
+            new_arrival_pos.save()
+            return Response({"result": self.serializer_class(new_arrival_pos).data}, status=200)
         except Exception as e:
             print(e)
             return Response({"result": "failed"}, status=400)

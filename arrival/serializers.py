@@ -1,10 +1,16 @@
 from rest_framework import serializers
-from .models import Arrival, Material
+from .models import Arrival, ArrivalPos, Material
 
 
 class ArrivalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Arrival
+        fields = '__all__'
+
+
+class ArrivalPosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArrivalPos
         fields = '__all__'
 
 
