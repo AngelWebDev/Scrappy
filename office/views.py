@@ -168,7 +168,7 @@ class UserAPI(LoginRequiredMixin, UserOfficeAccessMixin, RetrieveUpdateDestroyAP
     def retrieve(self, request, *args, **kwargs):
         users = []
         try:
-            users_obj = ScrappyUser.objects.filter(status=ScrappyUser.StatusChoices.ACTIVE).all()
+            users_obj = ScrappyUser.objects.all()
             if users_obj:
                 for user in users_obj:
                     rights = list(Rights.objects.filter(user=user).values_list("right", flat=True))
