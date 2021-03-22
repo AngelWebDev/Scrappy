@@ -47,6 +47,7 @@
     "company_name": "Company Name",
     "customer": "Customer",
     "date/time": "Date/Time",
+    "deactivated": "Deactive",
     "description": "Select Date",
     "doc_exp": "Document Expiration",
     "doc_id": "Document ID",
@@ -88,6 +89,7 @@
   },
   "form-data": {
     "access-rights": "Access Rights",
+    "active": "Active",
     "back": "Back",
     "cancel": "Cancel",
     "cancelInvite": "Cancel Invitation",

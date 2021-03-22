@@ -204,7 +204,7 @@ export default {
     headers: [
       { text: "Customer#", value: "arrival.customer_id" },
       { text: "Customer", value: "arrival.customer" },
-      { text: "Payout#", value: "arrival.payout_id" },
+      { text: "Payout#", value: "arrival.id" },
       { text: "Amount", value: "arrival.price" },
       { text: "Paid At", value: "paid_at" },
       { text: "User", value: "username" },
@@ -260,6 +260,8 @@ export default {
           this.items = result.map((item) => ({
             id: item.id,
             paid_at: moment(item.paid_at).format("MM-DD-YYYY hh:mm"),
+            // eslint-disable-next-line no-undef
+            username: authUser.firstname + " " + authUser.lastname,
             arrival: {
               ...item.arrival,
               arrived_at: moment(item.arrival.arrived_at).format(
