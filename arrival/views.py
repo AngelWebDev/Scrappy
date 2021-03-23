@@ -50,7 +50,6 @@ class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreat
         try:
             arrival_pos = ArrivalPos.objects.filter(
                 arrival__customer_id=request.query_params['customer_id'],
-                arrival__user_id=request.user.id,
                 arrival__status=Arrival.StatusChoices.OPEN
             ).order_by('-arrival__arrived_at').all()
             if arrival_pos:
