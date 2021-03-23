@@ -203,6 +203,26 @@ export const createArrival = async (data, csrftoken) => {
   });
 };
 
+export const getArrivalPosList = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/shipment/?customer_id=${id}`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
+export const deleteArrivalPos = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/arrival_pos/${id}`, {
+    method: "DELETE",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
 export const getOpenList = async (csrftoken) => {
   return await fetch(`${API_URL}/payout/open`, {
     method: "GET",
