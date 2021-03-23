@@ -102,12 +102,130 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
+              <v-btn color="warning" dark @click="openDialogID">
+                {{ $t("table-data.verify_customer") }}
+              </v-btn>
               <v-btn color="red darken-1" text @click="close">
                 {{ $t("form-data.cancel") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="paid">
                 {{ $t("payout.paid") }}
               </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="dialogID" max-width="600px">
+          <v-card height="750px">
+            <v-card-title>
+              <span class="headline">{{ $t(`form-data.id_person`) }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="12">
+                    <p class="text-left pa-0 ma-0">
+                      {{ editedItem.customer }}
+                    </p>
+                    <p class="text-left pa-0 ma-0">
+                      {{ editedItem.street }}
+                    </p>
+                    <p class="text-left ma-0">
+                      {{ editedItem.zip + " " + editedItem.city }}
+                    </p>
+                    <p class="text-left mt-0 mb-8">
+                      {{ editedItem.company_name }}
+                    </p>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-select
+                          outlined
+                          :items="types"
+                          :label="$t('table-data.doc_type')"
+                          v-model="identification.document_type"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-text-field
+                          outlined
+                          v-model="identification.document_id_number"
+                          :label="$t('table-data.doc_number')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-text-field
+                          outlined
+                          v-model="identification.issuing_country"
+                          :label="$t('table-data.doc_issuer')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-text-field
+                          outlined
+                          v-model="identification.name_on_document"
+                          :label="$t('table-data.doc_name')"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" class="py-0">
+                        <v-menu
+                          v-model="fromDateMenu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              outlined
+                              :label="$t('table-data.doc_exp')"
+                              readonly
+                              :value="identification.document_expiration_date"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            locale="en-in"
+                            v-model="identification.document_expiration_date"
+                            no-title
+                            @input="fromDateMenu = false"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-container>
+                <v-row>
+                  <v-col cols="6">
+                    <v-btn color="grey darken-1" text @click="cancelDoc">
+                      {{ $t("form-data.cancel") }}
+                    </v-btn>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-btn color="blue darken-1" text @click="saveDoc">
+                      {{ $t("form-data.save") }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -125,12 +243,18 @@
 </template>
 
 <script>
-import { getOpenList, getOpen, createPaid } from "../../api";
+import {
+  getOpenList,
+  getOpen,
+  createPaid,
+  verifyIdentification,
+} from "../../api";
 import moment from "moment";
 export default {
   name: "open",
   data: () => ({
     dialog: false,
+    dialogID: false,
     editing: false,
     error: false,
     success: false,
@@ -144,6 +268,25 @@ export default {
     ],
     fromDateMenu: false,
     items: [],
+    types: [
+      { value: "passport", text: "Passport" },
+      { value: "idcard", text: "ID Card" },
+      { value: "driverlicense", text: "Driver License" },
+    ],
+    identification: {
+      document_type: "passport",
+      document_id_number: "",
+      name_on_document: null,
+      issuing_country: null,
+      document_expiration_date: null,
+    },
+    defaultIdentification: {
+      document_type: "passport",
+      document_id_number: "",
+      name_on_document: null,
+      issuing_country: null,
+      document_expiration_date: null,
+    },
     editedIndex: -1,
     editedItem: {
       id: "",
@@ -198,6 +341,32 @@ export default {
             arrived_at: moment(item.arrived_at).format("MM-DD-YYYY hh:mm"),
           }));
         });
+    },
+
+    openDialogID() {
+      this.dialogID = true;
+    },
+
+    cancelDoc() {
+      this.dialogID = false;
+      this.identification = Object.assign({}, this.defaultIdentification);
+    },
+
+    saveDoc() {
+      this.identification.verified_at = moment(new Date()).format(
+        "MM-DD-YYYY hh:mm"
+      );
+      Object.assign(this.items[this.editedIndex], this.editedItem);
+      const data = {
+        customer_id: this.editedItem.customer_id,
+        document_type: this.identification.document_type,
+        document_id_number: this.identification.document_id_number,
+        name_on_document: this.identification.name_on_document,
+        issuing_country: this.identification.issuing_country,
+        document_expiration_date: this.identification.document_expiration_date,
+      };
+      verifyIdentification(data, this.token);
+      this.dialogID = false;
     },
 
     editItem(item) {

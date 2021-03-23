@@ -80,7 +80,7 @@ export const createCustomer = async (data, csrftoken) => {
 };
 
 export const verifyIdentification = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/office/identification`, {
+  return await fetch(`${API_URL}/office/identification/`, {
     method: "POST",
     headers: {
       ...headers,
