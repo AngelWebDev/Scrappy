@@ -227,7 +227,12 @@ export default {
 
       if (this.error !== "") return;
 
-      createArrival(this.form, this.token).then((res) => {
+      const payload = {
+        ...this.form,
+        arrived_at: new Date(),
+      };
+
+      createArrival(payload, this.token).then((res) => {
         if (res.status === 200) {
           this.form.material_id = null;
           this.form.gross_weight_kg = 0;

@@ -33,7 +33,7 @@ export const getUsers = async (csrftoken) => {
 };
 
 export const updateUser = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/office/user`, {
+  return await fetch(`${API_URL}/office/user/`, {
     method: "PUT",
     headers: {
       ...headers,
@@ -56,6 +56,13 @@ export const deleteUser = async (uid, csrftoken) => {
 
 export const deactiveUser = async (uid) => {
   return await fetch(`${API_URL}/office/user/${uid}/deactive`, {
+    method: "PUT",
+    headers,
+  });
+};
+
+export const activeUser = async (uid) => {
+  return await fetch(`${API_URL}/office/user/${uid}/active`, {
     method: "PUT",
     headers,
   });
@@ -186,7 +193,7 @@ export const createMaterial = async (data, csrftoken) => {
 };
 
 export const createArrival = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/arrival/shipment`, {
+  return await fetch(`${API_URL}/arrival/shipment/`, {
     method: "POST",
     headers: {
       ...headers,

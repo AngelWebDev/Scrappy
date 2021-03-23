@@ -97,8 +97,21 @@
               <v-btn color="grey darken-1" text @click="close">
                 {{ $t("form-data.cancel") }}
               </v-btn>
-              <v-btn color="red darken-1" text @click="deactive">
+              <v-btn
+                color="red darken-1"
+                v-if="editedItem.status === `active`"
+                text
+                @click="deactive"
+              >
                 {{ $t("form-data.deactive") }}
+              </v-btn>
+              <v-btn
+                color="red darken-1"
+                v-if="editedItem.status !== `active`"
+                text
+                @click="active"
+              >
+                {{ $t("form-data.active") }}
               </v-btn>
               <v-btn color="blue darken-1" text @click="invite">
                 {{ $t("form-data.save") }}
@@ -334,13 +347,25 @@ export default {
       }
     },
 
-    async deactive() {
+    deactive() {
       if (this.editedIndex > -1) {
         this.editedItem.status = "Deactivated";
         delete this.editedItem.name;
         // eslint-disable-next-line no-undef
         updateUser(this.editedItem, csrftoken).then(() => {
-          this.items.splice(this.editedIndex, 1);
+          this.initialize();
+          this.close();
+        });
+      }
+    },
+
+    active() {
+      if (this.editedIndex > -1) {
+        this.editedItem.status = "active";
+        delete this.editedItem.name;
+        // eslint-disable-next-line no-undef
+        updateUser(this.editedItem, csrftoken).then(() => {
+          this.initialize();
           this.close();
         });
       }
