@@ -43,7 +43,7 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         return render(request, self.template, context)
 
 
-class ArrivalCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreateAPIView):
+class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreateAPIView):
     serializer_class = ArrivalPosSerializer
 
     def list(self, request, *args, **kwargs):

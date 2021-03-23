@@ -11,9 +11,14 @@ class ArrivalSerializer(serializers.ModelSerializer):
 
 
 class ArrivalPosSerializer(serializers.ModelSerializer):
+    material_name = serializers.SerializerMethodField()
+
     class Meta:
         model = ArrivalPos
-        fields = '__all__'
+        fields = ['id', 'material_name', 'gross_weight_kg', 'tare_kg', 'net_weight_kg']
+
+    def get_material_name(self, obj):
+        return obj.material.name
 
 
 class MaterialSerializer(serializers.ModelSerializer):
