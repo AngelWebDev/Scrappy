@@ -52,7 +52,7 @@ class ArrivalPayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIVie
         return Response({"result": serializer.data})
 
 
-class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveUpdateAPIView):
+class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
     lookup_field = 'id'
     serializer_class = ArrivalInPayoutSerializerDetail
 

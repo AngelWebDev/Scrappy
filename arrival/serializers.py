@@ -49,14 +49,18 @@ class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
 
 class ArrivalInPayoutSerializerDetail(ArrivalInPayoutSerializerList):
     street = serializers.CharField(source='customer.street')
+    identification = serializers.SerializerMethodField()
     company_name = serializers.SerializerMethodField()
     zip = serializers.CharField(source='customer.zip')
 
     class Meta(ArrivalInPayoutSerializerList.Meta):
-        fields = ArrivalInPayoutSerializerList.Meta.fields + ['street', 'company_name', 'zip']
+        fields = ArrivalInPayoutSerializerList.Meta.fields + ['street', 'company_name', 'zip', 'identification']
 
     def get_company_name(self, obj):
         if obj.customer.company:
             return obj.customer.company.name
         else:
             return None
+
+    def get_identification(self, obj):
+        return obj.customer.identifications.exists()

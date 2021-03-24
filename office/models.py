@@ -124,7 +124,7 @@ class Identification(models.Model):
     issuing_country = models.CharField(max_length=255)
     document_expiration_date = models.DateField(null=True, blank=True)
     verified_at = models.DateTimeField(auto_now_add=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='identifications')
 
 
 class Journal(models.Model):
