@@ -83,6 +83,7 @@
     "value": "Wert",
     "vat_id": "VAT ID",
     "verify": "Überprüfen Identität",
+    "verify_customer": "Überprüfen Kunden",
     "verify_again": "Überprüfen Nochmal",
     "weight": "Brutto Gewicht",
     "zip": "Zip"

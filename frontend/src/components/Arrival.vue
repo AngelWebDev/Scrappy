@@ -110,7 +110,6 @@
       :hide-default-footer="true"
       class="elevation-1"
       v-if="items.length > 0"
-      @click:row="editItem"
     >
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small @click="deleteItem(item)">
@@ -122,13 +121,20 @@
 </template>
 
 <script>
-import { getCustomers, getCustomer, createArrival, getMaterials } from "../api";
+import {
+  getCustomers,
+  getCustomer,
+  createArrival,
+  getMaterials,
+  getArrivalPosList,
+  deleteArrivalPos,
+} from "../api";
 export default {
   name: "arrival",
   data() {
     return {
       headers: [
-        { text: "Material", value: "material" },
+        { text: "Material", value: "material_name" },
         { text: "Gross Kg", value: "gross_weight_kg" },
         { text: "Tare Kg", value: "tare_kg" },
         { text: "Net Kg", value: "net_weight_kg" },
@@ -221,6 +227,11 @@ export default {
           this.customer = Object.assign({}, res.result);
         }
       });
+      getArrivalPosList(this.form.customer_id, this.token)
+        .then((res) => res.json())
+        .then(({ result }) => {
+          this.items = result;
+        });
     },
     save() {
       this.validation();
@@ -237,6 +248,11 @@ export default {
           this.form.material_id = null;
           this.form.gross_weight_kg = 0;
           this.form.tare_kg = 0;
+          getArrivalPosList(this.form.customer_id, this.token)
+            .then((res) => res.json())
+            .then(({ result }) => {
+              this.items = result;
+            });
         } else {
           this.error = "Something went wrong";
         }
@@ -253,6 +269,15 @@ export default {
         } else {
           this.error = "Something went wrong";
         }
+      });
+    },
+    deleteItem(item) {
+      deleteArrivalPos(item.id, this.token).then(() => {
+        getArrivalPosList(this.form.customer_id, this.token)
+          .then((res) => res.json())
+          .then(({ result }) => {
+            this.items = result;
+          });
       });
     },
     validation() {

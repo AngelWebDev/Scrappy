@@ -80,7 +80,7 @@ export const createCustomer = async (data, csrftoken) => {
 };
 
 export const verifyIdentification = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/office/identification`, {
+  return await fetch(`${API_URL}/office/identification/`, {
     method: "POST",
     headers: {
       ...headers,
@@ -200,6 +200,26 @@ export const createArrival = async (data, csrftoken) => {
       "X-CSRFTOKEN": csrftoken,
     },
     body: JSON.stringify(data),
+  });
+};
+
+export const getArrivalPosList = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/shipment/?customer_id=${id}`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
+export const deleteArrivalPos = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/arrival/arrival_pos/${id}`, {
+    method: "DELETE",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
   });
 };
 

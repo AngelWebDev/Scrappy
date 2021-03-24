@@ -118,7 +118,7 @@ class InviteAcceptView(LoginRequiredMixin, AcceptInvite):
 
 class UserInviteAPI(LoginRequiredMixin, APIView):
     model = CustomInvitation
-    
+
     def post(self, request):
         try:
             invite = self.model.create(**request.data, inviter=request.user)
