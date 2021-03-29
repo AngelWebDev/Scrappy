@@ -171,9 +171,80 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-col class="text-center">
+              <v-col class="text-center" cols="2">
                 <v-btn color="red darken-1" text @click="close">
                   {{ $t("form-data.close") }}
+                </v-btn>
+              </v-col>
+              <v-col class="text-center" cols="10">
+                <v-btn color="blue darken-1" text @click="print">
+                  {{ $t("form-data.print-receipt") }}
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="email">
+                  {{ $t("form-data.email-receipt") }}
+                </v-btn>
+                <v-btn color="red darken-1" text @click="reversal">
+                  {{ $t("form-data.reversal") }}
+                </v-btn>
+              </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="isEmail" max-width="500px">
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ $t(`payout.send-receipt`) }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" class="text-left">
+                    <v-text-field
+                      outlined
+                      v-model="emailAddress"
+                      :label="$t('table-data.email')"
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-col class="text-center">
+                <v-btn color="red darken-1" text @click="sendEmail">
+                  {{ $t("form-data.send") }}
+                </v-btn>
+              </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="isReversal" max-width="500px">
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ $t(`form-data.reversal`) }}</span>
+            </v-card-title>
+
+            <!-- <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" class="text-left">
+                    <v-text-field
+                      outlined
+                      v-model="emailAddress"
+                      :label="$t('table-data.email')"
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text> -->
+
+            <v-card-actions>
+              <v-col class="text-center">
+                <v-btn color="red darken-1" text @click="reversalTransaction">
+                  {{ $t("form-data.reverseTransaction") }}
                 </v-btn>
               </v-col>
             </v-card-actions>
@@ -197,6 +268,10 @@ export default {
   name: "paid",
   data: () => ({
     dialog: false,
+    isPrint: false,
+    isEmail: false,
+    emailAddress: "",
+    isReversal: false,
     editing: false,
     error: false,
     success: false,
@@ -293,6 +368,22 @@ export default {
       this.$nextTick(() => {
         this.editedIndex = -1;
       });
+    },
+    print() {
+      this.isPrint = true;
+    },
+    email() {
+      this.isEmail = true;
+    },
+    sendEmail() {
+      if (this.emailAddress) {
+        //call api
+        this.isEmail = false;
+        this.emailAddress = "";
+      }
+    },
+    reversal() {
+      this.isReversal = true;
     },
   },
 };

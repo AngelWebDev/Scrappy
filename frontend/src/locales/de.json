@@ -102,12 +102,17 @@
     "edit-customer": "Bearbeiten Kundin",
     "edit-material": "Bearbeiten Material",
     "edit user": "Bearbeiten Nutzerin",
+    "email-receipt": "Email Kassenbon",
     "finish": "Sparen + Fertig",
     "id_person": "Identifizieren Person",
     "invite": "Einladen",
     "invite user": "Benutzer Nutzerin",
+    "print receipt": "Drucken Kassenbon",
     "resend": "Erneut senden",
-    "save": "sparen"
+    "reversal": "Umkehrung",
+    "reverseTransaction": "Umkehren Transaktion",
+    "save": "Sparen",
+    "send": "Senden"
   },
   "messages": {
     "invite": {

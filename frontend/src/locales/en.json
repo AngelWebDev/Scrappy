@@ -33,7 +33,8 @@
   },
   "payout": {
     "open": "OPEN",
-    "paid": "PAID"
+    "paid": "PAID",
+    "send-receipt": "Send Receipt via email"
   },
   "table-data": {
     "actions": "Actions",
@@ -102,12 +103,17 @@
     "edit-customer": "Edit Customer",
     "edit-material": "Edit Material",
     "edit user": "Edit User",
+    "email-receipt": "Email Receipt",
     "finish": "Save + Finish",
     "id_person": "Identify Person",
     "invite": "Invite",
     "invite user": "Invite User",
+    "print-receipt": "Print Receipt",
     "resend": "Re-Send Invitation",
-    "save": "Save"
+    "reversal": "Reversal",
+    "reverseTransaction": "Reverse Transaction",
+    "save": "Save",
+    "send": "Send"
   },
   "messages": {
     "invite": {

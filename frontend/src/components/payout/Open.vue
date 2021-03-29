@@ -102,7 +102,12 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="warning" dark @click="openDialogID">
+              <v-btn
+                color="warning"
+                dark
+                @click="openDialogID"
+                v-if="!editedItem.identification"
+              >
                 {{ $t("table-data.verify_customer") }}
               </v-btn>
               <v-btn color="red darken-1" text @click="close">
