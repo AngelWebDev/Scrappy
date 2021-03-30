@@ -94,6 +94,7 @@
     "back": "Zurück",
     "cancel": "Stornieren",
     "cancelInvite": "Stornieren Einladung",
+    "change-customer": "Veränderung Kundin",
     "clear": "klar",
     "close": "Schließen",
     "create-customer": "Erstellen Kundin",
@@ -112,6 +113,7 @@
     "reversal": "Umkehrung",
     "reverseTransaction": "Umkehren Transaktion",
     "save": "Sparen",
+    "select": "Wählen",
     "send": "Senden"
   },
   "messages": {

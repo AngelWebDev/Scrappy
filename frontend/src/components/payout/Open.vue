@@ -106,9 +106,12 @@
                 color="warning"
                 dark
                 @click="openDialogID"
-                v-if="!editedItem.identification"
+                v-if="editedItem.identification"
               >
                 {{ $t("table-data.verify_customer") }}
+              </v-btn>
+              <v-btn color="grey darken-1" text @click="changeCustomer">
+                {{ $t("form-data.change-customer") }}
               </v-btn>
               <v-btn color="red darken-1" text @click="close">
                 {{ $t("form-data.cancel") }}
@@ -234,6 +237,55 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-dialog v-model="isChangeCustomer" max-width="600px">
+          <v-card height="250px">
+            <v-card-title>
+              <span class="headline">{{ $t(`form-data.id_person`) }}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="12">
+                    <v-autocomplete
+                      v-model="customer_id"
+                      :items="customers"
+                      outlined
+                      dense
+                      chips
+                      small-chips
+                      :label="$t('table-data.customer')"
+                      v-on:change="onChange"
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-container>
+                <v-row>
+                  <v-col cols="6">
+                    <v-btn
+                      color="grey darken-1"
+                      text
+                      @click="cancelChangeCustomer"
+                    >
+                      {{ $t("form-data.cancel") }}
+                    </v-btn>
+                  </v-col>
+
+                  <v-col cols="6">
+                    <v-btn color="blue darken-1" text @click="selectCustomer">
+                      {{ $t("form-data.select") }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-toolbar>
     </template>
 
@@ -253,6 +305,8 @@ import {
   getOpen,
   createPaid,
   verifyIdentification,
+  getCustomer,
+  getCustomers,
 } from "../../api";
 import moment from "moment";
 export default {
@@ -260,6 +314,7 @@ export default {
   data: () => ({
     dialog: false,
     dialogID: false,
+    isChangeCustomer: false,
     editing: false,
     error: false,
     success: false,
@@ -317,6 +372,8 @@ export default {
       zip: "",
       company_name: "",
     },
+    customers: [],
+    customer_id: "",
     token: "",
   }),
 
@@ -410,6 +467,47 @@ export default {
       this.dialogDelete = false;
       this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
+    },
+
+    changeCustomer() {
+      this.isChangeCustomer = true;
+      getCustomers(this.token)
+        .then((res) => res.json())
+        .then(({ result }) => {
+          this.customers = result.map((item) => ({
+            value: item.id,
+            text: item.company
+              ? item.firstname +
+                " " +
+                item.lastname +
+                ", " +
+                item.company.name +
+                ", " +
+                item.street +
+                ", " +
+                item.zip
+              : item.firstname +
+                " " +
+                item.lastname +
+                ", " +
+                item.street +
+                ", " +
+                item.zip,
+          }));
+        });
+    },
+
+    onChange(id) {
+      this.error = "";
+      this.customer_id = id;
+    },
+
+    cancelChangeCustomer() {
+      this.isChangeCustomer = false;
+      this.customer_id = "";
+    },
+    selectCustomer() {
+      console.log("item", this.customer_id);
     },
   },
 };
