@@ -147,6 +147,14 @@
                       <h2 class="text-left py-8">
                         {{ $t("table-data.id") }}
                       </h2>
+                      <v-row>
+                        <v-data-table
+                          :headers="headers"
+                          :items="items"
+                          :hide-default-footer="true"
+                          class="elevation-2"
+                        ></v-data-table>
+                      </v-row>
                       <v-row class="text-left pa-0 ma-0">
                         <v-col class="text-left pa-0 ma-0">
                           <span class="doc_title">
@@ -740,7 +748,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.v-data-table {
+.elevation-1 {
   margin-left: 260px;
 }
 </style>
