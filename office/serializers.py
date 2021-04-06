@@ -43,8 +43,8 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
 
     def get_identification(self, obj):
         try:
-            identification = Identification.objects.filter(customer=obj).latest('verified_at')
-            return IdentificationSerializer(identification).data
+            identifications = Identification.objects.filter(customer=obj).all()
+            return IdentificationSerializer(identifications, many=True).data
         except Identification.DoesNotExist:
             return None
 

@@ -7,4 +7,5 @@ urlpatterns = [
     path('user/invite/', views.UserInviteAPI.as_view(), name='user_invite'),
     path('customer/', views.CustomerAPI.as_view(), name='customer_api'),
     path('identification/', views.IdentificationAPI.as_view(), name='identification_api'),
+    path('identification/<int:pk>', views.IdentificationDeleteAPI.as_view(), name='id_delete_api'),
 ]

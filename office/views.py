@@ -10,7 +10,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListCreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -344,3 +344,7 @@ class IdentificationAPI(LoginRequiredMixin, UserOfficeAccessMixin, ListCreateAPI
         except Exception as e:
             print(e)
             return Response({"result": "Failed identification verify"}, status=400)
+
+
+class IdentificationDeleteAPI(LoginRequiredMixin, UserOfficeAccessMixin, DestroyAPIView):
+    queryset = Identification.objects.all()
