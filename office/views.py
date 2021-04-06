@@ -10,7 +10,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -233,7 +233,7 @@ class UserAPI(LoginRequiredMixin, UserOfficeAccessMixin, RetrieveUpdateDestroyAP
             return Response({"result": "User not found"}, status=400)
 
 
-class CustomerAPIView(LoginRequiredMixin, UserOfficeAccessMixin, APIView):
+class CustomerAPI(LoginRequiredMixin, UserOfficeAccessMixin, APIView):
     model = Customer
     list_serializer = CustomerListSerializer
     detail_serializer = CustomerDetailSerializer
@@ -322,15 +322,25 @@ class CustomerAPIView(LoginRequiredMixin, UserOfficeAccessMixin, APIView):
             return Response({"result": "Failed customer delete"}, status=400)
 
 
-class IdentificationCreateAPI(LoginRequiredMixin, UserOfficeAccessMixin, CreateAPIView):
+class IdentificationAPI(LoginRequiredMixin, UserOfficeAccessMixin, ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             identification_info = request.data
             identification_info["user_id"] = request.user.id
-            new_identification = Identification(**identification_info)
-            new_identification.save()
 
-            return Response({"result": "success"})
+            old_identification_qry = Identification.objects.filter(
+                customer_id=identification_info["customer_id"],
+                document_type=identification_info["document_type"],
+            )
+            old_identification = old_identification_qry.first()
+
+            if old_identification:
+                old_identification_qry.update(**identification_info)
+                return Response({"result": old_identification.id})
+            else:
+                new_identification = Identification(**identification_info)
+                new_identification.save()
+                return Response({"result": new_identification.id})
         except Exception as e:
             print(e)
             return Response({"result": "Failed identification verify"}, status=400)
