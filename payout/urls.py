@@ -9,4 +9,5 @@ urlpatterns = [
     path('paid/', views.PayoutListAPI.as_view(), name='payout_paid_list'),
     path('paid/<int:id>/', views.PayoutDetailAPI.as_view(), name='payout_paid_detail'),
     path('report/', views.PayoutReportAPI.as_view(), name='payout_report'),
+    path('reverse/<int:id>/', views.PayoutReversalAPI.as_view(), name='payout_reversal'),
 ]

@@ -3,6 +3,7 @@ import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
+from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 
@@ -114,3 +115,18 @@ class PayoutReportAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
         return Response({"result": serializer.data})
+
+
+class PayoutReversalAPI(LoginRequiredMixin, UserPayoutAccessMixin, APIView):
+    def post(self, request, id):
+        print(id)
+        try:
+            payout = Payout.objects.get(id=id)
+            arrival = Arrival.objects.get(id=payout.arrival_id)
+            arrival.status = Arrival.StatusChoices.OPEN
+            arrival.save()
+            payout.delete()
+            return Response({"result": "success"}, 200)
+        except Exception as e:
+            print(e)
+            return Response({"result": "failed"}, 400)
