@@ -28,8 +28,8 @@ class ArrivalPos(models.Model):
     class Meta:
         db_table = "arrival_pos"
 
-    arrival = models.ForeignKey(Arrival, on_delete=models.CASCADE, null=True)
-    material = models.ForeignKey(Material, on_delete=models.PROTECT)
+    arrival = models.ForeignKey(Arrival, on_delete=models.CASCADE, null=True, related_name="arrival_pos")
+    material = models.ForeignKey(Material, on_delete=models.PROTECT, related_name="arrival_pos")
     gross_weight_kg = models.FloatField()
     tare_kg = models.FloatField()
     net_weight_kg = models.FloatField()

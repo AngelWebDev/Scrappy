@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Payout
+from arrival.models import Material
 from arrival.serializers import ArrivalInPayoutSerializerList, ArrivalInPayoutSerializerDetail, MaterialSerializer
 from office.serializers import UserSerializer, CustomerDetailSerializer
 
@@ -33,7 +34,7 @@ class PayoutReportSerializer(serializers.ModelSerializer):
         fields = ['id', 'customer', 'material', 'price_per_kg', 'net_weight', 'vat_amount']
 
     def get_price_per_kg(self, obj):
-        return obj.arrival.material.price_per_kg
+        return obj.arrival.arrival_pos.price_per_kg
 
     def get_net_weight(self, obj):
         return obj.arrival.net_weight_kg
@@ -41,5 +42,3 @@ class PayoutReportSerializer(serializers.ModelSerializer):
     def get_customer(self, obj):
         return CustomerDetailSerializer(obj.arrival.customer).data
 
-    def get_material(self, obj):
-        return MaterialSerializer(obj.arrival.material).data

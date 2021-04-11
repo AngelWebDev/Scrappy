@@ -105,7 +105,7 @@ class Customer(models.Model):
     company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.email
+        return "{} {}".format(self.firstname.capitalize(), self.lastname.capitalize())
 
 
 class Identification(models.Model):

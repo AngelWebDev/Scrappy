@@ -4,6 +4,12 @@ from rest_framework import serializers
 from .models import Arrival, ArrivalPos, Material
 
 
+class MaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Material
+        fields = '__all__'
+
+
 class ArrivalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Arrival
@@ -11,20 +17,14 @@ class ArrivalSerializer(serializers.ModelSerializer):
 
 
 class ArrivalPosSerializer(serializers.ModelSerializer):
-    material_name = serializers.SerializerMethodField()
+    material = MaterialSerializer()
 
     class Meta:
         model = ArrivalPos
-        fields = ['id', 'material_name', 'gross_weight_kg', 'tare_kg', 'net_weight_kg']
+        fields = ['id', 'material', 'gross_weight_kg', 'tare_kg', 'net_weight_kg']
 
     def get_material_name(self, obj):
         return obj.material.name
-
-
-class MaterialSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Material
-        fields = '__all__'
 
 
 class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
@@ -52,9 +52,10 @@ class ArrivalInPayoutSerializerDetail(ArrivalInPayoutSerializerList):
     identification = serializers.SerializerMethodField()
     company_name = serializers.SerializerMethodField()
     zip = serializers.CharField(source='customer.zip')
+    arrival_pos = ArrivalPosSerializer(many=True)
 
     class Meta(ArrivalInPayoutSerializerList.Meta):
-        fields = ArrivalInPayoutSerializerList.Meta.fields + ['street', 'company_name', 'zip', 'identification']
+        fields = ArrivalInPayoutSerializerList.Meta.fields + ['street', 'company_name', 'zip', 'identification', 'arrival_pos']
 
     def get_company_name(self, obj):
         if obj.customer.company:

@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Order received</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+          font-size: 14px;
+        }
+        .container {
+          max-width: 600px;
+          height: 300px;
+          margin: auto;
+          display: flex;
+          justify-content: space-between;
+          border: 2px solid black;
+          padding: 20px;
+          line-height: 2;
+        }
+        #material-info {
+          padding: 20px;
+          flex: 1;
+        }
+        .value {
+          font-weight: bold;
+        }
+        #customer-info {
+          border: 2px solid black;
+          padding: 20px;
+          padding-top: 40px;
+          flex: 1;
+        }
+        .title {
+          font-size: 18px;
+        }
+        .subtitle {
+          font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="material-info">
+            <span class="title">Payout</span>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Material:</td>
+                        <td class="value">{{ material_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Arrival:</td>
+                        <td class="value">{{ arrived_at }}</td>
+                    </tr>
+                    <tr>
+                        <td>Weight:</td>
+                        <td class="value">{{ net_weight }}</td>
+                    </tr>
+                    <tr>
+                        <td>Value:</td>
+                        <td class="value" style="font-size: 20px">{{ total_price }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="customer-info">
+            <span class="subtitle">Customer</span>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Name:</td>
+                        <td class="value">{{ customer_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Company:</td>
+                        <td class="value">{{ company_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Address:</td>
+                        <td class="value">{{ address }}</td>
+                    </tr>
+                    <tr>
+                        <td>ZIP / City:</td>
+                        <td class="value">{{ zip }} / {{ city }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
