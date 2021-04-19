@@ -507,6 +507,7 @@ export default {
       this.customer_id = "";
     },
     selectCustomer() {
+      // eslint-disable-next-line no-console
       console.log("item", this.customer_id);
     },
   },

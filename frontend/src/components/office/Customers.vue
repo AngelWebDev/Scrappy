@@ -133,7 +133,7 @@
                     />
                     <div
                       class="text-right mt-16 pt-16"
-                      v-if="!editedItem.identification.document_id_number"
+                      v-if="!editedItem.identification.length"
                     >
                       <v-btn color="warning" dark @click="openDialogID">
                         {{ $t("table-data.verify") }}
@@ -142,108 +142,28 @@
 
                     <div
                       class="text-left"
-                      v-if="editedItem.identification.document_id_number"
+                      v-if="editedItem.identification.length"
                     >
                       <h2 class="text-left py-8">
                         {{ $t("table-data.id") }}
                       </h2>
                       <v-row>
                         <v-data-table
-                          :headers="headers"
-                          :items="items"
+                          :headers="idHeaders"
+                          :items="editedItem.identification"
                           :hide-default-footer="true"
                           class="elevation-2"
-                        ></v-data-table>
+                        >
+                          <template v-slot:[`item.actions`]="{ item }">
+                            <v-icon small @click="deleteIDItem(item)">
+                              mdi-delete
+                            </v-icon>
+                          </template></v-data-table
+                        >
                       </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_type") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{ editedItem.identification.document_type }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_id") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{ editedItem.identification.document_id_number }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_name") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{ editedItem.identification.name_on_document }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_exp") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{
-                              editedItem.identification.document_expiration_date
-                            }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_issuer") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{ editedItem.identification.issuing_country }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_verify_user") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{ editedItem.identification.username }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <v-row class="text-left pa-0 ma-0">
-                        <v-col class="text-left pa-0 ma-0">
-                          <span class="doc_title">
-                            {{ $t("table-data.doc_verify_date") }} :
-                          </span>
-                        </v-col>
-                        <v-col class="text-left pa-0 ma-0">
-                          <strong>
-                            {{ editedItem.identification.verified_at }}
-                          </strong>
-                        </v-col>
-                      </v-row>
-                      <div class="text-right pa-4">
+                      <div class="text-left pt-4">
                         <v-btn @click="openDialogID">
-                          {{ $t("table-data.verify_again") }}
+                          {{ $t("table-data.new") }}
                         </v-btn>
                       </div>
                     </div>
@@ -508,6 +428,13 @@ export default {
       { text: "Status", value: "status" },
       { text: "Actions", value: "actions", sortable: false },
     ],
+
+    idHeaders: [
+      { text: "Type", value: "document_type" },
+      { text: "Number", value: "document_id_number" },
+      { text: "Valid Until", value: "document_expiration_date" },
+      { text: "Actions", value: "actions", sortable: false },
+    ],
     items: [],
     editedIndex: -1,
     editedItem: {
@@ -527,13 +454,7 @@ export default {
         tax_id: "",
         vat_id: "",
       },
-      identification: {
-        document_type: "passport",
-        document_id_number: "",
-        name_on_document: null,
-        issuing_country: null,
-        document_expiration_date: null,
-      },
+      identification: [],
     },
     defaultItem: {
       title: "",
@@ -605,10 +526,10 @@ export default {
 
     cancelDoc() {
       this.dialogID = false;
-      this.editedItem.identification = Object.assign(
-        {},
-        this.defaultItem.identification
-      );
+      // this.editedItem.identification = Object.assign(
+      //   {},
+      //   this.defaultItem.identification
+      // );
     },
 
     saveDoc() {
@@ -626,6 +547,7 @@ export default {
           .document_expiration_date,
       };
       verifyIdentification(data, this.token);
+      this.editedItem.identification.push(data);
       this.dialogID = false;
     },
 
@@ -667,6 +589,13 @@ export default {
       this.editedIndex = this.items.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
+    },
+
+    deleteIDItem(item) {
+      this.editedItem.identification.splice(
+        this.editedItem.identification.indexOf(item),
+        1
+      );
     },
 
     deleteItemConfirm() {

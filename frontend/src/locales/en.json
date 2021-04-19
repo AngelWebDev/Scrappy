@@ -1,8 +1,10 @@
 {
   "pdf": {
     "date": "Date",
+    "payout-title": "Payout Transaction",
     "title": "Payout History",
     "transaction-id": "Transaction-ID",
+    "customer": "Customer",
     "customer-no": "Customer-No",
     "customer-name": "Customer Name",
     "tax-id": "Tax ID",
@@ -13,7 +15,12 @@
     "price-per-kg": "Price per kg",
     "position-value": "Position Value",
     "vat-amount": "Vat Amount",
-    "gross-amount": "Gross Amount"
+    "gross-amount": "Gross Amount",
+    "arrival": "Arrival",
+    "weight": "Weight",
+    "value": "Value",
+    "paid-out": "Paid Out",
+    "paid-out-by": "Paid out By"
   },
   "app-bar": {
     "change-password": "Change Password",
@@ -75,6 +82,7 @@
     "material": "Material",
     "name": "Name",
     "net": "Net Weight",
+    "new": "New",
     "office": "Office",
     "payout": "Payout",
     "solutation": "Solutation",

@@ -134,7 +134,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: "Material", value: "material_name" },
+        { text: "Material", value: "material.name" },
         { text: "Gross Kg", value: "gross_weight_kg" },
         { text: "Tare Kg", value: "tare_kg" },
         { text: "Net Kg", value: "net_weight_kg" },
@@ -230,8 +230,9 @@ export default {
       getArrivalPosList(this.form.customer_id, this.token)
         .then((res) => res.json())
         .then(({ result }) => {
-          this.items = result;
-        });
+          this.items = result.length ? result : [{}];
+        })
+        .catch(() => (this.items = []));
     },
     save() {
       this.validation();

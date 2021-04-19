@@ -1,8 +1,10 @@
 {
   "pdf": {
     "date": "Datum",
+    "payout-title": "Auszahlung Transaktion",
     "title": "Trödlerbuch",
     "transaction-id": "Transaktion-ID",
+    "customer": "Kundin",
     "customer-no": "Kunden-No",
     "customer-name": "Kunden Name",
     "tax-id": "MwSt ID",
@@ -13,7 +15,12 @@
     "price-per-kg": "Preis pro kg",
     "position-value": "Position Wert",
     "vat-amount": "Vat Menge",
-    "gross-amount": "Brutto Menge"
+    "gross-amount": "Brutto Menge",
+    "arrival": "Ankunft",
+    "weight": "Gewicht",
+    "value": "Wert",
+    "paid-out": "BEZAHLT aus",
+    "paid-out-by": "BEZAHLT aus Durch"
   },
   "app-bar": {
     "change-password": "Ändere das Passwort",
@@ -74,6 +81,7 @@
     "material": "Material",
     "name": "Name",
     "net": "Netz Gewicht",
+    "new": "Netz",
     "office": "Büro",
     "payout": "Auszahlung",
     "solutation": "Lösung",
