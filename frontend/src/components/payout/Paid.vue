@@ -37,9 +37,12 @@
                           {{ $t("table-data.material") }} :
                         </span>
                       </v-col>
-                      <v-col class="text-left pa-0 ma-0">
+                      <v-col
+                        class="text-left pa-0 ma-0"
+                        v-if="editedItem.arrival.arrival_pos"
+                      >
                         <strong>
-                          {{ editedItem.arrival.material }}
+                          {{ editedItem.arrival.arrival_pos[0].material.name }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -63,9 +66,13 @@
                           {{ $t("table-data.weight") }} :
                         </span>
                       </v-col>
-                      <v-col class="text-left pa-0 ma-0">
+                      <v-col
+                        class="text-left pa-0 ma-0"
+                        v-if="editedItem.arrival.arrival_pos"
+                      >
                         <strong>
-                          {{ editedItem.arrival.net_weight_kg }} kg
+                          {{ editedItem.arrival.arrival_pos[0].net_weight_kg }}
+                          kg
                         </strong>
                       </v-col>
                     </v-row>
@@ -77,7 +84,7 @@
                         </span>
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
-                        <h2>{{ editedItem.arrival.price }} EUR</h2>
+                        <h2>{{ editedItem.arrival.price.toFixed(2) }} EUR</h2>
                       </v-col>
                     </v-row>
 
@@ -334,6 +341,7 @@ export default {
               arrived_at: moment(item.arrival.arrived_at).format(
                 "MM-DD-YYYY hh:mm"
               ),
+              price: item.arrival.price.toFixed(2),
             },
           }));
         });
@@ -405,18 +413,42 @@ export default {
         doc.text(this.$t("pdf.value"), 10, 110);
         doc.text(this.$t("pdf.paid-out"), 10, 130);
         doc.text(this.$t("pdf.paid-out-by"), 10, 150);
-        console.log("item", this.editedItem);
+        doc.text(this.$t("table-data.name"), 100, 80);
+        doc.text(this.$t("table-data.company"), 100, 100);
+        doc.text(this.$t("table-data.address"), 100, 120);
+        doc.text(
+          this.$t("table-data.zip") + "/" + this.$t("table-data.city"),
+          100,
+          140
+        );
 
-        // doc.text(this.editedItem.arrival.material, 50, 50);
-        // doc.text(this.editedItem.arrival.arrival_at, 50, 70);
-        // doc.text(this.editedItem.arrival.net_weight_kg, 50, 90);
-        // doc.text(this.editedItem.arrival.price + "EUR", 50, 110);
-        // doc.text(this.editedItem.paid_at, 50, 130);
-        // doc.text(
-        //   this.editedItem.user.firstname + " " + this.editedItem.user.lastname,
-        //   50,
-        //   150
-        // );
+        doc.setFont("helvetica", "Bold");
+        doc.setFontSize(15);
+        doc.text(this.editedItem.arrival.arrival_pos[0].material.name, 35, 50);
+        doc.text(this.editedItem.arrival.arrived_at, 35, 70);
+        doc.text(
+          `${this.editedItem.arrival.arrival_pos[0].net_weight_kg} kg`,
+          35,
+          90
+        );
+        doc.setFontSize(20);
+        doc.text(this.editedItem.arrival.price + "EUR", 35, 110);
+        doc.setFontSize(15);
+        doc.text(this.editedItem.paid_at, 35, 130);
+        doc.text(
+          this.editedItem.user.firstname + " " + this.editedItem.user.lastname,
+          35,
+          150
+        );
+
+        doc.text(this.editedItem.arrival.customer, 120, 80);
+        doc.text(this.editedItem.arrival.company_name, 120, 100);
+        doc.text(this.editedItem.arrival.street, 120, 120);
+        doc.text(
+          `${this.editedItem.arrival.zip}/${this.editedItem.arrival.city}`,
+          120,
+          140
+        );
 
         //Footer
         doc.setFont("helvetica", "italic");

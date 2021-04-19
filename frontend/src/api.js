@@ -1,7 +1,7 @@
 import { API_URL, headers } from "./config";
 
 export const inviteUser = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/office/user/invite`, {
+  return await fetch(`${API_URL}/office/user/invite/`, {
     method: "POST",
     headers: {
       ...headers,
@@ -12,7 +12,7 @@ export const inviteUser = async (data, csrftoken) => {
 };
 
 export const cancelInviteUser = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/office/user/cancel-invite`, {
+  return await fetch(`${API_URL}/office/user/cancel-invite/`, {
     method: "POST",
     headers: {
       ...headers,
@@ -23,7 +23,7 @@ export const cancelInviteUser = async (data, csrftoken) => {
 };
 
 export const getUsers = async (csrftoken) => {
-  return await fetch(`${API_URL}/office/user`, {
+  return await fetch(`${API_URL}/office/user/`, {
     method: "GET",
     headers: {
       ...headers,
@@ -122,7 +122,7 @@ export const updateCustomer = async (data, csrftoken) => {
 };
 
 export const deleteCustomer = async (id, csrftoken) => {
-  return await fetch(`${API_URL}/office/customer`, {
+  return await fetch(`${API_URL}/office/customer/`, {
     method: "DELETE",
     headers: {
       ...headers,
@@ -133,14 +133,14 @@ export const deleteCustomer = async (id, csrftoken) => {
 };
 
 export const deactiveCustomer = async (cid) => {
-  return await fetch(`${API_URL}/office/customer/${cid}/deactive`, {
+  return await fetch(`${API_URL}/office/customer/${cid}/deactive/`, {
     method: "PUT",
     headers,
   });
 };
 
 export const getMaterial = (id, csrftoken) => {
-  return fetch(`${API_URL}/arrival/material?id=${id}`, {
+  return fetch(`${API_URL}/arrival/material?id=${id}/`, {
     method: "GET",
     headers: {
       ...headers,
@@ -150,7 +150,7 @@ export const getMaterial = (id, csrftoken) => {
 };
 
 export const getMaterials = async (csrftoken) => {
-  return await fetch(`${API_URL}/arrival/material`, {
+  return await fetch(`${API_URL}/arrival/material/`, {
     method: "GET",
     headers: {
       ...headers,
@@ -160,7 +160,7 @@ export const getMaterials = async (csrftoken) => {
 };
 
 export const updateMaterial = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/arrival/material`, {
+  return await fetch(`${API_URL}/arrival/material/`, {
     method: "PUT",
     headers: {
       ...headers,
@@ -171,7 +171,7 @@ export const updateMaterial = async (data, csrftoken) => {
 };
 
 export const deleteMaterial = async (id, csrftoken) => {
-  return await fetch(`${API_URL}/arrival/material`, {
+  return await fetch(`${API_URL}/arrival/material/`, {
     method: "DELETE",
     headers: {
       ...headers,
@@ -182,7 +182,7 @@ export const deleteMaterial = async (id, csrftoken) => {
 };
 
 export const createMaterial = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/arrival/material`, {
+  return await fetch(`${API_URL}/arrival/material/`, {
     method: "POST",
     headers: {
       ...headers,
@@ -214,7 +214,7 @@ export const getArrivalPosList = async (id, csrftoken) => {
 };
 
 export const deleteArrivalPos = async (id, csrftoken) => {
-  return await fetch(`${API_URL}/arrival/arrival_pos/${id}`, {
+  return await fetch(`${API_URL}/arrival/arrival_pos/${id}/`, {
     method: "DELETE",
     headers: {
       ...headers,
@@ -224,7 +224,7 @@ export const deleteArrivalPos = async (id, csrftoken) => {
 };
 
 export const getOpenList = async (csrftoken) => {
-  return await fetch(`${API_URL}/payout/open`, {
+  return await fetch(`${API_URL}/payout/open/`, {
     method: "GET",
     headers: {
       ...headers,
@@ -234,7 +234,7 @@ export const getOpenList = async (csrftoken) => {
 };
 
 export const getOpen = (id, csrftoken) => {
-  return fetch(`${API_URL}/payout/open/${id}`, {
+  return fetch(`${API_URL}/payout/open/${id}/`, {
     method: "GET",
     headers: {
       ...headers,
@@ -255,7 +255,7 @@ export const createPaid = (id, csrftoken) => {
 };
 
 export const getPaidList = async (csrftoken) => {
-  return await fetch(`${API_URL}/payout/paid`, {
+  return await fetch(`${API_URL}/payout/paid/`, {
     method: "GET",
     headers: {
       ...headers,
