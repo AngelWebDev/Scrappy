@@ -130,24 +130,32 @@ export default {
               this.isPrint = true;
               this.items = result.map((item) => ({
                 id: item.id,
-                customerNo: item.customer.id,
+                customerNo: item.arrival.customer.id,
                 customerName:
-                  item.customer.firstname + " " + item.customer.lastname,
-                taxID: item.customer.company
-                  ? item.customer.company.tax_id
+                  item.arrival.customer.firstname +
+                  " " +
+                  item.arrival.customer.lastname,
+                taxID: item.arrival.customer.company
+                  ? item.arrival.customer.company.tax_id
                   : "",
-                vatID: item.customer.company
-                  ? item.customer.company.vat_id
+                vatID: item.arrival.customer.company
+                  ? item.arrival.customer.company.vat_id
                   : "",
                 // CLN: item.CLN,
                 // materialCategory: item.category,
-                material: item.material.name,
-                netWeight: item.net_weight,
-                pricePerKg: item.price_per_kg,
-                positionValue: item.net_weight * item.price_per_kg,
+                material: item.arrival.arrival_pos[0].material.name,
+                netWeight: item.arrival.arrival_pos[0].net_weight_kg,
+                pricePerKg: item.arrival.arrival_pos[0].material.price_per_kg,
+                positionValue: (
+                  item.arrival.arrival_pos[0].net_weight_kg *
+                  item.arrival.arrival_pos[0].material.price_per_kg
+                ).toFixed(2),
                 vatAmount: item.vat_amount,
-                grossAmount:
-                  item.vat_amount + item.net_weight * item.price_per_kg,
+                grossAmount: (
+                  item.vat_amount +
+                  item.arrival.arrival_pos[0].net_weight_kg *
+                    item.arrival.arrival_pos[0].material.price_per_kg
+                ).toFixed(2),
               }));
             }
           });

@@ -90,6 +90,16 @@ export const verifyIdentification = async (data, csrftoken) => {
   });
 };
 
+export const deleteIdentification = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/office/identification/${id}`, {
+    method: "DELETE",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
 export const getCustomer = (id, csrftoken) => {
   return fetch(`${API_URL}/office/customer?id=${id}`, {
     method: "GET",

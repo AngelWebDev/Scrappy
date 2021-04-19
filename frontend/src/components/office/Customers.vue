@@ -394,6 +394,7 @@ import {
   deleteCustomer,
   getCustomers,
   verifyIdentification,
+  deleteIdentification,
 } from "../../api";
 export default {
   name: "customers",
@@ -592,10 +593,12 @@ export default {
     },
 
     deleteIDItem(item) {
-      this.editedItem.identification.splice(
-        this.editedItem.identification.indexOf(item),
-        1
-      );
+      deleteIdentification(item.id, this.token).then(() => {
+        this.editedItem.identification.splice(
+          this.editedItem.identification.indexOf(item),
+          1
+        );
+      });
     },
 
     deleteItemConfirm() {
