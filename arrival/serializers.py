@@ -23,13 +23,10 @@ class ArrivalPosSerializer(serializers.ModelSerializer):
         model = ArrivalPos
         fields = ['id', 'material', 'gross_weight_kg', 'tare_kg', 'net_weight_kg']
 
-    def get_material_name(self, obj):
-        return obj.material.name
-
 
 class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
-    city = serializers.SerializerMethodField()
+    city = serializers.CharField(source='customer.city')
     price = serializers.SerializerMethodField()
 
     class Meta:
@@ -38,9 +35,6 @@ class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
 
     def get_customer(self, obj):
         return "{} {}".format(obj.customer.firstname, obj.customer.lastname)
-
-    def get_city(self, obj):
-        return obj.customer.city
 
     def get_price(self, obj):
         arrival_pos = ArrivalPos.objects.filter(arrival_id=obj.id).all()

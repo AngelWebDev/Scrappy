@@ -67,7 +67,7 @@ class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreat
             shipment_time = arrival_pos.pop('arrived_at')
             arrival, is_created = Arrival.objects.get_or_create(
                 customer_id=customer_id, user=request.user, arrived_at=shipment_time)
-            arrival_pos['net_weight_kg'] = Decimal(arrival_pos['gross_weight_kg']) - Decimal(arrival_pos['tare_kg'])
+            arrival_pos['net_weight_kg'] = round(Decimal(arrival_pos['gross_weight_kg']) - Decimal(arrival_pos['tare_kg']), 2)
             arrival_pos['arrival_id'] = arrival.id
             new_arrival_pos = ArrivalPos(**arrival_pos)
             new_arrival_pos.save()

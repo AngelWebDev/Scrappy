@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from .models import Payout
-from arrival.models import Material
-from arrival.serializers import ArrivalInPayoutSerializerList, ArrivalInPayoutSerializerDetail, MaterialSerializer
+from arrival.models import Arrival, ArrivalPos
+from arrival.serializers import ArrivalInPayoutSerializerList, ArrivalInPayoutSerializerDetail, ArrivalPosSerializer
 from office.serializers import UserSerializer, CustomerDetailSerializer
 
 
@@ -23,22 +23,19 @@ class PayoutDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'paid_at', 'paid_amount', 'user', 'arrival']
 
 
+class ArrivalForReportSerializer(serializers.ModelSerializer):
+    customer = CustomerDetailSerializer()
+    arrival_pos = ArrivalPosSerializer(many=True)
+
+    class Meta:
+        model = Arrival
+        fields = ['customer', 'arrival_pos']
+
+
 class PayoutReportSerializer(serializers.ModelSerializer):
-    customer = serializers.SerializerMethodField()
-    material = serializers.SerializerMethodField()
-    price_per_kg = serializers.SerializerMethodField()
-    net_weight = serializers.SerializerMethodField()
+    arrival = ArrivalForReportSerializer()
 
     class Meta:
         model = Payout
-        fields = ['id', 'customer', 'material', 'price_per_kg', 'net_weight', 'vat_amount']
-
-    def get_price_per_kg(self, obj):
-        return obj.arrival.arrival_pos.price_per_kg
-
-    def get_net_weight(self, obj):
-        return obj.arrival.net_weight_kg
-
-    def get_customer(self, obj):
-        return CustomerDetailSerializer(obj.arrival.customer).data
+        fields = ['id', 'arrival', 'vat_amount']
 
