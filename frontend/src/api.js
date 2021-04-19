@@ -101,7 +101,7 @@ export const getCustomer = (id, csrftoken) => {
 };
 
 export const getCustomers = async (csrftoken) => {
-  return await fetch(`${API_URL}/office/customer`, {
+  return await fetch(`${API_URL}/office/customer/`, {
     method: "GET",
     headers: {
       ...headers,
@@ -111,7 +111,7 @@ export const getCustomers = async (csrftoken) => {
 };
 
 export const updateCustomer = async (data, csrftoken) => {
-  return await fetch(`${API_URL}/office/customer`, {
+  return await fetch(`${API_URL}/office/customer/`, {
     method: "PUT",
     headers: {
       ...headers,
@@ -281,5 +281,26 @@ export const getReportsData = async (date, csrftoken) => {
       ...headers,
       "X-CSRFTOKEN": csrftoken,
     },
+  });
+};
+
+export const reversalTransaction = async (id, csrftoken) => {
+  return await fetch(`${API_URL}/payout/reverse/${id}/`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
+export const emailRecipt = async (data, csrftoken) => {
+  return await fetch(`${API_URL}/payout/report/email/`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+    body: JSON.stringify(data),
   });
 };

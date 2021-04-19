@@ -227,20 +227,6 @@
               <span class="headline">{{ $t(`form-data.reversal`) }}</span>
             </v-card-title>
 
-            <!-- <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" class="text-left">
-                    <v-text-field
-                      outlined
-                      v-model="emailAddress"
-                      :label="$t('table-data.email')"
-                    />
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text> -->
-
             <v-card-actions>
               <v-col class="text-center">
                 <v-btn color="red darken-1" text @click="reversalTransaction">
@@ -262,7 +248,13 @@
 </template>
 
 <script>
-import { getPaidList, getPaid } from "../../api";
+import {
+  getPaidList,
+  getPaid,
+  reversalTransaction,
+  emailRecipt,
+} from "../../api";
+import jsPDF from "jspdf";
 import moment from "moment";
 export default {
   name: "paid",
@@ -371,19 +363,100 @@ export default {
     },
     print() {
       this.isPrint = true;
+      const date = moment(new Date()).format("MM-DD-YYYY hh:mm");
+      let pdfName = "payout_transaction_" + date.replaceAll("-", "").trim();
+
+      const addPages = (doc) => {
+        const pageCount = doc.internal.getNumberOfPages();
+
+        doc.setPage(1);
+        //Header
+        doc.setFont("helvetica", "Bold");
+        doc.setFontSize(20);
+        doc.text(this.$t("pdf.customer"), 100, 70);
+        doc.setFontSize(30);
+        doc.text(
+          this.$t(`pdf.payout-title`),
+          doc.internal.pageSize.width / 2,
+          30,
+          {
+            align: "center",
+          }
+        );
+        doc.setFont("helvetica");
+        doc.setFontSize(10);
+        doc.text(
+          `${this.$t("pdf.date")}: ` + date,
+          doc.internal.pageSize.width - 10,
+          30,
+          {
+            align: "right",
+          }
+        );
+        doc.setDrawColor("gray");
+        doc.setLineWidth(0, 5);
+        doc.line(10, 35, doc.internal.pageSize.width - 10, 35);
+
+        doc.setFont("helvetica");
+        doc.setFontSize(10);
+        doc.text(this.$t("pdf.material"), 10, 50);
+        doc.text(this.$t("pdf.arrival"), 10, 70);
+        doc.text(this.$t("pdf.weight"), 10, 90);
+        doc.text(this.$t("pdf.value"), 10, 110);
+        doc.text(this.$t("pdf.paid-out"), 10, 130);
+        doc.text(this.$t("pdf.paid-out-by"), 10, 150);
+        console.log("item", this.editedItem);
+
+        // doc.text(this.editedItem.arrival.material, 50, 50);
+        // doc.text(this.editedItem.arrival.arrival_at, 50, 70);
+        // doc.text(this.editedItem.arrival.net_weight_kg, 50, 90);
+        // doc.text(this.editedItem.arrival.price + "EUR", 50, 110);
+        // doc.text(this.editedItem.paid_at, 50, 130);
+        // doc.text(
+        //   this.editedItem.user.firstname + " " + this.editedItem.user.lastname,
+        //   50,
+        //   150
+        // );
+
+        //Footer
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(10);
+        doc.text(
+          "Page " + String(1) + " of " + String(pageCount),
+          doc.internal.pageSize.width / 2,
+          287,
+          {
+            align: "center",
+          }
+        );
+      };
+      let doc = new jsPDF();
+      addPages(doc);
+      doc.save(pdfName + ".pdf");
     },
     email() {
       this.isEmail = true;
     },
     sendEmail() {
       if (this.emailAddress) {
-        //call api
+        const data = {
+          payout_id: this.editedItem.id,
+          arrival_pos_id: this.editedItem.arrival.id,
+          email: this.emailAddress,
+        };
+        emailRecipt(data, this.token);
         this.isEmail = false;
         this.emailAddress = "";
       }
     },
     reversal() {
       this.isReversal = true;
+    },
+    reversalTransaction() {
+      reversalTransaction(this.editedItem.id, this.token);
+      this.items.splice(this.editedIndex, 1);
+      this.isReversal = false;
+      this.close();
     },
   },
 };
