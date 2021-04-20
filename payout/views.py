@@ -83,6 +83,23 @@ class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, 
         return Response({"result": "success"})
 
 
+class ArrivalChangeCustomerAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveUpdateAPIView):
+    serializer_class = ArrivalInPayoutSerializerDetail
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Arrival.objects.filter(status=Arrival.StatusChoices.OPEN).all()
+
+    def update(self, request, id, customer_id):
+        obj = self.get_object()
+        if obj:
+            obj.customer_id = customer_id
+            obj.save()
+            return Response({"result": self.get_serializer(obj).data})
+        else:
+            return Response({"result": "There is no matching arrival data"}, 404)
+
+
 class PayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
     serializer_class = PayoutListSerializer
     queryset = Payout.objects.all()
@@ -95,7 +112,7 @@ class PayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
 
 class PayoutDetailAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveAPIView):
     queryset = Payout.objects.all()
-    lookup_url_kwarg = 'id'
+    lookup_field = 'id'
     serializer_class = PayoutDetailSerializer
 
     def retrieve(self, request, *args, **kwargs):
