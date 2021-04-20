@@ -306,6 +306,7 @@ import {
   createPaid,
   verifyIdentification,
   getCustomers,
+  changeCustomer,
 } from "../../api";
 import moment from "moment";
 export default {
@@ -506,8 +507,13 @@ export default {
       this.customer_id = "";
     },
     selectCustomer() {
-      // eslint-disable-next-line no-console
-      console.log("item", this.customer_id);
+      changeCustomer(this.editedItem.id, this.customer_id, this.token).then(
+        () => {
+          this.cancelChangeCustomer();
+          this.close();
+          this.initialize();
+        }
+      );
     },
   },
 };
