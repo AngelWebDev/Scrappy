@@ -305,7 +305,6 @@ import {
   getOpen,
   createPaid,
   verifyIdentification,
-  getCustomer,
   getCustomers,
 } from "../../api";
 import moment from "moment";
