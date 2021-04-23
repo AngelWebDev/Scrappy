@@ -157,6 +157,7 @@ export default {
         },
       },
       materials: [],
+      allMaterials: [],
       form: {
         customer_id: null,
         material_id: null,
@@ -203,6 +204,7 @@ export default {
       getMaterials(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
+          this.allMaterials = result;
           this.materials = result.map((item) => ({
             value: item.id,
             text: item.name,
@@ -227,12 +229,6 @@ export default {
           this.customer = Object.assign({}, res.result);
         }
       });
-      getArrivalPosList(this.form.customer_id, this.token)
-        .then((res) => res.json())
-        .then(({ result }) => {
-          this.items = result.length ? result : [{}];
-        })
-        .catch(() => (this.items = []));
     },
     save() {
       this.validation();
@@ -244,27 +240,27 @@ export default {
         arrived_at: new Date(),
       };
 
-      createArrival(payload, this.token).then((res) => {
-        if (res.status === 200) {
-          this.form.material_id = null;
-          this.form.gross_weight_kg = 0;
-          this.form.tare_kg = 0;
-          getArrivalPosList(this.form.customer_id, this.token)
-            .then((res) => res.json())
-            .then(({ result }) => {
-              this.items = result;
-            });
-        } else {
-          this.error = "Something went wrong";
-        }
+      this.items.push({
+        material: this.allMaterials.find(
+          (item) => item.id === this.form.material_id
+        ),
+        gross_weight_kg: this.form.gross_weight_kg,
+        tare_kg: this.form.tare_kg,
+        net_weight_kg: this.form.gross_weight_kg - this.form.tare_kg,
       });
+
+      this.form.material_id = null;
+      this.form.gross_weight_kg = 0;
+      this.form.tare_kg = 0;
     },
     finish() {
-      this.validation();
+      const payload = {
+        customer_id: this.form.customer_id,
+        arrived_at: new Date(),
+        arrivals: this.items,
+      };
 
-      if (this.error !== "") return;
-
-      createArrival(this.form, this.token).then((res) => {
+      createArrival(payload, this.token).then((res) => {
         if (res.status === 200) {
           this.cancel();
         } else {
@@ -273,13 +269,9 @@ export default {
       });
     },
     deleteItem(item) {
-      deleteArrivalPos(item.id, this.token).then(() => {
-        getArrivalPosList(this.form.customer_id, this.token)
-          .then((res) => res.json())
-          .then(({ result }) => {
-            this.items = result;
-          });
-      });
+      this.items = this.items.filter(
+        (it, index) => index !== this.items.indexOf(item)
+      );
     },
     validation() {
       if (this.form.customer_id === null) {
