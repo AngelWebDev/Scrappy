@@ -101,11 +101,18 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-select
+                dense
+                :items="ids"
+                v-model="selectedId"
+                v-on:change="selectId"
+                outlined
+                class="pt-6 pr-2"
+              />
               <v-btn
                 color="warning"
                 dark
-                @click="openDialogID"
+                @click="verifyCustomer"
                 v-if="editedItem.identification"
               >
                 {{ $t("table-data.verify_customer") }}
@@ -306,6 +313,7 @@ import {
   createPaid,
   verifyIdentification,
   getCustomers,
+  getCustomer,
   changeCustomer,
 } from "../../api";
 import moment from "moment";
@@ -372,6 +380,8 @@ export default {
       zip: "",
       company_name: "",
     },
+    ids: [],
+    selectedId: "",
     customers: [],
     customer_id: "",
     token: "",
@@ -409,6 +419,17 @@ export default {
       this.dialogID = true;
     },
 
+    selectId() {
+      if (this.selectedId === -1) {
+        this.openDialogID();
+      }
+    },
+
+    verifyCustomer() {
+      //console.log("angel log", this.editedItem.id, this.selectedId);
+      //call api
+    },
+
     cancelDoc() {
       this.dialogID = false;
       this.identification = Object.assign({}, this.defaultIdentification);
@@ -427,7 +448,18 @@ export default {
         issuing_country: this.identification.issuing_country,
         document_expiration_date: this.identification.document_expiration_date,
       };
-      verifyIdentification(data, this.token);
+      verifyIdentification(data, this.token).then(() => {
+        getCustomer(this.editedItem.customer_id, this.token).then((res) => {
+          if (res.result.identification.length > 0) {
+            const resultIds = res.result.identification.map((item) => ({
+              text: item.document_type,
+              value: item.id,
+            }));
+
+            this.ids = [...resultIds, { text: "Enter New Doc", value: -1 }];
+          }
+        });
+      });
       this.dialogID = false;
     },
 
@@ -442,6 +474,16 @@ export default {
         this.editedItem.arrived_at = moment(new Date()).format(
           "MM-DD-YYYY hh:mm"
         );
+      });
+      getCustomer(item.customer_id, this.token).then((res) => {
+        if (res.result.identification.length > 0) {
+          const resultIds = res.result.identification.map((item) => ({
+            text: item.document_type,
+            value: item.id,
+          }));
+
+          this.ids = [...resultIds, { text: "Enter New Doc", value: -1 }];
+        }
       });
     },
 
