@@ -1,5 +1,5 @@
 import json
-from decimal import Decimal
+import datetime
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views.generic import View
@@ -62,16 +62,18 @@ class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreat
 
     def create(self, request, *args, **kwargs):
         try:
-            arrival_pos = request.data
-            customer_id = arrival_pos.pop('customer_id')
-            shipment_time = arrival_pos.pop('arrived_at')
-            arrival, is_created = Arrival.objects.get_or_create(
-                customer_id=customer_id, user=request.user, arrived_at=shipment_time)
-            arrival_pos['net_weight_kg'] = round(Decimal(arrival_pos['gross_weight_kg']) - Decimal(arrival_pos['tare_kg']), 2)
-            arrival_pos['arrival_id'] = arrival.id
-            new_arrival_pos = ArrivalPos(**arrival_pos)
-            new_arrival_pos.save()
-            return Response({"result": self.serializer_class(new_arrival_pos).data}, status=200)
+            customer_id = request.data['customer_id']
+            if request.data["materials"] and len(request.data["materials"]) > 0:
+                arrival, is_created = Arrival.objects.get_or_create(
+                    customer_id=customer_id, user=request.user, arrived_at=datetime.datetime.utcnow())
+
+                for data in request.data["materials"]:
+                    data['arrival_id'] = arrival.id
+                    new_arrival_pos = ArrivalPos(**data)
+                    new_arrival_pos.save()
+                return Response({"result": "success"}, status=200)
+            else:
+                return Response({"result": "there is no material data"}, status=400)
         except Exception as e:
             print(e)
             return Response({"result": "failed"}, status=400)
