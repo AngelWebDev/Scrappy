@@ -18,6 +18,24 @@
         <v-dialog v-model="dialog" max-width="700px">
           <v-card>
             <v-card-title>
+              <span class="headline">{{ $t(`side-bar.arrival_details`) }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-data-table
+                    :headers="arrivalsHeader"
+                    :items="arrivals"
+                    :search="search"
+                    :hide-default-footer="true"
+                    class="elevation-2"
+                    @click:row="editItem"
+                  >
+                  </v-data-table>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-title>
               <span class="headline">{{ $t(`side-bar.payout`) }}</span>
             </v-card-title>
 
@@ -334,6 +352,15 @@ export default {
       { text: "Date/Time", value: "arrived_at" },
       { text: "Amount", value: "price" },
     ],
+    arrivalsHeader: [
+      { text: "Material", value: "name" },
+      { text: "Net Kg", value: "net_weight_kg" },
+      { text: "Price/kg", value: "price_per_kg" },
+      { text: "Payout", value: "payout" },
+      { text: "Arrival Time", value: "arrived_at" },
+      { text: "Accepting User", value: "username" },
+    ],
+    arrivals: [],
     fromDateMenu: false,
     items: [],
     types: [
@@ -563,7 +590,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.v-data-table {
+.elevation-1 {
   margin-left: 260px;
 }
 .invite-error {

@@ -29,6 +29,7 @@
   },
   "side-bar": {
     "arrival": "Arrival",
+    "arrival_details": "Arrival Details",
     "office": "Office",
     "payout": "Payout"
   },

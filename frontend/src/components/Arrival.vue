@@ -121,14 +121,7 @@
 </template>
 
 <script>
-import {
-  getCustomers,
-  getCustomer,
-  createArrival,
-  getMaterials,
-  getArrivalPosList,
-  deleteArrivalPos,
-} from "../api";
+import { getCustomers, getCustomer, createArrival, getMaterials } from "../api";
 export default {
   name: "arrival",
   data() {
@@ -234,11 +227,6 @@ export default {
       this.validation();
 
       if (this.error !== "") return;
-
-      const payload = {
-        ...this.form,
-        arrived_at: new Date(),
-      };
 
       this.items.push({
         material: this.allMaterials.find(
