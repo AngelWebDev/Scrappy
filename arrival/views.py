@@ -43,7 +43,7 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         return render(request, self.template, context)
 
 
-class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreateAPIView):
+class ArrivalListCreateAPI(ListCreateAPIView):
     serializer_class = ArrivalPosSerializer
 
     def list(self, request, *args, **kwargs):
@@ -63,12 +63,12 @@ class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreat
     def create(self, request, *args, **kwargs):
         try:
             customer_id = request.data['customer_id']
-            if request.data["materials"] and len(request.data["materials"]) > 0:
+            if request.data["arrivals"] and len(request.data["arrivals"]) > 0:
                 arrival, is_created = Arrival.objects.get_or_create(
                     customer_id=customer_id, user=request.user, arrived_at=datetime.datetime.utcnow())
 
-                for data in request.data["materials"]:
-                    data['arrival_id'] = arrival.id
+                for data in request.data["arrivals"]:
+                    data["arrival_id"] = arrival.id
                     new_arrival_pos = ArrivalPos(**data)
                     new_arrival_pos.save()
                 return Response({"result": "success"}, status=200)
