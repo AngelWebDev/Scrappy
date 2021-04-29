@@ -131,6 +131,16 @@ export const updateCustomer = async (data, csrftoken) => {
   });
 };
 
+export const changeCustomer = async (id, customerID, csrftoken) => {
+  return await fetch(`${API_URL}/payout/open/${id}/${customerID}/`, {
+    method: "PUT",
+    headers: {
+      ...headers,
+      "X-CSRFTOKEN": csrftoken,
+    },
+  });
+};
+
 export const deleteCustomer = async (id, csrftoken) => {
   return await fetch(`${API_URL}/office/customer/`, {
     method: "DELETE",

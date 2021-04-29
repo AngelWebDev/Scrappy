@@ -29,6 +29,7 @@
   },
   "side-bar": {
     "arrival": "Ankunft",
+    "arrival_details": "Ankunft Einzelheiten",
     "office": "Büro",
     "payout": "Auszahlung"
   },

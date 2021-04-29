@@ -18,6 +18,24 @@
         <v-dialog v-model="dialog" max-width="700px">
           <v-card>
             <v-card-title>
+              <span class="headline">{{ $t(`side-bar.arrival_details`) }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-data-table
+                    :headers="arrivalsHeader"
+                    :items="arrivals"
+                    :search="search"
+                    :hide-default-footer="true"
+                    class="elevation-2"
+                    @click:row="editItem"
+                  >
+                  </v-data-table>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-title>
               <span class="headline">{{ $t(`side-bar.payout`) }}</span>
             </v-card-title>
 
@@ -101,11 +119,18 @@
             </v-card-text>
 
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-select
+                dense
+                :items="ids"
+                v-model="selectedId"
+                v-on:change="selectId"
+                outlined
+                class="pt-6 pr-2"
+              />
               <v-btn
                 color="warning"
                 dark
-                @click="openDialogID"
+                @click="verifyCustomer"
                 v-if="editedItem.identification"
               >
                 {{ $t("table-data.verify_customer") }}
@@ -306,6 +331,8 @@ import {
   createPaid,
   verifyIdentification,
   getCustomers,
+  getCustomer,
+  changeCustomer,
 } from "../../api";
 import moment from "moment";
 export default {
@@ -325,6 +352,15 @@ export default {
       { text: "Date/Time", value: "arrived_at" },
       { text: "Amount", value: "price" },
     ],
+    arrivalsHeader: [
+      { text: "Material", value: "name" },
+      { text: "Net Kg", value: "net_weight_kg" },
+      { text: "Price/kg", value: "price_per_kg" },
+      { text: "Payout", value: "payout" },
+      { text: "Arrival Time", value: "arrived_at" },
+      { text: "Accepting User", value: "username" },
+    ],
+    arrivals: [],
     fromDateMenu: false,
     items: [],
     types: [
@@ -371,6 +407,8 @@ export default {
       zip: "",
       company_name: "",
     },
+    ids: [],
+    selectedId: "",
     customers: [],
     customer_id: "",
     token: "",
@@ -408,6 +446,17 @@ export default {
       this.dialogID = true;
     },
 
+    selectId() {
+      if (this.selectedId === -1) {
+        this.openDialogID();
+      }
+    },
+
+    verifyCustomer() {
+      //console.log("angel log", this.editedItem.id, this.selectedId);
+      //call api
+    },
+
     cancelDoc() {
       this.dialogID = false;
       this.identification = Object.assign({}, this.defaultIdentification);
@@ -426,7 +475,18 @@ export default {
         issuing_country: this.identification.issuing_country,
         document_expiration_date: this.identification.document_expiration_date,
       };
-      verifyIdentification(data, this.token);
+      verifyIdentification(data, this.token).then(() => {
+        getCustomer(this.editedItem.customer_id, this.token).then((res) => {
+          if (res.result.identification.length > 0) {
+            const resultIds = res.result.identification.map((item) => ({
+              text: item.document_type,
+              value: item.id,
+            }));
+
+            this.ids = [...resultIds, { text: "Enter New Doc", value: -1 }];
+          }
+        });
+      });
       this.dialogID = false;
     },
 
@@ -441,6 +501,16 @@ export default {
         this.editedItem.arrived_at = moment(new Date()).format(
           "MM-DD-YYYY hh:mm"
         );
+      });
+      getCustomer(item.customer_id, this.token).then((res) => {
+        if (res.result.identification.length > 0) {
+          const resultIds = res.result.identification.map((item) => ({
+            text: item.document_type,
+            value: item.id,
+          }));
+
+          this.ids = [...resultIds, { text: "Enter New Doc", value: -1 }];
+        }
       });
     },
 
@@ -506,8 +576,13 @@ export default {
       this.customer_id = "";
     },
     selectCustomer() {
-      // eslint-disable-next-line no-console
-      console.log("item", this.customer_id);
+      changeCustomer(this.editedItem.id, this.customer_id, this.token).then(
+        () => {
+          this.cancelChangeCustomer();
+          this.close();
+          this.initialize();
+        }
+      );
     },
   },
 };
@@ -515,7 +590,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.v-data-table {
+.elevation-1 {
   margin-left: 260px;
 }
 .invite-error {
