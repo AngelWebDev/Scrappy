@@ -196,10 +196,10 @@ import {
   deleteUser,
   updateUser,
   cancelInviteUser,
-  getUsers,
-} from "../../api";
+  getUsers
+} from '../../api'
 export default {
-  name: "users",
+  name: 'users',
   data: () => ({
     dialog: false,
     dialogDelete: false,
@@ -208,195 +208,195 @@ export default {
     error: null,
     success: false,
     headers: [
-      { text: "Name", value: "name" },
-      { text: "Email", value: "email" },
-      { text: "Arrival", value: "arrival" },
-      { text: "Payout", value: "payout" },
-      { text: "Office", value: "office" },
-      { text: "Status", value: "status" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: 'Name', value: 'name' },
+      { text: 'Email', value: 'email' },
+      { text: 'Arrival', value: 'arrival' },
+      { text: 'Payout', value: 'payout' },
+      { text: 'Office', value: 'office' },
+      { text: 'Status', value: 'status' },
+      { text: 'Actions', value: 'actions', sortable: false }
     ],
     items: [],
     editedIndex: -1,
     editedItem: {
-      id: "",
-      firstname: "",
-      lastname: "",
-      email: "",
+      id: '',
+      firstname: '',
+      lastname: '',
+      email: '',
       arrival: false,
       payout: false,
-      office: false,
+      office: false
     },
     defaultItem: {
-      id: "",
-      firstname: "",
-      lastname: "",
-      email: "",
+      id: '',
+      firstname: '',
+      lastname: '',
+      email: '',
       arrival: false,
       payout: false,
-      office: false,
-    },
+      office: false
+    }
   }),
 
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "Invite User" : "Edit User";
-    },
+    formTitle () {
+      return this.editedIndex === -1 ? 'Invite User' : 'Edit User'
+    }
   },
 
   watch: {
-    dialog(val) {
-      val || this.close();
+    dialog (val) {
+      val || this.close()
     },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
+    dialogDelete (val) {
+      val || this.closeDelete()
+    }
   },
 
-  created() {
-    this.initialize();
+  created () {
+    this.initialize()
   },
 
   methods: {
-    initialize() {
+    initialize () {
       const csrftoken = document
         .querySelector('input[name="csrfmiddlewaretoken"]')
-        .getAttribute("value");
+        .getAttribute('value')
       // eslint-disable-next-line no-undef
       getUsers(csrftoken)
         .then((res) => res.json())
         .then(({ result }) => {
           // eslint-disable-next-line no-undef
           this.items = result.map((item) => ({
-            name: item.firstname + " " + item.lastname,
-            ...item,
-          }));
-        });
+            name: item.firstname + ' ' + item.lastname,
+            ...item
+          }))
+        })
     },
 
-    editItem(item) {
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-      this.editing = true;
+    editItem (item) {
+      this.editedIndex = this.items.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+      this.editing = true
     },
 
-    deleteItem(item) {
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
+    deleteItem (item) {
+      this.editedIndex = this.items.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
     },
 
-    async deleteItemConfirm() {
-      this.items.splice(this.editedIndex, 1);
+    async deleteItemConfirm () {
+      this.items.splice(this.editedIndex, 1)
       // eslint-disable-next-line no-undef
-      await deleteUser(this.editedItem.id, csrftoken);
-      this.closeDelete();
+      await deleteUser(this.editedItem.id, csrftoken)
+      this.closeDelete()
     },
 
-    back() {
-      this.pending = false;
+    back () {
+      this.pending = false
     },
 
-    close() {
-      this.dialog = false;
-      this.editing = false;
-      this.pending = false;
-      this.error = null;
-      this.success = false;
+    close () {
+      this.dialog = false
+      this.editing = false
+      this.pending = false
+      this.error = null
+      this.success = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
 
-    closeDelete() {
-      this.dialogDelete = false;
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
+    closeDelete () {
+      this.dialogDelete = false
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
     },
 
-    async invite() {
+    async invite () {
       if (this.editedIndex > -1) {
-        delete this.editedItem.name;
+        delete this.editedItem.name
         // eslint-disable-next-line no-undef
         updateUser(this.editedItem, csrftoken).then(() => {
           Object.assign(this.items[this.editedIndex], {
             ...this.editedItem,
-            name: this.editedItem.firstname + " " + this.editedItem.lastname,
-          });
-          this.close();
-        });
+            name: this.editedItem.firstname + ' ' + this.editedItem.lastname
+          })
+          this.close()
+        })
       } else {
-        this.validation();
+        this.validation()
         if (!this.error) {
-          this.pending = true;
-          delete this.editedItem.name;
-          delete this.editedItem.id;
+          this.pending = true
+          delete this.editedItem.name
+          delete this.editedItem.id
           // eslint-disable-next-line no-undef
           inviteUser(this.editedItem, csrftoken)
             .then((res) => res.json())
             .then((res) => {
-              if (res.result === "success") {
-                this.success = true;
+              if (res.result === 'success') {
+                this.success = true
               } else {
-                this.error = "Something went wrong.";
+                this.error = 'Something went wrong.'
               }
-            });
+            })
         }
       }
     },
 
-    deactive() {
+    deactive () {
       if (this.editedIndex > -1) {
-        this.editedItem.status = "Deactivated";
-        delete this.editedItem.name;
+        this.editedItem.status = 'Deactivated'
+        delete this.editedItem.name
         // eslint-disable-next-line no-undef
         updateUser(this.editedItem, csrftoken).then(() => {
-          this.initialize();
-          this.close();
-        });
+          this.initialize()
+          this.close()
+        })
       }
     },
 
-    active() {
+    active () {
       if (this.editedIndex > -1) {
-        this.editedItem.status = "active";
-        delete this.editedItem.name;
+        this.editedItem.status = 'active'
+        delete this.editedItem.name
         // eslint-disable-next-line no-undef
         updateUser(this.editedItem, csrftoken).then(() => {
-          this.initialize();
-          this.close();
-        });
+          this.initialize()
+          this.close()
+        })
       }
     },
 
-    reSend() {
+    reSend () {
       // eslint-disable-next-line no-undef
-      inviteUser(this.editedItem, csrftoken);
+      inviteUser(this.editedItem, csrftoken)
     },
 
-    cancelInvite() {
+    cancelInvite () {
       const data = {
-        email: this.editedItem.email,
-      };
-      // eslint-disable-next-line no-undef
-      cancelInviteUser(data, csrftoken);
-      this.close();
-    },
-    validation() {
-      if (!this.editedItem.email) {
-        this.error = "Please enter email address.";
-      } else if (!this.editedItem.firstname) {
-        this.error = "Please enter First Name.";
-      } else if (!this.editedItem.lastname) {
-        this.error = "Please enter Last Name.";
-      } else {
-        this.error = null;
+        email: this.editedItem.email
       }
+      // eslint-disable-next-line no-undef
+      cancelInviteUser(data, csrftoken)
+      this.close()
     },
-  },
-};
+    validation () {
+      if (!this.editedItem.email) {
+        this.error = 'Please enter email address.'
+      } else if (!this.editedItem.firstname) {
+        this.error = 'Please enter First Name.'
+      } else if (!this.editedItem.lastname) {
+        this.error = 'Please enter Last Name.'
+      } else {
+        this.error = null
+      }
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -1,326 +1,326 @@
-import { API_URL, headers } from "./config";
+import { API_URL, headers } from './config'
 
 export const inviteUser = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/user/invite/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const cancelInviteUser = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/user/cancel-invite/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const getUsers = async (csrftoken) => {
   return await fetch(`${API_URL}/office/user/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const updateUser = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/user/`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const deleteUser = async (uid, csrftoken) => {
   return await fetch(`${API_URL}/office/user`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify({ id: uid }),
-  });
-};
+    body: JSON.stringify({ id: uid })
+  })
+}
 
 export const deactiveUser = async (uid) => {
   return await fetch(`${API_URL}/office/user/${uid}/deactive`, {
-    method: "PUT",
-    headers,
-  });
-};
+    method: 'PUT',
+    headers
+  })
+}
 
 export const activeUser = async (uid) => {
   return await fetch(`${API_URL}/office/user/${uid}/active`, {
-    method: "PUT",
-    headers,
-  });
-};
+    method: 'PUT',
+    headers
+  })
+}
 
 export const createCustomer = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/customer`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const verifyIdentification = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/identification/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const deleteIdentification = async (id, csrftoken) => {
   return await fetch(`${API_URL}/office/identification/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const getCustomer = (id, csrftoken) => {
   return fetch(`${API_URL}/office/customer?id=${id}`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  }).then((res) => res.json());
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  }).then((res) => res.json())
+}
 
 export const getCustomers = async (csrftoken) => {
   return await fetch(`${API_URL}/office/customer/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const updateCustomer = async (data, csrftoken) => {
   return await fetch(`${API_URL}/office/customer/`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const changeCustomer = async (id, customerID, csrftoken) => {
   return await fetch(`${API_URL}/payout/open/${id}/${customerID}/`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const deleteCustomer = async (id, csrftoken) => {
   return await fetch(`${API_URL}/office/customer/`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify({ id: id }),
-  });
-};
+    body: JSON.stringify({ id: id })
+  })
+}
 
 export const deactiveCustomer = async (cid) => {
   return await fetch(`${API_URL}/office/customer/${cid}/deactive/`, {
-    method: "PUT",
-    headers,
-  });
-};
+    method: 'PUT',
+    headers
+  })
+}
 
 export const getMaterial = (id, csrftoken) => {
   return fetch(`${API_URL}/arrival/material?id=${id}/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  }).then((res) => res.json());
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  }).then((res) => res.json())
+}
 
 export const getMaterials = async (csrftoken) => {
   return await fetch(`${API_URL}/arrival/material/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const updateMaterial = async (data, csrftoken) => {
   return await fetch(`${API_URL}/arrival/material/`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const deleteMaterial = async (id, csrftoken) => {
   return await fetch(`${API_URL}/arrival/material/`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify({ id: id }),
-  });
-};
+    body: JSON.stringify({ id: id })
+  })
+}
 
 export const createMaterial = async (data, csrftoken) => {
   return await fetch(`${API_URL}/arrival/material/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const createArrival = async (data, csrftoken) => {
   return await fetch(`${API_URL}/arrival/shipment/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}
 
 export const getArrivalPosList = async (id, csrftoken) => {
   return await fetch(`${API_URL}/arrival/shipment/?customer_id=${id}`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const deleteArrivalPos = async (id, csrftoken) => {
   return await fetch(`${API_URL}/arrival/arrival_pos/${id}/`, {
-    method: "DELETE",
+    method: 'DELETE',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const getOpenList = async (csrftoken) => {
   return await fetch(`${API_URL}/payout/open/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const getOpen = (id, csrftoken) => {
   return fetch(`${API_URL}/payout/open/${id}/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  }).then((res) => res.json());
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  }).then((res) => res.json())
+}
 
 export const createPaid = (id, Id, csrftoken) => {
   return fetch(`${API_URL}/payout/open/${id}/`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: { identificaion_id: Id },
-  }).then((res) => res.json());
-};
+    body: { identificaion_id: Id }
+  }).then((res) => res.json())
+}
 
 export const getPaidList = async (csrftoken) => {
   return await fetch(`${API_URL}/payout/paid/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const getPaid = (id, csrftoken) => {
   return fetch(`${API_URL}/payout/paid/${id}/`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  }).then((res) => res.json());
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  }).then((res) => res.json())
+}
 
 export const getReportsData = async (date, csrftoken) => {
   return await fetch(`${API_URL}/payout/report/?date=${date}`, {
-    method: "GET",
+    method: 'GET',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const reversalTransaction = async (id, csrftoken) => {
   return await fetch(`${API_URL}/payout/reverse/${id}/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
-    },
-  });
-};
+      'X-CSRFTOKEN': csrftoken
+    }
+  })
+}
 
 export const emailRecipt = async (data, csrftoken) => {
   return await fetch(`${API_URL}/payout/report/email/`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       ...headers,
-      "X-CSRFTOKEN": csrftoken,
+      'X-CSRFTOKEN': csrftoken
     },
-    body: JSON.stringify(data),
-  });
-};
+    body: JSON.stringify(data)
+  })
+}

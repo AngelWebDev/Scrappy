@@ -385,7 +385,7 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 import {
   createCustomer,
   getCustomer,
@@ -394,150 +394,150 @@ import {
   deleteCustomer,
   getCustomers,
   verifyIdentification,
-  deleteIdentification,
-} from "../../api";
+  deleteIdentification
+} from '../../api'
 export default {
-  name: "customers",
+  name: 'customers',
   data: () => ({
     dialog: false,
     dialogID: false,
     dialogDelete: false,
     pending: false,
     editing: false,
-    search: "",
-    token: "",
-    error: "",
+    search: '',
+    token: '',
+    error: '',
     // eslint-disable-next-line no-undef
     user: authUser,
     is_company: false,
-    solutations: ["Mr", "Mrs", "Dr", "Prof"],
+    solutations: ['Mr', 'Mrs', 'Dr', 'Prof'],
     types: [
-      { value: "passport", text: "Passport" },
-      { value: "idcard", text: "ID Card" },
-      { value: "driverlicense", text: "Driver License" },
+      { value: 'passport', text: 'Passport' },
+      { value: 'idcard', text: 'ID Card' },
+      { value: 'driverlicense', text: 'Driver License' }
     ],
     fromDateMenu: false,
 
     headers: [
-      { text: "No", value: "no" },
-      { text: "Last Name", value: "lastname" },
-      { text: "First Name", value: "firstname" },
-      { text: "Address", value: "street" },
-      { text: "City", value: "city" },
-      { text: "Comments", value: "comments" },
-      { text: "Vat_id", value: "company.vat_id" },
-      { text: "Status", value: "status" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: 'No', value: 'no' },
+      { text: 'Last Name', value: 'lastname' },
+      { text: 'First Name', value: 'firstname' },
+      { text: 'Address', value: 'street' },
+      { text: 'City', value: 'city' },
+      { text: 'Comments', value: 'comments' },
+      { text: 'Vat_id', value: 'company.vat_id' },
+      { text: 'Status', value: 'status' },
+      { text: 'Actions', value: 'actions', sortable: false }
     ],
 
     idHeaders: [
-      { text: "Type", value: "document_type" },
-      { text: "Number", value: "document_id_number" },
-      { text: "Valid Until", value: "document_expiration_date" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: 'Type', value: 'document_type' },
+      { text: 'Number', value: 'document_id_number' },
+      { text: 'Valid Until', value: 'document_expiration_date' },
+      { text: 'Actions', value: 'actions', sortable: false }
     ],
     items: [],
     editedIndex: -1,
     editedItem: {
-      title: "",
-      firstname: "",
-      lastname: "",
-      street: "",
-      city: "",
-      comments: "",
+      title: '',
+      firstname: '',
+      lastname: '',
+      street: '',
+      city: '',
+      comments: '',
       status: true,
-      phone1: "",
-      zip: "",
-      email: "",
+      phone1: '',
+      zip: '',
+      email: '',
       company: {
-        id: "",
-        name: "",
-        tax_id: "",
-        vat_id: "",
+        id: '',
+        name: '',
+        tax_id: '',
+        vat_id: ''
       },
-      identification: [],
+      identification: []
     },
     defaultItem: {
-      title: "",
-      firstname: "",
-      lastname: "",
-      street: "",
-      city: "",
-      phone1: "",
-      comments: "",
+      title: '',
+      firstname: '',
+      lastname: '',
+      street: '',
+      city: '',
+      phone1: '',
+      comments: '',
       status: true,
-      zip: "",
-      email: "",
+      zip: '',
+      email: '',
       company: {
-        id: "",
-        name: "",
-        tax_id: "",
-        vat_id: "",
+        id: '',
+        name: '',
+        tax_id: '',
+        vat_id: ''
       },
       identification: {
-        document_type: "passport",
-        document_id_number: "",
+        document_type: 'passport',
+        document_id_number: '',
         name_on_document: null,
         issuing_country: null,
-        document_expiration_date: null,
-      },
-    },
+        document_expiration_date: null
+      }
+    }
   }),
 
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "create-customer" : "edit-customer";
-    },
+    formTitle () {
+      return this.editedIndex === -1 ? 'create-customer' : 'edit-customer'
+    }
   },
 
-  mounted() {
+  mounted () {
     this.token = document
       .querySelector('input[name="csrfmiddlewaretoken"]')
-      .getAttribute("value");
+      .getAttribute('value')
   },
 
   watch: {
-    dialog(val) {
-      val || this.close();
+    dialog (val) {
+      val || this.close()
     },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
+    dialogDelete (val) {
+      val || this.closeDelete()
+    }
   },
 
-  created() {
-    this.initialize();
+  created () {
+    this.initialize()
   },
 
   methods: {
-    initialize() {
+    initialize () {
       getCustomers(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           this.items = result.map((item, index) => ({
             ...item,
-            no: index + 1,
-          }));
-        });
+            no: index + 1
+          }))
+        })
     },
 
-    openDialogID() {
-      this.dialogID = true;
+    openDialogID () {
+      this.dialogID = true
     },
 
-    cancelDoc() {
-      this.dialogID = false;
+    cancelDoc () {
+      this.dialogID = false
       // this.editedItem.identification = Object.assign(
       //   {},
       //   this.defaultItem.identification
       // );
     },
 
-    saveDoc() {
+    saveDoc () {
       this.editedItem.identification.verified_at = moment(new Date()).format(
-        "MM-DD-YYYY hh:mm"
-      );
-      Object.assign(this.items[this.editedIndex], this.editedItem);
+        'MM-DD-YYYY hh:mm'
+      )
+      Object.assign(this.items[this.editedIndex], this.editedItem)
       const data = {
         customer_id: this.editedItem.id,
         document_type: this.editedItem.identification.document_type,
@@ -545,25 +545,25 @@ export default {
         name_on_document: this.editedItem.identification.name_on_document,
         issuing_country: this.editedItem.identification.issuing_country,
         document_expiration_date: this.editedItem.identification
-          .document_expiration_date,
-      };
-      verifyIdentification(data, this.token);
-      this.editedItem.identification.push(data);
-      this.dialogID = false;
+          .document_expiration_date
+      }
+      verifyIdentification(data, this.token)
+      this.editedItem.identification.push(data)
+      this.dialogID = false
     },
 
-    editItem(item) {
+    editItem (item) {
       getCustomer(item.id, this.token).then((res) => {
         if (res) {
-          this.editedIndex = this.items.indexOf(item);
+          this.editedIndex = this.items.indexOf(item)
           if (!res.result.company) {
-            res.result.company = Object.assign({}, this.defaultItem.company);
+            res.result.company = Object.assign({}, this.defaultItem.company)
           }
           if (!res.result.identification) {
             res.result.identification = Object.assign(
               {},
               this.defaultItem.identification
-            );
+            )
           }
 
           if (
@@ -572,110 +572,110 @@ export default {
           ) {
             res.result.identification.verified_at = moment(
               res.result.identification.verified_at
-            ).format("MM-DD-YYYY hh:mm");
+            ).format('MM-DD-YYYY hh:mm')
           }
-          this.editedItem = Object.assign({}, res.result);
+          this.editedItem = Object.assign({}, res.result)
           if (res.result.company && res.result.company.id) {
-            this.is_company = true;
+            this.is_company = true
           }
-          this.dialog = true;
-          this.editing = true;
+          this.dialog = true
+          this.editing = true
         }
-      });
+      })
     },
 
-    deleteItem(item) {
-      item.company = Object.assign({}, this.defaultItem.company);
-      item.identification = Object.assign({}, this.defaultItem.identification);
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
+    deleteItem (item) {
+      item.company = Object.assign({}, this.defaultItem.company)
+      item.identification = Object.assign({}, this.defaultItem.identification)
+      this.editedIndex = this.items.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
     },
 
-    deleteIDItem(item) {
+    deleteIDItem (item) {
       deleteIdentification(item.id, this.token).then(() => {
         this.editedItem.identification.splice(
           this.editedItem.identification.indexOf(item),
           1
-        );
-      });
+        )
+      })
     },
 
-    deleteItemConfirm() {
-      this.items.splice(this.editedIndex, 1);
-      this.closeDelete();
+    deleteItemConfirm () {
+      this.items.splice(this.editedIndex, 1)
+      this.closeDelete()
     },
 
-    close() {
-      this.dialog = false;
-      this.editing = false;
-      this.pending = false;
+    close () {
+      this.dialog = false
+      this.editing = false
+      this.pending = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
 
-    closeDelete() {
-      this.dialogDelete = false;
-      deleteCustomer(this.editedItem.id, this.token);
+    closeDelete () {
+      this.dialogDelete = false
+      deleteCustomer(this.editedItem.id, this.token)
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
 
-    save() {
-      const that = this;
-      if (this.editedItem.company.id === "") {
-        delete this.editedItem.company.id;
+    save () {
+      const that = this
+      if (this.editedItem.company.id === '') {
+        delete this.editedItem.company.id
       }
       if (!this.is_company) {
-        delete this.editedItem.company;
+        delete this.editedItem.company
       }
-      delete this.editedItem.identification;
+      delete this.editedItem.identification
       if (this.editedIndex > -1) {
-        Object.assign(this.items[this.editedIndex], this.editedItem);
+        Object.assign(this.items[this.editedIndex], this.editedItem)
 
         updateCustomer(this.editedItem, this.token).then((res) => {
           if (res.ok) {
-            this.editing = true;
-            that.close();
+            this.editing = true
+            that.close()
           } else {
-            this.error = res.statusText;
+            this.error = res.statusText
           }
-        });
+        })
       } else {
         if (this.editedItem.email) {
           createCustomer(this.editedItem, this.token)
             .then((res) => res.json())
             .then((res) => {
               if (res.result) {
-                res.result.company = Object.assign({}, {});
+                res.result.company = Object.assign({}, {})
                 this.items.push({
                   ...res.result,
-                  no: this.items.length + 1,
-                });
-                that.close();
+                  no: this.items.length + 1
+                })
+                that.close()
               } else {
-                this.error = "Something went wrong.";
+                this.error = 'Something went wrong.'
               }
-            });
+            })
         }
       }
     },
 
-    deactive() {
-      deactiveCustomer(this.editedItem.id, this.token);
-      this.editedItem.status = false;
-      delete this.editedItem.name;
+    deactive () {
+      deactiveCustomer(this.editedItem.id, this.token)
+      this.editedItem.status = false
+      delete this.editedItem.name
       updateCustomer(this.editedItem, this.token).then(() => {
-        Object.assign(this.items[this.editedIndex], this.editedItem);
-        this.close();
-      });
-    },
-  },
-};
+        Object.assign(this.items[this.editedIndex], this.editedItem)
+        this.close()
+      })
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -8,21 +8,21 @@
 </template>
 
 <script>
-import NavigationBar from "./components/NavigationBar.vue";
-import AppBar from "./components/AppBar.vue";
+import NavigationBar from './components/NavigationBar.vue'
+import AppBar from './components/AppBar.vue'
 // import Footer from "./components/Footer.vue";
-import Arrival from "./components/Arrival.vue";
-import "./assets/custom.css";
+import Arrival from './components/Arrival.vue'
+import './assets/custom.css'
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
     NavigationBar,
     AppBar,
     // Footer,
-    Arrival,
-  },
-};
+    Arrival
+  }
+}
 </script>
 
 <style>

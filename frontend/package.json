@@ -3,16 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
+    "start": "npm run serve"
   },
   "dependencies": {
     "@kazupon/vue-i18n-loader": "0.5.0",
-    "@vue/composition-api": "1.0.0-rc.1",
-    "core-js": "^2.6.5",
+    "core-js": "^3.6.5",
     "jspdf": "2.3.1",
     "moment": "2.29.1",
     "swrv": "0.9.3",
@@ -26,12 +25,14 @@
   },
   "devDependencies": {
     "@mdi/font": "^5.9.55",
-    "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-plugin-babel": "4.5.12",
+    "@vue/cli-plugin-eslint": "4.5.12",
     "@vue/cli-service": "^3.11.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "6.8.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {

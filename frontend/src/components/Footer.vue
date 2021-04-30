@@ -6,14 +6,14 @@
 
 <script>
 export default {
-  name: "footer",
+  name: 'footer',
   components: {},
-  data() {
+  data () {
     return {
-      Header: "Footer",
-    };
-  },
-};
+      Header: 'Footer'
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

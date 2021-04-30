@@ -16,25 +16,25 @@
 </template>
 
 <script>
-import Open from "./payout/Open";
-import Paid from "./payout/Paid";
+import Open from './payout/Open'
+import Paid from './payout/Paid'
 export default {
-  name: "payout-tab-bar",
+  name: 'payout-tab-bar',
   components: {
     Open,
-    Paid,
+    Paid
   },
-  data() {
+  data () {
     return {
       tab: null,
       items: [
-        { title: "open", content: "Open" },
-        { title: "paid", content: "Paid" },
+        { title: 'open', content: 'Open' },
+        { title: 'paid', content: 'Paid' }
       ],
-      right: null,
-    };
-  },
-};
+      right: null
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

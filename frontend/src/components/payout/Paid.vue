@@ -274,252 +274,252 @@ import {
   getPaidList,
   getPaid,
   reversalTransaction,
-  emailRecipt,
-} from "../../api";
-import jsPDF from "jspdf";
-import moment from "moment";
+  emailRecipt
+} from '../../api'
+import jsPDF from 'jspdf'
+import moment from 'moment'
 export default {
-  name: "paid",
+  name: 'paid',
   data: () => ({
     dialog: false,
     isPrint: false,
     isEmail: false,
-    emailAddress: "",
+    emailAddress: '',
     isReversal: false,
     editing: false,
     error: false,
     success: false,
-    search: "",
+    search: '',
     headers: [
-      { text: "Customer#", value: "arrival.customer_id" },
-      { text: "Customer", value: "arrival.customer" },
-      { text: "Payout#", value: "arrival.id" },
-      { text: "Amount", value: "arrival.price" },
-      { text: "Paid At", value: "paid_at" },
-      { text: "User", value: "username" },
+      { text: 'Customer#', value: 'arrival.customer_id' },
+      { text: 'Customer', value: 'arrival.customer' },
+      { text: 'Payout#', value: 'arrival.id' },
+      { text: 'Amount', value: 'arrival.price' },
+      { text: 'Paid At', value: 'paid_at' },
+      { text: 'User', value: 'username' }
     ],
     arrivalsHeader: [
-      { text: "Material", value: "material.name" },
-      { text: "Net Kg", value: "net_weight_kg" },
-      { text: "Price/kg", value: "material.price_per_kg" },
-      { text: "Payout", value: "payout" },
-      { text: "Arrival Time", value: "arrived_at" },
-      { text: "Accepting User", value: "username" },
+      { text: 'Material', value: 'material.name' },
+      { text: 'Net Kg', value: 'net_weight_kg' },
+      { text: 'Price/kg', value: 'material.price_per_kg' },
+      { text: 'Payout', value: 'payout' },
+      { text: 'Arrival Time', value: 'arrived_at' },
+      { text: 'Accepting User', value: 'username' }
     ],
     arrivals: [],
     fromDateMenu: false,
     items: [],
     editedIndex: -1,
     editedItem: {
-      id: "",
-      paid_at: "",
+      id: '',
+      paid_at: '',
       paid_amount: 0,
       user: {
-        id: "",
-        email: "",
-        firstname: "",
-        lastname: "",
-        status: "",
+        id: '',
+        email: '',
+        firstname: '',
+        lastname: '',
+        status: ''
       },
       material: {
-        name: "",
+        name: ''
       },
       arrival: {
-        id: "",
-        customer: "",
-        city: "",
-        material: "",
+        id: '',
+        customer: '',
+        city: '',
+        material: '',
         net_weight_kg: 0,
-        arrived_at: "",
+        arrived_at: '',
         price: 0,
-        street: "",
-        company_name: "",
-        zip: "",
-      },
+        street: '',
+        company_name: '',
+        zip: ''
+      }
     },
-    token: "",
+    token: ''
   }),
 
   watch: {
-    dialog(val) {
-      val || this.close();
-    },
+    dialog (val) {
+      val || this.close()
+    }
   },
 
-  created() {
-    this.initialize();
+  created () {
+    this.initialize()
   },
 
   methods: {
-    initialize() {
+    initialize () {
       this.token = document
         .querySelector('input[name="csrfmiddlewaretoken"]')
-        .getAttribute("value");
+        .getAttribute('value')
       getPaidList(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           this.items = result.map((item) => ({
             id: item.id,
-            paid_at: moment(item.paid_at).format("MM-DD-YYYY hh:mm"),
+            paid_at: moment(item.paid_at).format('MM-DD-YYYY hh:mm'),
             // eslint-disable-next-line no-undef
-            username: authUser.firstname + " " + authUser.lastname,
+            username: authUser.firstname + ' ' + authUser.lastname,
             arrival: {
               ...item.arrival,
               arrived_at: moment(item.arrival.arrived_at).format(
-                "MM-DD-YYYY hh:mm"
+                'MM-DD-YYYY hh:mm'
               ),
-              price: item.arrival.price.toFixed(2),
-            },
-          }));
-        });
+              price: item.arrival.price.toFixed(2)
+            }
+          }))
+        })
     },
 
-    editItem(item) {
-      this.editedIndex = this.items.indexOf(item);
+    editItem (item) {
+      this.editedIndex = this.items.indexOf(item)
       getPaid(item.id, this.token).then(({ result }) => {
-        this.savedItem = Object.assign({}, result);
+        this.savedItem = Object.assign({}, result)
         this.arrivals = result.arrival.arrival_pos.map((item) => ({
           ...item,
           payout: (item.net_weight_kg * item.material.price_per_kg).toFixed(2),
-          arrived_at: moment(result.arrived_at).format("MM-DD-YYYY hh:mm"),
+          arrived_at: moment(result.arrived_at).format('MM-DD-YYYY hh:mm'),
           // eslint-disable-next-line no-undef
-          username: authUser.firstname + " " + authUser.lastname,
-        }));
-        this.dialog = true;
-        this.editing = true;
-      });
+          username: authUser.firstname + ' ' + authUser.lastname
+        }))
+        this.dialog = true
+        this.editing = true
+      })
     },
 
-    selectMaterial(material) {
+    selectMaterial (material) {
       this.editedItem = {
         ...this.savedItem,
         ...material,
-        paid_at: moment(this.savedItem.paid_at).format("MM-DD-YYYY hh:mm"),
-      };
+        paid_at: moment(this.savedItem.paid_at).format('MM-DD-YYYY hh:mm')
+      }
     },
 
-    close() {
-      this.dialog = false;
-      this.editing = false;
+    close () {
+      this.dialog = false
+      this.editing = false
       this.$nextTick(() => {
-        this.editedIndex = -1;
-      });
+        this.editedIndex = -1
+      })
     },
-    print() {
-      this.isPrint = true;
-      const date = moment(new Date()).format("MM-DD-YYYY hh:mm");
-      let pdfName = "payout_transaction_" + date.replaceAll("-", "").trim();
+    print () {
+      this.isPrint = true
+      const date = moment(new Date()).format('MM-DD-YYYY hh:mm')
+      const pdfName = 'payout_transaction_' + date.replaceAll('-', '').trim()
 
       const addPages = (doc) => {
-        const pageCount = doc.internal.getNumberOfPages();
+        const pageCount = doc.internal.getNumberOfPages()
 
-        doc.setPage(1);
-        //Header
-        doc.setFont("helvetica", "Bold");
-        doc.setFontSize(20);
-        doc.text(this.$t("pdf.customer"), 100, 70);
-        doc.setFontSize(30);
+        doc.setPage(1)
+        // Header
+        doc.setFont('helvetica', 'Bold')
+        doc.setFontSize(20)
+        doc.text(this.$t('pdf.customer'), 100, 70)
+        doc.setFontSize(30)
         doc.text(
-          this.$t(`pdf.payout-title`),
+          this.$t('pdf.payout-title'),
           doc.internal.pageSize.width / 2,
           30,
           {
-            align: "center",
+            align: 'center'
           }
-        );
-        doc.setFont("helvetica");
-        doc.setFontSize(10);
+        )
+        doc.setFont('helvetica')
+        doc.setFontSize(10)
         doc.text(
-          `${this.$t("pdf.date")}: ` + date,
+          `${this.$t('pdf.date')}: ` + date,
           doc.internal.pageSize.width - 10,
           30,
           {
-            align: "right",
+            align: 'right'
           }
-        );
-        doc.setDrawColor("gray");
-        doc.setLineWidth(0, 5);
-        doc.line(10, 35, doc.internal.pageSize.width - 10, 35);
+        )
+        doc.setDrawColor('gray')
+        doc.setLineWidth(0, 5)
+        doc.line(10, 35, doc.internal.pageSize.width - 10, 35)
 
-        doc.setFont("helvetica");
-        doc.setFontSize(10);
-        doc.text(this.$t("pdf.material"), 10, 50);
-        doc.text(this.$t("pdf.arrival"), 10, 70);
-        doc.text(this.$t("pdf.weight"), 10, 90);
-        doc.text(this.$t("pdf.value"), 10, 110);
-        doc.text(this.$t("pdf.paid-out"), 10, 130);
-        doc.text(this.$t("pdf.paid-out-by"), 10, 150);
-        doc.text(this.$t("table-data.name"), 100, 80);
-        doc.text(this.$t("table-data.company"), 100, 100);
-        doc.text(this.$t("table-data.address"), 100, 120);
+        doc.setFont('helvetica')
+        doc.setFontSize(10)
+        doc.text(this.$t('pdf.material'), 10, 50)
+        doc.text(this.$t('pdf.arrival'), 10, 70)
+        doc.text(this.$t('pdf.weight'), 10, 90)
+        doc.text(this.$t('pdf.value'), 10, 110)
+        doc.text(this.$t('pdf.paid-out'), 10, 130)
+        doc.text(this.$t('pdf.paid-out-by'), 10, 150)
+        doc.text(this.$t('table-data.name'), 100, 80)
+        doc.text(this.$t('table-data.company'), 100, 100)
+        doc.text(this.$t('table-data.address'), 100, 120)
         doc.text(
-          this.$t("table-data.zip") + "/" + this.$t("table-data.city"),
+          this.$t('table-data.zip') + '/' + this.$t('table-data.city'),
           100,
           140
-        );
+        )
 
-        doc.setFont("helvetica", "Bold");
-        doc.setFontSize(15);
-        doc.text(this.editedItem.material.name, 35, 50);
-        doc.text(this.editedItem.arrived_at, 35, 70);
-        doc.text(`${this.editedItem.net_weight_kg} kg`, 35, 90);
-        doc.setFontSize(20);
-        doc.text(this.editedItem.payout + "EUR", 35, 110);
-        doc.setFontSize(15);
-        doc.text(this.editedItem.paid_at, 35, 130);
-        doc.text(this.editedItem.username, 35, 150);
+        doc.setFont('helvetica', 'Bold')
+        doc.setFontSize(15)
+        doc.text(this.editedItem.material.name, 35, 50)
+        doc.text(this.editedItem.arrived_at, 35, 70)
+        doc.text(`${this.editedItem.net_weight_kg} kg`, 35, 90)
+        doc.setFontSize(20)
+        doc.text(this.editedItem.payout + 'EUR', 35, 110)
+        doc.setFontSize(15)
+        doc.text(this.editedItem.paid_at, 35, 130)
+        doc.text(this.editedItem.username, 35, 150)
 
-        doc.text(this.editedItem.arrival.customer, 120, 80);
-        doc.text(this.editedItem.arrival.company_name, 120, 100);
-        doc.text(this.editedItem.arrival.street, 120, 120);
+        doc.text(this.editedItem.arrival.customer, 120, 80)
+        doc.text(this.editedItem.arrival.company_name, 120, 100)
+        doc.text(this.editedItem.arrival.street, 120, 120)
         doc.text(
           `${this.editedItem.arrival.zip}/${this.editedItem.arrival.city}`,
           120,
           140
-        );
+        )
 
-        //Footer
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(10);
+        // Footer
+        doc.setFont('helvetica', 'italic')
+        doc.setFontSize(10)
         doc.text(
-          "Page " + String(1) + " of " + String(pageCount),
+          'Page ' + String(1) + ' of ' + String(pageCount),
           doc.internal.pageSize.width / 2,
           287,
           {
-            align: "center",
+            align: 'center'
           }
-        );
-      };
-      let doc = new jsPDF();
-      addPages(doc);
-      doc.save(pdfName + ".pdf");
+        )
+      }
+      const doc = new jsPDF()
+      addPages(doc)
+      doc.save(pdfName + '.pdf')
     },
-    email() {
-      this.isEmail = true;
+    email () {
+      this.isEmail = true
     },
-    sendEmail() {
+    sendEmail () {
       if (this.emailAddress) {
         const data = {
           payout_id: this.editedItem.id,
           arrival_pos_id: this.editedItem.arrival.id,
-          email: this.emailAddress,
-        };
-        emailRecipt(data, this.token);
-        this.isEmail = false;
-        this.emailAddress = "";
+          email: this.emailAddress
+        }
+        emailRecipt(data, this.token)
+        this.isEmail = false
+        this.emailAddress = ''
       }
     },
-    reversal() {
-      this.isReversal = true;
+    reversal () {
+      this.isReversal = true
     },
-    reversalTransaction() {
-      reversalTransaction(this.editedItem.id, this.token);
-      this.items.splice(this.editedIndex, 1);
-      this.isReversal = false;
-      this.close();
-    },
-  },
-};
+    reversalTransaction () {
+      reversalTransaction(this.editedItem.id, this.token)
+      this.items.splice(this.editedIndex, 1)
+      this.isReversal = false
+      this.close()
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

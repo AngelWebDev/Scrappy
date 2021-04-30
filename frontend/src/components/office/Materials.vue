@@ -108,148 +108,148 @@ import {
   getMaterial,
   updateMaterial,
   deleteMaterial,
-  getMaterials,
-} from "../../api";
+  getMaterials
+} from '../../api'
 export default {
-  name: "materials",
+  name: 'materials',
   data: () => ({
     dialog: false,
     dialogID: false,
     dialogDelete: false,
-    token: "",
-    error: "",
+    token: '',
+    error: '',
 
     headers: [
-      { text: "No", value: "no" },
-      { text: "Name", value: "name" },
-      { text: "Price", value: "price_per_kg" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: 'No', value: 'no' },
+      { text: 'Name', value: 'name' },
+      { text: 'Price', value: 'price_per_kg' },
+      { text: 'Actions', value: 'actions', sortable: false }
     ],
     items: [],
     editedIndex: -1,
     editedItem: {
-      id: "",
-      name: "",
-      price_per_kg: 0.0,
+      id: '',
+      name: '',
+      price_per_kg: 0.0
     },
     defaultItem: {
-      id: "",
-      name: "",
-      price_per_kg: 0.0,
-    },
+      id: '',
+      name: '',
+      price_per_kg: 0.0
+    }
   }),
 
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "create-material" : "edit-material";
-    },
+    formTitle () {
+      return this.editedIndex === -1 ? 'create-material' : 'edit-material'
+    }
   },
 
-  mounted() {
+  mounted () {
     this.token = document
       .querySelector('input[name="csrfmiddlewaretoken"]')
-      .getAttribute("value");
+      .getAttribute('value')
   },
 
   watch: {
-    dialog(val) {
-      val || this.close();
+    dialog (val) {
+      val || this.close()
     },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
+    dialogDelete (val) {
+      val || this.closeDelete()
+    }
   },
 
-  created() {
-    this.initialize();
+  created () {
+    this.initialize()
   },
 
   methods: {
-    initialize() {
+    initialize () {
       getMaterials(this.token)
         .then((res) => res.json())
         .then(({ result }) => {
           this.items = result.map((item, index) => ({
             ...item,
-            no: index + 1,
-          }));
-        });
+            no: index + 1
+          }))
+        })
     },
 
-    editItem(item) {
+    editItem (item) {
       getMaterial(item.id, this.token).then((res) => {
         if (res) {
-          this.editedIndex = this.items.indexOf(item);
-          this.editedItem = Object.assign({}, res.result);
-          this.dialog = true;
-          this.editing = true;
+          this.editedIndex = this.items.indexOf(item)
+          this.editedItem = Object.assign({}, res.result)
+          this.dialog = true
+          this.editing = true
         }
-      });
+      })
     },
 
-    deleteItem(item) {
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
+    deleteItem (item) {
+      this.editedIndex = this.items.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
     },
 
-    deleteItemConfirm() {
-      this.items.splice(this.editedIndex, 1);
-      this.closeDelete();
+    deleteItemConfirm () {
+      this.items.splice(this.editedIndex, 1)
+      this.closeDelete()
     },
 
-    close() {
-      this.dialog = false;
-      this.editing = false;
-      this.error = "";
+    close () {
+      this.dialog = false
+      this.editing = false
+      this.error = ''
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
 
-    closeDelete() {
-      this.dialogDelete = false;
-      deleteMaterial(this.editedItem.id, this.token);
+    closeDelete () {
+      this.dialogDelete = false
+      deleteMaterial(this.editedItem.id, this.token)
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
 
-    save() {
+    save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.items[this.editedIndex], this.editedItem);
+        Object.assign(this.items[this.editedIndex], this.editedItem)
 
         updateMaterial(this.editedItem, this.token).then((res) => {
           if (res.ok) {
-            this.editing = true;
-            this.close();
+            this.editing = true
+            this.close()
           } else {
-            this.error = res.statusText;
+            this.error = res.statusText
           }
-        });
+        })
       } else {
         if (this.editedItem.name) {
-          delete this.editedItem.id;
+          delete this.editedItem.id
           createMaterial(this.editedItem, this.token)
             .then((res) => res.json())
             .then((res) => {
               if (res.result) {
                 this.items.push({
                   ...res.result,
-                  no: this.items.length + 1,
-                });
-                this.close();
+                  no: this.items.length + 1
+                })
+                this.close()
               } else {
-                this.error = "Something went wrong.";
+                this.error = 'Something went wrong.'
               }
-            });
+            })
         }
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -16,31 +16,31 @@
 </template>
 
 <script>
-import Users from "./office/Users";
-import Customers from "./office/Customers";
-import Reports from "./office/Reports";
-import Materials from "./office/Materials";
+import Users from './office/Users'
+import Customers from './office/Customers'
+import Reports from './office/Reports'
+import Materials from './office/Materials'
 export default {
-  name: "office-tab-bar",
+  name: 'office-tab-bar',
   components: {
     Users,
     Customers,
     Reports,
-    Materials,
+    Materials
   },
-  data() {
+  data () {
     return {
       tab: null,
       items: [
-        { title: "users", content: "Users" },
-        { title: "customers", content: "Customers" },
-        { title: "reports", content: "Reports" },
-        { title: "materials", content: "Materials" },
+        { title: 'users', content: 'Users' },
+        { title: 'customers', content: 'Customers' },
+        { title: 'reports', content: 'Reports' },
+        { title: 'materials', content: 'Materials' }
       ],
-      right: null,
-    };
-  },
-};
+      right: null
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

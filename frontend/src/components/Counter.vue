@@ -8,16 +8,16 @@
 
 <script>
 export default {
-    // let's create a Counter component
-  name: "Counter",
+  // let's create a Counter component
+  name: 'Counter',
   computed: {
     count () {
       return this.$store.state.count
     }
   },
   methods: {
-      increment() { this.$store.commit('increment') },
-      decrement() { this.$store.commit('decrement') }
-  },
+    increment () { this.$store.commit('increment') },
+    decrement () { this.$store.commit('decrement') }
+  }
 }
 </script>

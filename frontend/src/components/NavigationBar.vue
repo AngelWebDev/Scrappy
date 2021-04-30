@@ -36,28 +36,28 @@
 
 <script>
 export default {
-  name: "navigation-bar",
+  name: 'navigation-bar',
   components: {},
   props: {
-    selectedItem: Number,
+    selectedItem: Number
   },
-  data() {
+  data () {
     return {
       items: [
-        { title: "arrival", icon: "mdi-dolly", target: "/arrival" },
-        { title: "payout", icon: "mdi-credit-card-outline", target: "/payout" },
-        { title: "office", icon: "mdi-office-building", target: "/office" },
+        { title: 'arrival', icon: 'mdi-dolly', target: '/arrival' },
+        { title: 'payout', icon: 'mdi-credit-card-outline', target: '/payout' },
+        { title: 'office', icon: 'mdi-office-building', target: '/office' }
       ],
       right: null,
-      user: {},
-    };
+      user: {}
+    }
   },
-  created() {
+  created () {
     // eslint-disable-next-line no-undef
-    this.user = authUser;
-    this.items = this.items.filter((item) => this.user[item.title]);
-  },
-};
+    this.user = authUser
+    this.items = this.items.filter((item) => this.user[item.title])
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

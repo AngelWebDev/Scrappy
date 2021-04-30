@@ -8,21 +8,21 @@
 </template>
 
 <script>
-import NavigationBar from "./components/NavigationBar.vue";
-import AppBar from "./components/AppBar.vue";
-import PayoutTabBar from "./components/PayoutTabBar.vue";
+import NavigationBar from './components/NavigationBar.vue'
+import AppBar from './components/AppBar.vue'
+import PayoutTabBar from './components/PayoutTabBar.vue'
 // import Footer from "./components/Footer.vue";
-import "./assets/custom.css";
+import './assets/custom.css'
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
     NavigationBar,
     AppBar,
-    PayoutTabBar,
+    PayoutTabBar
     // Footer,
-  },
-};
+  }
+}
 </script>
 
 <style>

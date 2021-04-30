@@ -34,43 +34,43 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 export default {
-  name: "app-bar",
+  name: 'app-bar',
   components: {},
-  data() {
+  data () {
     return {
       items: [
-        { title: "Arrival", icon: "mdi-dolly" },
-        { title: "Payout", icon: "mdi-credit-card-outline" },
-        { title: "Office", icon: "mdi-office-building" },
+        { title: 'Arrival', icon: 'mdi-dolly' },
+        { title: 'Payout', icon: 'mdi-credit-card-outline' },
+        { title: 'Office', icon: 'mdi-office-building' }
       ],
-      lans: process.env.VUE_APP_I18N_SUPPORTED_LOCALE.split(","),
-      locale: "en",
+      lans: process.env.VUE_APP_I18N_SUPPORTED_LOCALE.split(','),
+      locale: 'en',
       right: null,
       user: {},
-      nowTime: "",
-    };
+      nowTime: ''
+    }
   },
-  created() {
+  created () {
     // eslint-disable-next-line no-undef
-    this.user = authUser;
+    this.user = authUser
   },
-  mounted() {
-    this.nowTimes();
+  mounted () {
+    this.nowTimes()
   },
   methods: {
-    selectLanguage() {
+    selectLanguage () {
       if (this.$i18n.locale !== this.locale) {
-        this.$i18n.locale = this.locale;
+        this.$i18n.locale = this.locale
       }
     },
-    nowTimes() {
-      this.nowTime = moment(new Date()).format("MM-DD-YYYY hh:mm");
-      setTimeout(this.nowTimes, 30 * 1000);
-    },
-  },
-};
+    nowTimes () {
+      this.nowTime = moment(new Date()).format('MM-DD-YYYY hh:mm')
+      setTimeout(this.nowTimes, 30 * 1000)
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
