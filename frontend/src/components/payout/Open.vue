@@ -15,7 +15,7 @@
           hide-details
         />
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="700px">
+        <v-dialog v-model="dialog" max-width="800px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ $t(`side-bar.arrival_details`) }}</span>
@@ -131,9 +131,17 @@
                 color="warning"
                 dark
                 @click="verifyCustomer"
-                v-if="editedItem.identification"
+                v-if="editedItem.identification && !verifiedCustomer"
               >
                 {{ $t("table-data.verify_customer") }}
+              </v-btn>
+              <v-btn
+                color="success"
+                dark
+                @click="verifyCustomer"
+                v-if="verifiedCustomer"
+              >
+                {{ $t("table-data.verified_customer") }}
               </v-btn>
               <v-btn color="grey darken-1" text @click="changeCustomer">
                 {{ $t("form-data.change-customer") }}
@@ -344,6 +352,7 @@ export default {
     editing: false,
     error: false,
     success: false,
+    verifiedCustomer: false,
     search: "",
     headers: [
       { text: "Customer#", value: "customer_id" },
@@ -353,9 +362,9 @@ export default {
       { text: "Amount", value: "price" },
     ],
     arrivalsHeader: [
-      { text: "Material", value: "name" },
+      { text: "Material", value: "material.name" },
       { text: "Net Kg", value: "net_weight_kg" },
-      { text: "Price/kg", value: "price_per_kg" },
+      { text: "Price/kg", value: "material.price_per_kg" },
       { text: "Payout", value: "payout" },
       { text: "Arrival Time", value: "arrived_at" },
       { text: "Accepting User", value: "username" },
@@ -453,8 +462,9 @@ export default {
     },
 
     verifyCustomer() {
-      //console.log("angel log", this.editedItem.id, this.selectedId);
-      //call api
+      if (this.selectedId > 0) {
+        this.verifiedCustomer = true;
+      }
     },
 
     cancelDoc() {
@@ -501,6 +511,13 @@ export default {
         this.editedItem.arrived_at = moment(new Date()).format(
           "MM-DD-YYYY hh:mm"
         );
+        this.arrivals = result.arrival_pos.map((item) => ({
+          ...item,
+          payout: item.net_weight_kg * item.material.price_per_kg,
+          arrived_at: moment(result.arrived_at).format("MM-DD-YYYY hh:mm"),
+          // eslint-disable-next-line no-undef
+          username: authUser.firstname + " " + authUser.lastname,
+        }));
       });
       getCustomer(item.customer_id, this.token).then((res) => {
         if (res.result.identification.length > 0) {
@@ -515,17 +532,20 @@ export default {
     },
 
     paid() {
-      createPaid(this.editedItem.id, this.token).then(({ result }) => {
-        if (result === "success") {
-          this.initialize();
-          this.close();
+      createPaid(this.editedItem.id, this.selectId, this.token).then(
+        ({ result }) => {
+          if (result === "success") {
+            this.initialize();
+            this.close();
+          }
         }
-      });
+      );
     },
 
     close() {
       this.dialog = false;
       this.editing = false;
+      this.verifiedCustomer = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;

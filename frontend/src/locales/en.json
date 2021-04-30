@@ -93,6 +93,7 @@
     "value": "Value",
     "vat_id": "VAT ID",
     "verify": "Verify Identity",
+    "verified_customer": "Verified",
     "verify_customer": "Verify Customer",
     "verify_again": "Verify Again",
     "weight": "Weight",

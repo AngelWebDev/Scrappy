@@ -15,7 +15,7 @@
           hide-details
         />
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="700px">
+        <v-dialog v-model="dialog" max-width="800px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ $t(`side-bar.arrival_details`) }}</span>
@@ -29,7 +29,7 @@
                     :search="search"
                     :hide-default-footer="true"
                     class="elevation-2"
-                    @click:row="editItem"
+                    @click:row="selectMaterial"
                   >
                   </v-data-table>
                 </v-row>
@@ -56,12 +56,9 @@
                           {{ $t("table-data.material") }} :
                         </span>
                       </v-col>
-                      <v-col
-                        class="text-left pa-0 ma-0"
-                        v-if="editedItem.arrival.arrival_pos"
-                      >
+                      <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.arrival.arrival_pos[0].material.name }}
+                          {{ editedItem.material.name }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -74,7 +71,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{ editedItem.arrival.arrived_at }}
+                          {{ editedItem.arrived_at }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -87,10 +84,10 @@
                       </v-col>
                       <v-col
                         class="text-left pa-0 ma-0"
-                        v-if="editedItem.arrival.arrival_pos"
+                        v-if="editedItem.net_weight_kg"
                       >
                         <strong>
-                          {{ editedItem.arrival.arrival_pos[0].net_weight_kg }}
+                          {{ editedItem.net_weight_kg }}
                           kg
                         </strong>
                       </v-col>
@@ -102,8 +99,11 @@
                           {{ $t("table-data.value") }} :
                         </span>
                       </v-col>
-                      <v-col class="text-left pa-0 ma-0">
-                        <h2>{{ editedItem.arrival.price.toFixed(2) }} EUR</h2>
+                      <v-col
+                        class="text-left pa-0 ma-0"
+                        v-if="editedItem.payout"
+                      >
+                        <h2>{{ editedItem.payout }} EUR</h2>
                       </v-col>
                     </v-row>
 
@@ -128,11 +128,7 @@
                       </v-col>
                       <v-col class="text-left pa-0 ma-0">
                         <strong>
-                          {{
-                            editedItem.user.firstname +
-                              " " +
-                              editedItem.user.lastname
-                          }}
+                          {{ editedItem.username }}
                         </strong>
                       </v-col>
                     </v-row>
@@ -303,9 +299,9 @@ export default {
       { text: "User", value: "username" },
     ],
     arrivalsHeader: [
-      { text: "Material", value: "name" },
+      { text: "Material", value: "material.name" },
       { text: "Net Kg", value: "net_weight_kg" },
-      { text: "Price/kg", value: "price_per_kg" },
+      { text: "Price/kg", value: "material.price_per_kg" },
       { text: "Payout", value: "payout" },
       { text: "Arrival Time", value: "arrived_at" },
       { text: "Accepting User", value: "username" },
@@ -324,6 +320,9 @@ export default {
         firstname: "",
         lastname: "",
         status: "",
+      },
+      material: {
+        name: "",
       },
       arrival: {
         id: "",
@@ -378,16 +377,25 @@ export default {
     editItem(item) {
       this.editedIndex = this.items.indexOf(item);
       getPaid(item.id, this.token).then(({ result }) => {
-        this.editedItem = Object.assign({}, result);
-        this.editedItem.paid_at = moment(this.editedItem.paid_at).format(
-          "MM-DD-YYYY hh:mm"
-        );
-        this.editedItem.arrival.arrived_at = moment(
-          this.editedItem.arrival.arrived_at
-        ).format("MM-DD-YYYY hh:mm");
+        this.savedItem = Object.assign({}, result);
+        this.arrivals = result.arrival.arrival_pos.map((item) => ({
+          ...item,
+          payout: (item.net_weight_kg * item.material.price_per_kg).toFixed(2),
+          arrived_at: moment(result.arrived_at).format("MM-DD-YYYY hh:mm"),
+          // eslint-disable-next-line no-undef
+          username: authUser.firstname + " " + authUser.lastname,
+        }));
         this.dialog = true;
         this.editing = true;
       });
+    },
+
+    selectMaterial(material) {
+      this.editedItem = {
+        ...this.savedItem,
+        ...material,
+        paid_at: moment(this.savedItem.paid_at).format("MM-DD-YYYY hh:mm"),
+      };
     },
 
     close() {
@@ -452,22 +460,14 @@ export default {
 
         doc.setFont("helvetica", "Bold");
         doc.setFontSize(15);
-        doc.text(this.editedItem.arrival.arrival_pos[0].material.name, 35, 50);
-        doc.text(this.editedItem.arrival.arrived_at, 35, 70);
-        doc.text(
-          `${this.editedItem.arrival.arrival_pos[0].net_weight_kg} kg`,
-          35,
-          90
-        );
+        doc.text(this.editedItem.material.name, 35, 50);
+        doc.text(this.editedItem.arrived_at, 35, 70);
+        doc.text(`${this.editedItem.net_weight_kg} kg`, 35, 90);
         doc.setFontSize(20);
-        doc.text(this.editedItem.arrival.price + "EUR", 35, 110);
+        doc.text(this.editedItem.payout + "EUR", 35, 110);
         doc.setFontSize(15);
         doc.text(this.editedItem.paid_at, 35, 130);
-        doc.text(
-          this.editedItem.user.firstname + " " + this.editedItem.user.lastname,
-          35,
-          150
-        );
+        doc.text(this.editedItem.username, 35, 150);
 
         doc.text(this.editedItem.arrival.customer, 120, 80);
         doc.text(this.editedItem.arrival.company_name, 120, 100);

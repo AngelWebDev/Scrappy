@@ -245,7 +245,12 @@ export default {
       const payload = {
         customer_id: this.form.customer_id,
         arrived_at: new Date(),
-        arrivals: this.items,
+        arrivals: this.items.map((item) => ({
+          material_id: item.material.id,
+          gross_weight_kg: item.gross_weight_kg,
+          tare_kg: item.tare_kg,
+          net_weight_kg: item.net_weight_kg,
+        })),
       };
 
       createArrival(payload, this.token).then((res) => {

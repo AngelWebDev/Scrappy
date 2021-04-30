@@ -263,14 +263,14 @@ export const getOpen = (id, csrftoken) => {
   }).then((res) => res.json());
 };
 
-export const createPaid = (id, csrftoken) => {
+export const createPaid = (id, Id, csrftoken) => {
   return fetch(`${API_URL}/payout/open/${id}/`, {
     method: "PUT",
     headers: {
       ...headers,
       "X-CSRFTOKEN": csrftoken,
     },
-    body: null,
+    body: { identificaion_id: Id },
   }).then((res) => res.json());
 };
 
