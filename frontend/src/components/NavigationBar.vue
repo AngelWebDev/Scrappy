@@ -12,7 +12,7 @@
     <v-divider></v-divider>
 
     <v-list nav dense>
-      <v-list-item-group v-model="selectedItem" color="primary">
+      <v-list-item-group v-model="index" color="primary">
         <v-list-item
           v-for="({ icon, title, target }, i) in items"
           :key="i"
@@ -49,13 +49,16 @@ export default {
         { title: "office", icon: "mdi-office-building", target: "/office" }
       ],
       right: null,
-      user: {}
+      user: {},
+      index: 0
     };
   },
   created() {
     // eslint-disable-next-line no-undef
     this.user = authUser;
     this.items = this.items.filter(item => this.user[item.title]);
+    this.index = this.selectedItem;
+    console.log("selectedItem", this.selectedItem);
   }
 };
 </script>
