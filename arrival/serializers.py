@@ -2,6 +2,7 @@ from functools import reduce
 
 from rest_framework import serializers
 from .models import Arrival, ArrivalPos, Material
+from office.serializers import IdentificationSerializer
 
 
 class MaterialSerializer(serializers.ModelSerializer):
@@ -34,7 +35,7 @@ class ArrivalInPayoutSerializerList(serializers.ModelSerializer):
         fields = ['id', 'customer_id',  'customer', 'city', 'arrived_at', 'price']
 
     def get_customer(self, obj):
-        return "{} {}".format(obj.customer.firstname, obj.customer.lastname)
+        return obj.customer.fullname
 
     def get_price(self, obj):
         arrival_pos = ArrivalPos.objects.filter(arrival_id=obj.id).all()
@@ -58,4 +59,4 @@ class ArrivalInPayoutSerializerDetail(ArrivalInPayoutSerializerList):
             return None
 
     def get_identification(self, obj):
-        return obj.customer.identifications.exists()
+        return IdentificationSerializer(obj.customer.identifications, many=True).data

@@ -107,6 +107,10 @@ class Customer(models.Model):
     def __str__(self):
         return "{} {}".format(self.firstname.capitalize(), self.lastname.capitalize())
 
+    @property
+    def fullname(self):
+        return "{} {}".format(self.firstname, self.lastname)
+
 
 class Identification(models.Model):
     class Meta:

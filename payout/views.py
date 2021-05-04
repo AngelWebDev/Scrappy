@@ -6,6 +6,7 @@ from django.template.loader import get_template
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 
+from rest_framework.filters import SearchFilter
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
@@ -57,7 +58,7 @@ class ArrivalPayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIVie
         return Response({"result": serializer.data})
 
 
-class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, RetrieveUpdateAPIView):
+class ArrivalPayoutRetrieveUpdateAPI(RetrieveUpdateAPIView):
     lookup_field = 'id'
     serializer_class = ArrivalInPayoutSerializerDetail
 
@@ -77,6 +78,7 @@ class ArrivalPayoutRetrieveUpdateAPI(LoginRequiredMixin, UserPayoutAccessMixin, 
         new_payout = Payout()
         new_payout.arrival = instance
         new_payout.user = request.user
+        new_payout.identification_id = request.data["identification_id"]
         new_payout.paid_amount = self.serializer_class(instance).get_price(instance)
         new_payout.save()
 
@@ -100,12 +102,14 @@ class ArrivalChangeCustomerAPI(LoginRequiredMixin, UserPayoutAccessMixin, Retrie
             return Response({"result": "There is no matching arrival data"}, 404)
 
 
-class PayoutListAPI(LoginRequiredMixin, UserPayoutAccessMixin, ListAPIView):
+class PayoutListAPI(ListAPIView):
     serializer_class = PayoutListSerializer
     queryset = Payout.objects.all()
+    filter_backends = [SearchFilter]
+    search_fields = ['arrival__customer__firstname', 'arrival__customer__lastname']
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         serializer = self.serializer_class(queryset, many=True)
         return Response({"result": serializer.data})
 
@@ -154,10 +158,10 @@ class PayoutReversalAPI(LoginRequiredMixin, UserPayoutAccessMixin, APIView):
 
 class PayoutReportEmailAPI(LoginRequiredMixin, UserPayoutAccessMixin, APIView):
     def post(self, request):
-        id = request.data["payout_id"]
+        payout_id = request.data["payout_id"]
         arrival_pos_id = request.data["arrival_pos_id"]
         email = request.data["email"]
-        payout = Payout.objects.get(id=id)
+        payout = Payout.objects.get(id=payout_id)
 
         if payout:
             try:

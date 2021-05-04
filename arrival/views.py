@@ -43,7 +43,7 @@ class ArrivalView(LoginRequiredMixin, UserArrivalAccessMixin, View):
         return render(request, self.template, context)
 
 
-class ArrivalListCreateAPI(ListCreateAPIView):
+class ArrivalListCreateAPI(LoginRequiredMixin, UserArrivalAccessMixin, ListCreateAPIView):
     serializer_class = ArrivalPosSerializer
 
     def list(self, request, *args, **kwargs):
@@ -53,7 +53,7 @@ class ArrivalListCreateAPI(ListCreateAPIView):
                 arrival__status=Arrival.StatusChoices.OPEN
             ).order_by('-arrival__arrived_at').all()
             if arrival_pos:
-                context = {"result": ArrivalPosSerializer(arrival_pos, many=True).data}
+                context = {"result": self.serializer_class(arrival_pos, many=True).data}
                 return Response(context, status=200)
             else:
                 return Response({"result": "No Content"}, status=204)
