@@ -29,7 +29,6 @@
                     :search="search"
                     :hide-default-footer="true"
                     class="elevation-2"
-                    @click:row="editItem"
                   >
                   </v-data-table>
                 </v-row>
@@ -341,10 +340,10 @@ import {
   getCustomers,
   getCustomer,
   changeCustomer
-} from '../../api'
-import moment from 'moment'
+} from "../../api";
+import moment from "moment";
 export default {
-  name: 'open',
+  name: "open",
   data: () => ({
     dialog: false,
     dialogID: false,
@@ -353,130 +352,130 @@ export default {
     error: false,
     success: false,
     verifiedCustomer: false,
-    search: '',
+    search: "",
     headers: [
-      { text: 'Customer#', value: 'customer_id' },
-      { text: 'Customer', value: 'customer' },
-      { text: 'City', value: 'city' },
-      { text: 'Date/Time', value: 'arrived_at' },
-      { text: 'Amount', value: 'price' }
+      { text: "Customer#", value: "customer_id" },
+      { text: "Customer", value: "customer" },
+      { text: "City", value: "city" },
+      { text: "Date/Time", value: "arrived_at" },
+      { text: "Amount", value: "price" }
     ],
     arrivalsHeader: [
-      { text: 'Material', value: 'material.name' },
-      { text: 'Net Kg', value: 'net_weight_kg' },
-      { text: 'Price/kg', value: 'material.price_per_kg' },
-      { text: 'Payout', value: 'payout' },
-      { text: 'Arrival Time', value: 'arrived_at' },
-      { text: 'Accepting User', value: 'username' }
+      { text: "Material", value: "material.name" },
+      { text: "Net Kg", value: "net_weight_kg" },
+      { text: "Price/kg", value: "material.price_per_kg" },
+      { text: "Payout", value: "payout" },
+      { text: "Arrival Time", value: "arrived_at" },
+      { text: "Accepting User", value: "username" }
     ],
     arrivals: [],
     fromDateMenu: false,
     items: [],
     types: [
-      { value: 'passport', text: 'Passport' },
-      { value: 'idcard', text: 'ID Card' },
-      { value: 'driverlicense', text: 'Driver License' }
+      { value: "passport", text: "Passport" },
+      { value: "idcard", text: "ID Card" },
+      { value: "driverlicense", text: "Driver License" }
     ],
     identification: {
-      document_type: 'passport',
-      document_id_number: '',
+      document_type: "passport",
+      document_id_number: "",
       name_on_document: null,
       issuing_country: null,
       document_expiration_date: null
     },
     defaultIdentification: {
-      document_type: 'passport',
-      document_id_number: '',
+      document_type: "passport",
+      document_id_number: "",
       name_on_document: null,
       issuing_country: null,
       document_expiration_date: null
     },
     editedIndex: -1,
     editedItem: {
-      id: '',
-      arrived_at: '',
-      city: '',
-      customer: '',
-      material: '',
+      id: "",
+      arrived_at: "",
+      city: "",
+      customer: "",
+      material: "",
       net_weight_kg: 0,
       price: 0,
-      street: '',
-      zip: '',
-      company_name: ''
+      street: "",
+      zip: "",
+      company_name: ""
     },
     defaultItem: {
-      id: '',
-      arrived_at: '',
-      city: '',
-      customer: '',
-      material: '',
+      id: "",
+      arrived_at: "",
+      city: "",
+      customer: "",
+      material: "",
       net_weight_kg: 0,
       price: 0,
-      street: '',
-      zip: '',
-      company_name: ''
+      street: "",
+      zip: "",
+      company_name: ""
     },
     ids: [],
-    selectedId: '',
+    selectedId: "",
     customers: [],
-    customer_id: '',
-    token: ''
+    customer_id: "",
+    token: ""
   }),
 
   watch: {
-    dialog (val) {
-      val || this.close()
+    dialog(val) {
+      val || this.close();
     },
-    dialogDelete (val) {
-      val || this.closeDelete()
+    dialogDelete(val) {
+      val || this.closeDelete();
     }
   },
 
-  created () {
-    this.initialize()
+  created() {
+    this.initialize();
   },
 
   methods: {
-    initialize () {
+    initialize() {
       this.token = document
         .querySelector('input[name="csrfmiddlewaretoken"]')
-        .getAttribute('value')
+        .getAttribute("value");
       getOpenList(this.token)
-        .then((res) => res.json())
+        .then(res => res.json())
         .then(({ result }) => {
-          this.items = result.map((item) => ({
+          this.items = result.map(item => ({
             ...item,
-            arrived_at: moment(item.arrived_at).format('MM-DD-YYYY hh:mm')
-          }))
-        })
+            arrived_at: moment(item.arrived_at).format("MM-DD-YYYY hh:mm")
+          }));
+        });
     },
 
-    openDialogID () {
-      this.dialogID = true
+    openDialogID() {
+      this.dialogID = true;
     },
 
-    selectId () {
+    selectId() {
       if (this.selectedId === -1) {
-        this.openDialogID()
+        this.openDialogID();
       }
     },
 
-    verifyCustomer () {
+    verifyCustomer() {
       if (this.selectedId > 0) {
-        this.verifiedCustomer = true
+        this.verifiedCustomer = true;
       }
     },
 
-    cancelDoc () {
-      this.dialogID = false
-      this.identification = Object.assign({}, this.defaultIdentification)
+    cancelDoc() {
+      this.dialogID = false;
+      this.identification = Object.assign({}, this.defaultIdentification);
     },
 
-    saveDoc () {
+    saveDoc() {
       this.identification.verified_at = moment(new Date()).format(
-        'MM-DD-YYYY hh:mm'
-      )
-      Object.assign(this.items[this.editedIndex], this.editedItem)
+        "MM-DD-YYYY hh:mm"
+      );
+      Object.assign(this.items[this.editedIndex], this.editedItem);
       const data = {
         customer_id: this.editedItem.customer_id,
         document_type: this.identification.document_type,
@@ -484,128 +483,128 @@ export default {
         name_on_document: this.identification.name_on_document,
         issuing_country: this.identification.issuing_country,
         document_expiration_date: this.identification.document_expiration_date
-      }
+      };
       verifyIdentification(data, this.token).then(() => {
-        getCustomer(this.editedItem.customer_id, this.token).then((res) => {
+        getCustomer(this.editedItem.customer_id, this.token).then(res => {
           if (res.result.identification.length > 0) {
-            const resultIds = res.result.identification.map((item) => ({
+            const resultIds = res.result.identification.map(item => ({
               text: item.document_type,
               value: item.id
-            }))
+            }));
 
-            this.ids = [...resultIds, { text: 'Enter New Doc', value: -1 }]
+            this.ids = [...resultIds, { text: "Enter New Doc", value: -1 }];
           }
-        })
-      })
-      this.dialogID = false
+        });
+      });
+      this.dialogID = false;
     },
 
-    editItem (item) {
+    editItem(item) {
       getOpen(item.id, this.token).then(({ result }) => {
-        this.editedIndex = this.items.indexOf(item)
+        this.editedIndex = this.items.indexOf(item);
         if (result) {
-          this.editedItem = Object.assign({}, result)
+          this.editedItem = Object.assign({}, result);
         }
-        this.dialog = true
-        this.editing = true
+        this.dialog = true;
+        this.editing = true;
         this.editedItem.arrived_at = moment(new Date()).format(
-          'MM-DD-YYYY hh:mm'
-        )
-        this.arrivals = result.arrival_pos.map((item) => ({
+          "MM-DD-YYYY hh:mm"
+        );
+        this.arrivals = result.arrival_pos.map(item => ({
           ...item,
           payout: item.net_weight_kg * item.material.price_per_kg,
-          arrived_at: moment(result.arrived_at).format('MM-DD-YYYY hh:mm'),
+          arrived_at: moment(result.arrived_at).format("MM-DD-YYYY hh:mm"),
           // eslint-disable-next-line no-undef
-          username: authUser.firstname + ' ' + authUser.lastname
-        }))
-      })
-      getCustomer(item.customer_id, this.token).then((res) => {
+          username: authUser.firstname + " " + authUser.lastname
+        }));
+      });
+      getCustomer(item.customer_id, this.token).then(res => {
         if (res.result.identification.length > 0) {
-          const resultIds = res.result.identification.map((item) => ({
+          const resultIds = res.result.identification.map(item => ({
             text: item.document_type,
             value: item.id
-          }))
+          }));
 
-          this.ids = [...resultIds, { text: 'Enter New Doc', value: -1 }]
+          this.ids = [...resultIds, { text: "Enter New Doc", value: -1 }];
         }
-      })
+      });
     },
 
-    paid () {
+    paid() {
       createPaid(this.editedItem.id, this.selectId, this.token).then(
         ({ result }) => {
-          if (result === 'success') {
-            this.initialize()
-            this.close()
+          if (result === "success") {
+            this.initialize();
+            this.close();
           }
         }
-      )
+      );
     },
 
-    close () {
-      this.dialog = false
-      this.editing = false
-      this.verifiedCustomer = false
+    close() {
+      this.dialog = false;
+      this.editing = false;
+      this.verifiedCustomer = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
     },
 
-    closeDelete () {
-      this.dialogDelete = false
-      this.editedItem = Object.assign({}, this.defaultItem)
-      this.editedIndex = -1
+    closeDelete() {
+      this.dialogDelete = false;
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
     },
 
-    changeCustomer () {
-      this.isChangeCustomer = true
+    changeCustomer() {
+      this.isChangeCustomer = true;
       getCustomers(this.token)
-        .then((res) => res.json())
+        .then(res => res.json())
         .then(({ result }) => {
-          this.customers = result.map((item) => ({
+          this.customers = result.map(item => ({
             value: item.id,
             text: item.company
               ? item.firstname +
-                ' ' +
+                " " +
                 item.lastname +
-                ', ' +
+                ", " +
                 item.company.name +
-                ', ' +
+                ", " +
                 item.street +
-                ', ' +
+                ", " +
                 item.zip
               : item.firstname +
-                ' ' +
+                " " +
                 item.lastname +
-                ', ' +
+                ", " +
                 item.street +
-                ', ' +
+                ", " +
                 item.zip
-          }))
-        })
+          }));
+        });
     },
 
-    onChange (id) {
-      this.error = ''
-      this.customer_id = id
+    onChange(id) {
+      this.error = "";
+      this.customer_id = id;
     },
 
-    cancelChangeCustomer () {
-      this.isChangeCustomer = false
-      this.customer_id = ''
+    cancelChangeCustomer() {
+      this.isChangeCustomer = false;
+      this.customer_id = "";
     },
-    selectCustomer () {
+    selectCustomer() {
       changeCustomer(this.editedItem.id, this.customer_id, this.token).then(
         () => {
-          this.cancelChangeCustomer()
-          this.close()
-          this.initialize()
+          this.cancelChangeCustomer();
+          this.close();
+          this.initialize();
         }
-      )
+      );
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
