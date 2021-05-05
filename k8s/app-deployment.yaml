@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      run: app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: app
+    spec:
+      containers:
+      - name: app
+        args:
+        - python3
+        - manage.py
+        - runserver
+        - 0.0.0.0:8000
+        image: 100days/scrappy:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        resources: {}
+        env:
+          - name: NODE_ENV
+            value: production
+          - name: SMTP_HOST
+            value: mailer
+          - name: SMTP_PORT
+            value: "25"
+          - name: SMTP_USER
+            value: ""
+          - name: SMTP_PASSWORD
+            value: ""
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always

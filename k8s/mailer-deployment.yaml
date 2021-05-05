@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailer
+spec:
+  selector:
+    matchLabels:
+      app: mailer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mailer
+    spec:
+      containers:
+        - name: mailer
+          image: "djfarrelly/maildev"
+          env:
+            - name: MAILDEV_WEB_PORT
+              value: "80"
+            - name: MAILDEV_SMTP_PORT
+              value: "25"
+            - name: MAILDEV_HIDE_EXTENSIONS
+              value: "STARTTLS"
+          ports:
+            - name: http
+              containerPort: 80

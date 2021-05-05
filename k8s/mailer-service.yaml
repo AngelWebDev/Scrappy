@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailer
+  annotations:
+    load-balancer.hetzner.cloud/location: nbg1
+    load-balancer.hetzner.cloud/name: scrappy-mailer
+    load-balancer.hetzner.cloud/health-check-port: "10254"
+    load-balancer.hetzner.cloud/health-check-protocol: "http"
+    load-balancer.hetzner.cloud/health-check-http-path: "/healthz"
+    load-balancer.hetzner.cloud/protocol: "http"
+    load-balancer.hetzner.cloud/use-private-ip: "true"
+spec:
+  type: LoadBalancer
+  selector:
+    app: mailer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+status:
+  loadBalancer: {}
