@@ -20,7 +20,7 @@ spec:
             - name: MAILDEV_WEB_PORT
               value: "80"
             - name: MAILDEV_SMTP_PORT
-              value: "25"
+              value: "587"
             - name: MAILDEV_HIDE_EXTENSIONS
               value: "STARTTLS"
           ports:
