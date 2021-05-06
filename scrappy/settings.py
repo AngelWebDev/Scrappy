@@ -157,8 +157,8 @@ INVITATIONS_INVITATION_EXPIRY = 7
 INVITATIONS_INVITATION_MODEL = 'office.CustomInvitation'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 1025
+EMAIL_HOST = 'mailer'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 25
 EMAIL_HOST_USER = 'soft2dev2021@gmail.com'
 EMAIL_HOST_PASSWORD = 'eoshsury!@34'
